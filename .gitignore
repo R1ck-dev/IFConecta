@@ -1,0 +1,11 @@
+.vscode/
+.idea/
+*.launch
+
+.env
+local.properties
+application-dev.yml
+application-prod.yml
+
+data/
+db-data/

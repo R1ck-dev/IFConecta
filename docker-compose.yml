@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: ifconecta-db
+    environment:
+      POSTGRES_DB: ifconecta
+      POSTGRES_USER: ${DB_USER:-ifconecta_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-local_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

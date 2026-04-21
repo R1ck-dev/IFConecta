@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ifconecta
+    username: ${DB_USER:ifconecta_admin}
+    password: ${DB_PASSWORD:local_password}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: true 
+
+  mail:
+    host: localhost
+    port: 1025 
+    username: ""
+    password: ""

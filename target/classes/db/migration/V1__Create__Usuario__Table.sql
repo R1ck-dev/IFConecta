@@ -1,0 +1,35 @@
+-- V1__Create_Usuario_Table.sql
+
+CREATE TABLE usuarios (
+    id UUID PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    email_acad VARCHAR(255) UNIQUE NOT NULL,
+    senha_hash VARCHAR(255) NOT NULL,
+    status VARCHAR(50) NOT NULL, -- PENDENTE_VERIFICACAO, ATIVO, INATIVO, SUSPENSO
+    role VARCHAR(50) NOT NULL,   -- USER, ADMIN
+    data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE alunos (
+    usuario_id UUID PRIMARY KEY REFERENCES usuarios(id) ON DELETE CASCADE,
+    prontuario VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE professores (
+    usuario_id UUID PRIMARY KEY REFERENCES usuarios(id) ON DELETE CASCADE,
+    siape VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE institucionais (
+    usuario_id UUID PRIMARY KEY REFERENCES usuarios(id) ON DELETE CASCADE,
+    setor VARCHAR(100) NOT NULL,
+    cargo VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE tokens_verificacao (
+    id UUID PRIMARY KEY,
+    usuario_id UUID NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    token VARCHAR(255) UNIQUE NOT NULL,
+    data_expiracao TIMESTAMP NOT NULL,
+    utilizado BOOLEAN NOT NULL DEFAULT FALSE
+);
