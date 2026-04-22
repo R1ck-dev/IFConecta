@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/ifconecta
+    url: jdbc:postgresql://localhost:5433/ifconecta
     username: ${DB_USER:ifconecta_admin}
     password: ${DB_PASSWORD:local_password}
     driver-class-name: org.postgresql.Driver

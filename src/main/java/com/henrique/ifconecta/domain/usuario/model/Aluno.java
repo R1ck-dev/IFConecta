@@ -10,12 +10,12 @@ public class Aluno extends Usuario{
     private String prontuario;
 
     // Construtor de Criação
-    public Aluno(UUID id, String nome, String emailAcad, String senhaHash, RoleUsuario role, String prontuario) {
+    public Aluno(UUID id, String nome, String emailAcad, String senhaHash, String prontuario) {
         super(id, nome, emailAcad, senhaHash, RoleUsuario.USER);
         this.prontuario = prontuario;
     }
 
-    // Construtor de Reconstrução
+    // Construtor de Reconstituição
     public Aluno(UUID id, String nome, String emailAcad, String senhaHash, StatusUsuario status, RoleUsuario role, LocalDateTime dataCriacao, String prontuario) {
         super(id, nome, emailAcad, senhaHash, status, role, dataCriacao);
         this.prontuario = prontuario;

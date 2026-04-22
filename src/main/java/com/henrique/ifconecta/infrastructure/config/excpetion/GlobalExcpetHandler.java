@@ -1,0 +1,34 @@
+package com.henrique.ifconecta.infrastructure.config.excpetion;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
+
+@RestControllerAdvice
+public class GlobalExcpetHandler {
+
+    // Trata erros de negócio
+    @ExceptionHandler(NegocioException.class)
+    public ResponseEntity<Map<String, String>> handleNegocioException(NegocioException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("erro", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    // Trata erros de @Valid do Controller
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error -> 
+            errors.put(error.getField(), error.getDefaultMessage())
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+}

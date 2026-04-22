@@ -10,12 +10,12 @@ public class Professor extends Usuario{
     private String siape;
 
     // Construtor de Criação
-    public Professor(UUID id, String nome, String emailAcad, String senhaHash, RoleUsuario role, String siape) {
+    public Professor(UUID id, String nome, String emailAcad, String senhaHash, String siape) {
         super(id, nome, emailAcad, senhaHash, RoleUsuario.USER);
         this.siape = siape;
     }
 
-    // Construtor de Reconstrução
+    // Construtor de Reconstituição
     public Professor(UUID id, String nome, String emailAcad, String senhaHash, StatusUsuario status, RoleUsuario role, LocalDateTime dataCriacao, String siape) {
         super(id, nome, emailAcad, senhaHash, status, role, dataCriacao);
         this.siape = siape;
