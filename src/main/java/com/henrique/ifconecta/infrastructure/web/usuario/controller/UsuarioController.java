@@ -2,6 +2,7 @@ package com.henrique.ifconecta.infrastructure.web.usuario.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,5 +35,10 @@ public class UsuarioController {
         registrarAlunoUseCase.execute(input);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<String> testarAutenticacao() {
+        return ResponseEntity.ok("Estou logado!");
     }
 }
