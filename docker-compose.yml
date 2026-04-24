@@ -13,5 +13,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  mailhog:
+    image: mailhog/mailhog
+    container_name: ifconecta-mailhog
+    ports:
+      - "1025:1025" # Porta do SMTP
+      - "8025:8025" # Porta da Interface Web
+
 volumes:
   postgres_data:

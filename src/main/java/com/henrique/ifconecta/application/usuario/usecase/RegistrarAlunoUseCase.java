@@ -5,8 +5,11 @@ import org.springframework.stereotype.Service;
 import com.henrique.ifconecta.application.usuario.dto.RegistrarAlunoInput;
 import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
 import com.henrique.ifconecta.domain.usuario.model.Aluno;
+import com.henrique.ifconecta.domain.usuario.model.TokenVerificacao;
+import com.henrique.ifconecta.domain.usuario.port.EmailSenderPort;
 import com.henrique.ifconecta.domain.usuario.port.EmailValidatorPort;
 import com.henrique.ifconecta.domain.usuario.port.PasswordEncoderPort;
+import com.henrique.ifconecta.domain.usuario.port.TokenVerificacaoRepository;
 import com.henrique.ifconecta.domain.usuario.port.UsuarioRepository;
 
 import jakarta.transaction.Transactional;
@@ -19,6 +22,8 @@ public class RegistrarAlunoUseCase {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoderPort passwordEncoderPort;
     private final EmailValidatorPort emailValidatorPort;
+    private final TokenVerificacaoRepository tokenVerificacaoRepository;
+    private final EmailSenderPort emailSenderPort;
 
     @Transactional
     public void execute(RegistrarAlunoInput input) {
@@ -40,8 +45,12 @@ public class RegistrarAlunoUseCase {
             input.prontuario()
         );
 
-        usuarioRepository.salvar(novoAluno);
+        Aluno alunoSalvo = (Aluno) usuarioRepository.salvar(novoAluno);
 
-        // TODO: Disparar evento de envio de e-mail de confirmação.
+        TokenVerificacao token = new TokenVerificacao(alunoSalvo);
+
+        tokenVerificacaoRepository.salvar(token);
+
+        emailSenderPort.enviarEmailAtivacao(alunoSalvo.getEmailAcad(), alunoSalvo.getNome(), token.getToken());
     }
 }

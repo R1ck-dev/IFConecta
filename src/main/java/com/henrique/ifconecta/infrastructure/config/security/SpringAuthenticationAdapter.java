@@ -3,6 +3,7 @@ package com.henrique.ifconecta.infrastructure.config.security;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.henrique.ifconecta.domain.usuario.enums.StatusUsuario;
 import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
 import com.henrique.ifconecta.domain.usuario.model.Usuario;
 import com.henrique.ifconecta.domain.usuario.port.AuthenticationPort;
@@ -24,6 +25,10 @@ public class SpringAuthenticationAdapter implements AuthenticationPort {
 
         if (!passwordEncoder.matches(rawPassword, usuario.getSenhaHash())) {
             throw new NegocioException("Credenciais inválidas.");
+        }
+
+        if (usuario.getStatus() != StatusUsuario.ATIVO) {
+            throw new NegocioException("Conta pendente. Por favor, verifique o seu email");
         }
 
         return usuario;
