@@ -13,3 +13,4 @@ public interface SpringDataUsuarioRepository extends JpaRepository<UsuarioJpaEnt
     Optional<UsuarioJpaEntity> findByEmailAcad(String emailAcad);
     boolean existsByEmailAcad(String emailAcad);
 } 
+    
