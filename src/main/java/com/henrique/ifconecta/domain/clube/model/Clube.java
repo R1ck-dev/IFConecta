@@ -60,6 +60,30 @@ public class Clube {
         this.membros.add(novoMembro);
     }
 
+    public void avaliarSolicitacao(UUID liderId, UUID usuarioAlvoId, boolean aprovado) {
+        boolean isLider = this.membros.stream()
+                .anyMatch(member -> member.getUsuarioId().equals(liderId) && member.getPapel() == PapelMembro.LIDER);
+
+        if (!isLider) {
+            throw new NegocioException("Apenas o líder do clube pode avaliar solicitações de membros.");
+        }
+
+        MembroClube membroAlvo = this.membros.stream()
+                .filter(member -> member.getUsuarioId().equals(usuarioAlvoId))
+                .findFirst()
+                .orElseThrow(() -> new NegocioException("Usuário não encontrado na lista de membros deste clube"));
+
+        if (membroAlvo.getStatus() != StatusMembro.PENDENTE) {
+            throw new NegocioException("Apenas membros com status PENDENTE podem ser avaliados.");
+        }
+
+        if (aprovado) {
+            membroAlvo.aprovar();
+        } else {
+            membroAlvo.rejeitar();
+        }
+    }
+
     public UUID getId() {
         return id;
     }

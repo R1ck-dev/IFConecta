@@ -1,5 +1,6 @@
 package com.henrique.ifconecta.infrastructure.web.clube.controller;
 
+import com.henrique.ifconecta.application.clube.usecase.AvaliarMembroUseCase;
 import com.henrique.ifconecta.application.clube.usecase.SolicitarEntradaClubeUseCase;
 import java.util.UUID;
 
@@ -14,16 +15,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.henrique.ifconecta.application.clube.dto.CriarClubeInput;
 import com.henrique.ifconecta.application.clube.usecase.CriarClubeUseCase;
+import com.henrique.ifconecta.infrastructure.web.clube.dto.AvaliarMembroRequest;
 import com.henrique.ifconecta.infrastructure.web.clube.dto.CriarClubeRequest;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 @RestController
 @RequestMapping("/api/clubes")
 @RequiredArgsConstructor
 public class ClubeController {
     
+    private final AvaliarMembroUseCase avaliarMembroUseCase;
     private final SolicitarEntradaClubeUseCase solicitarEntradaClubeUseCase;
     private final CriarClubeUseCase criarClubeUseCase;
 
@@ -46,15 +51,26 @@ public class ClubeController {
     }
 
     @PostMapping("/{clubeId}/membros")
-    public ResponseEntity<Void> solicitarEntrada(@PathVariable UUID cluebId) {
+    public ResponseEntity<Void> solicitarEntrada(@PathVariable UUID clubeId) {
         String userIdStr = extraiId();
         UUID usuarioId = UUID.fromString(userIdStr);
         
-        solicitarEntradaClubeUseCase.execute(cluebId, usuarioId);
+        solicitarEntradaClubeUseCase.execute(clubeId, usuarioId);
 
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/{clubeId}/membros/{usuarioAlvoId}/avaliacao")
+    public ResponseEntity<Void> avaliarMembro(@PathVariable UUID clubeId, @PathVariable UUID usuarioAlvoId, @RequestBody @Valid AvaliarMembroRequest request) {
+        String userIdStr = extraiId();
+        UUID liderId = UUID.fromString(userIdStr);
+
+        avaliarMembroUseCase.execute(clubeId, liderId, usuarioAlvoId, request.aprovado());
+        
+        return ResponseEntity.noContent().build();
+    }
+
+    
     private String extraiId() {
         return (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }

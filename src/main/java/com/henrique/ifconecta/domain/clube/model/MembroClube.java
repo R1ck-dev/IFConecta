@@ -39,6 +39,13 @@ public class MembroClube {
         this.status = StatusMembro.APROVADO;
     }
 
+    public void rejeitar() {
+        if (this.status == StatusMembro.REJEITADO) {
+            throw new NegocioException("Este membro já está reprovado.");
+        }
+        this.status = StatusMembro.REJEITADO;
+    }
+
     public UUID getId() {
         return id;
     }
