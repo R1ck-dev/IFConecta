@@ -1,5 +1,6 @@
 package com.henrique.ifconecta.infrastructure.persistence.usuario.mapper;
 
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 
 import com.henrique.ifconecta.domain.usuario.model.Aluno;
@@ -42,7 +43,10 @@ public class UsuarioMapper {
 
     // JPA -> Domain
     public Usuario toDomain(UsuarioJpaEntity entity) {
-        if (entity instanceof AlunoJpaEntity alunoEntity) {
+
+        UsuarioJpaEntity realEntity = (UsuarioJpaEntity) Hibernate.unproxy(entity);
+
+        if (realEntity instanceof AlunoJpaEntity alunoEntity) {
             return new Aluno(
                 alunoEntity.getId(),
                 alunoEntity.getNome(),
@@ -55,7 +59,7 @@ public class UsuarioMapper {
             );
         }
 
-        if (entity instanceof ProfessorJpaEntity professorEntity) {
+        if (realEntity instanceof ProfessorJpaEntity professorEntity) {
             return new Professor(
                 professorEntity.getId(),
                 professorEntity.getNome(),
@@ -68,7 +72,7 @@ public class UsuarioMapper {
             );
         }
 
-        if (entity instanceof InstitucionalJpaEntity instEntity) {
+        if (realEntity instanceof InstitucionalJpaEntity instEntity) {
             return new Institucional(
                 instEntity.getId(),
                 instEntity.getNome(),
