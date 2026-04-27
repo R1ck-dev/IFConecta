@@ -1,5 +1,6 @@
 package com.henrique.ifconecta.infrastructure.persistence.post.mapper;
 
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public class PostMapper {
         PostJpaEntity entity = new PostJpaEntity();
         entity.setId(domain.getId());
         entity.setConteudo(domain.getConteudo());
-        entity.setQtdUpVotes(domain.getQtdUpVotes());
+        entity.setUpvotes(new HashSet<>(domain.getUpvotes()));
         entity.setDataCriacao(domain.getDataCriacao());
 
         entity.setAutor(entityManager.getReference(UsuarioJpaEntity.class, domain.getAutorId()));
@@ -59,7 +60,7 @@ public class PostMapper {
                 entity.getAutor().getId(),
                 clubeId,
                 entity.getConteudo(),
-                entity.getQtdUpVotes(),
+                new HashSet<>(entity.getUpvotes()),
                 entity.getDataCriacao(),
                 entity.getComentarios().stream()
                         .map(this::toComentarioDomain)

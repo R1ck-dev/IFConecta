@@ -2,7 +2,9 @@ package com.henrique.ifconecta.domain.post.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
@@ -12,7 +14,7 @@ public class Post {
     private UUID autorId;
     private UUID clubeId; // Se for null, o post pertence à timeline geral
     private String conteudo;
-    private int qtdUpVotes;
+    private Set<UUID> upvotes;
     private LocalDateTime dataCriacao;
     private List<Comentario> comentarios;
 
@@ -30,21 +32,21 @@ public class Post {
         this.autorId = autorId;
         this.clubeId = clubeId;
         this.conteudo = conteudo;
-        this.qtdUpVotes = 0;
+        this.upvotes = new HashSet<>();
         this.dataCriacao = LocalDateTime.now();
         this.comentarios = new ArrayList<>();
     }
 
     // Construtor de Reconstituição
-    public Post(UUID id, UUID autorId, UUID clubeId, String conteudo, int qtdUpVotes, LocalDateTime dataCriacao,
+    public Post(UUID id, UUID autorId, UUID clubeId, String conteudo, Set<UUID> upvotes, LocalDateTime dataCriacao,
             List<Comentario> comentarios) {
         this.id = id;
         this.autorId = autorId;
         this.clubeId = clubeId;
         this.conteudo = conteudo;
-        this.qtdUpVotes = qtdUpVotes;
+        this.upvotes = (upvotes != null) ? upvotes : new HashSet<>();
         this.dataCriacao = dataCriacao;
-        this.comentarios = comentarios;
+        this.comentarios = (comentarios != null) ? comentarios : new ArrayList<>();
     }
 
     public void adicionarComentario(UUID autorId, String conteudo) {
@@ -52,8 +54,16 @@ public class Post {
         this.comentarios.add(novoComentario);
     }
 
-    public void darUpVote() {
-        this.qtdUpVotes++;
+    public void darUpVote(UUID usuarioId) {
+        if (this.upvotes.contains(usuarioId)) {
+            this.upvotes.remove(usuarioId);
+        } else {
+            this.upvotes.add(usuarioId);
+        }
+    }
+
+    public int getQtdUpVotes() {
+        return this.upvotes.size();
     }
 
     public UUID getId() {
@@ -72,16 +82,16 @@ public class Post {
         return conteudo;
     }
 
-    public int getQtdUpVotes() {
-        return qtdUpVotes;
-    }
-
     public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
 
     public List<Comentario> getComentarios() {
         return comentarios;
+    }
+
+    public Set<UUID> getUpvotes() {
+        return upvotes;
     }
 
 }
