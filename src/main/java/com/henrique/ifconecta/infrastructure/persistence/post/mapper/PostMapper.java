@@ -26,6 +26,7 @@ public class PostMapper {
         PostJpaEntity entity = new PostJpaEntity();
         entity.setId(domain.getId());
         entity.setConteudo(domain.getConteudo());
+        entity.setAnonimo(domain.isAnonimo());
         entity.setUpvotes(new HashSet<>(domain.getUpvotes()));
         entity.setDataCriacao(domain.getDataCriacao());
 
@@ -58,8 +59,10 @@ public class PostMapper {
         return new Post(
                 entity.getId(),
                 entity.getAutor().getId(),
+                entity.getAutor().getNome(),
                 clubeId,
                 entity.getConteudo(),
+                entity.isAnonimo(),
                 new HashSet<>(entity.getUpvotes()),
                 entity.getDataCriacao(),
                 entity.getComentarios().stream()

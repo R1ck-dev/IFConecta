@@ -47,7 +47,8 @@ public class PostController {
         CriarPostInput input = new CriarPostInput(
                 autorId,
                 request.clubeId(),
-                request.conteudo());
+                request.conteudo(),
+                request.anonimo());
 
         criarPostUseCase.execute(input);
 

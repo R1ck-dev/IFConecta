@@ -5,6 +5,7 @@ import java.util.UUID;
 public record CriarPostInput(
     UUID autorId,
     UUID clubeId,
-    String conteudo
+    String conteudo,
+    boolean anonimo
 ) {
 } 

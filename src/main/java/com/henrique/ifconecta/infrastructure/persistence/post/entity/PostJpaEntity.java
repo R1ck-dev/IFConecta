@@ -43,6 +43,9 @@ public class PostJpaEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String conteudo;
 
+    @Column(nullable = false)
+    private boolean anonimo;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "post_upvotes", joinColumns = @JoinColumn(name = "post_id"))
     @Column(name = "usuario_id")

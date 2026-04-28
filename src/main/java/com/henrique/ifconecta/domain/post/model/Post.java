@@ -12,14 +12,16 @@ import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
 public class Post {
     private UUID id;
     private UUID autorId;
+    private String autorNome;
     private UUID clubeId; // Se for null, o post pertence à timeline geral
     private String conteudo;
+    private boolean anonimo;
     private Set<UUID> upvotes;
     private LocalDateTime dataCriacao;
     private List<Comentario> comentarios;
 
     // Construtor de Criação
-    public Post(UUID autorId, UUID clubeId, String conteudo) {
+    public Post(UUID autorId, UUID clubeId, String conteudo, boolean anonimo) {
         if (conteudo == null | conteudo.trim().isEmpty()) {
             throw new NegocioException("O conteúdo do post não pode estar vazio.");
         }
@@ -32,18 +34,23 @@ public class Post {
         this.autorId = autorId;
         this.clubeId = clubeId;
         this.conteudo = conteudo;
+        this.anonimo = anonimo;
         this.upvotes = new HashSet<>();
         this.dataCriacao = LocalDateTime.now();
         this.comentarios = new ArrayList<>();
     }
 
     // Construtor de Reconstituição
-    public Post(UUID id, UUID autorId, UUID clubeId, String conteudo, Set<UUID> upvotes, LocalDateTime dataCriacao,
+    public Post(UUID id, UUID autorId, String autorNome, UUID clubeId, String conteudo, boolean anonimo,
+            Set<UUID> upvotes,
+            LocalDateTime dataCriacao,
             List<Comentario> comentarios) {
         this.id = id;
         this.autorId = autorId;
+        this.autorNome = autorNome;
         this.clubeId = clubeId;
         this.conteudo = conteudo;
+        this.anonimo = anonimo;
         this.upvotes = (upvotes != null) ? upvotes : new HashSet<>();
         this.dataCriacao = dataCriacao;
         this.comentarios = (comentarios != null) ? comentarios : new ArrayList<>();
@@ -92,6 +99,14 @@ public class Post {
 
     public Set<UUID> getUpvotes() {
         return upvotes;
+    }
+
+    public String getAutorNome() {
+        return autorNome;
+    }
+
+    public boolean isAnonimo() {
+        return anonimo;
     }
 
 }

@@ -38,7 +38,8 @@ public class CriarPostUseCase {
         Post novoPost = new Post(
             input.autorId(),
             input.clubeId(),
-            input.conteudo()
+            input.conteudo(),
+            input.anonimo()
         );
 
         postRepository.salvar(novoPost);
