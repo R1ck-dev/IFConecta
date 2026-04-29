@@ -53,4 +53,16 @@ public class PostRepositoryAdapter implements PostRepository {
                 pageJpa.getTotalPages(),
                 pageJpa.getTotalElements());
     }
+
+    @Override
+    public Pagina<Post> listarTimelineDoClube(UUID clubeId, int pagina, int tamanho) {
+        PageRequest pageRequest = PageRequest.of(pagina, tamanho);
+        var pageJpa = springDataPostRepository.findAllByClubeIdOrderByDataCriacaoDesc(clubeId, pageRequest);
+
+        return new Pagina<>(
+                pageJpa.getContent().stream().map(postMapper::toDomain).collect(Collectors.toList()),
+                pageJpa.getNumber(),
+                pageJpa.getTotalPages(),
+                pageJpa.getTotalElements());
+    }
 }

@@ -2,6 +2,7 @@ package com.henrique.ifconecta.infrastructure.web.clube.controller;
 
 import com.henrique.ifconecta.application.clube.usecase.AvaliarMembroUseCase;
 import com.henrique.ifconecta.application.clube.usecase.SolicitarEntradaClubeUseCase;
+import com.henrique.ifconecta.application.post.dto.PostResumoDTO;
 import com.henrique.ifconecta.domain.shared.Pagina;
 
 import java.util.UUID;
@@ -19,6 +20,7 @@ import com.henrique.ifconecta.application.clube.dto.ClubeResumoDTO;
 import com.henrique.ifconecta.application.clube.dto.CriarClubeInput;
 import com.henrique.ifconecta.application.clube.usecase.CriarClubeUseCase;
 import com.henrique.ifconecta.application.clube.usecase.ListarClubesUseCase;
+import com.henrique.ifconecta.application.clube.usecase.ListarTimelineDoClubeUseCase;
 import com.henrique.ifconecta.infrastructure.web.clube.dto.AvaliarMembroRequest;
 import com.henrique.ifconecta.infrastructure.web.clube.dto.CriarClubeRequest;
 
@@ -37,6 +39,7 @@ public class ClubeController {
     private final SolicitarEntradaClubeUseCase solicitarEntradaClubeUseCase;
     private final CriarClubeUseCase criarClubeUseCase;
     private final ListarClubesUseCase listarClubesUseCase;
+    private final ListarTimelineDoClubeUseCase listarTimelineDoClubeUseCase;
 
     @PostMapping
     public ResponseEntity<Void> criarClube(@RequestBody @Valid CriarClubeRequest request) {
@@ -81,6 +84,20 @@ public class ClubeController {
     public ResponseEntity<Pagina<ClubeResumoDTO>> listarClubes(@RequestParam(defaultValue = "0") int pagina,
             @RequestParam(defaultValue = "10") int tamanho) {
         Pagina<ClubeResumoDTO> response = listarClubesUseCase.execute(pagina, tamanho);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{clubeId}/posts")
+    public ResponseEntity<Pagina<PostResumoDTO>> listarTimeline(
+            @PathVariable UUID clubeId,
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamanho) {
+
+        String userIdStr = extraiId();
+        UUID usuarioId = UUID.fromString(userIdStr);
+
+        Pagina<PostResumoDTO> response = listarTimelineDoClubeUseCase.execute(clubeId, usuarioId, pagina, tamanho);
 
         return ResponseEntity.ok(response);
     }

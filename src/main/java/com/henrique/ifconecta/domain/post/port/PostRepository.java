@@ -10,4 +10,5 @@ public interface PostRepository {
     Post salvar(Post post);
     Optional<Post> buscarPorId(UUID id);
     Pagina<Post> listarTimelineGeral(int pagina, int tamanho);
+    Pagina<Post> listarTimelineDoClube(UUID clubeId, int pagina, int tamanho);
 }
