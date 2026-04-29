@@ -11,15 +11,15 @@ public class Institucional extends Usuario{
     private String cargo;
 
     // Construtor de Criação
-    public Institucional(UUID id, String nome, String emailAcad, String senhaHash, String setor, String cargo) {
-        super(id, nome, emailAcad, senhaHash, RoleUsuario.USER);
+    public Institucional(UUID id, UUID cursoId, String nome, String emailAcad, String senhaHash, String setor, String cargo) {
+        super(id, cursoId, nome, emailAcad, senhaHash, RoleUsuario.USER);
         this.setor = setor;
         this.cargo = cargo;
     }
 
     // Construtor de Reconstituição
-    public Institucional(UUID id, String nome, String emailAcad, String senhaHash, StatusUsuario status, RoleUsuario role, LocalDateTime dataCriacao, String setor, String cargo) {
-        super(id, nome, emailAcad, senhaHash, status, role, dataCriacao);
+    public Institucional(UUID id, UUID cursoId, String nome, String emailAcad, String senhaHash, StatusUsuario status, RoleUsuario role, LocalDateTime dataCriacao, String setor, String cargo) {
+        super(id, cursoId, nome, emailAcad, senhaHash, status, role, dataCriacao);
         this.setor = setor;
         this.cargo = cargo;
     }

@@ -1,0 +1,11 @@
+package com.henrique.ifconecta.infrastructure.persistence.academico.repository;
+
+import java.util.UUID;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.henrique.ifconecta.infrastructure.persistence.academico.entity.CursoJpaEntity;
+
+public interface SpringDataCursoRepository extends JpaRepository<CursoJpaEntity, UUID> {
+    
+}

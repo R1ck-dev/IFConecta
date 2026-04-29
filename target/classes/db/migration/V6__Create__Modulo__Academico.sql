@@ -6,7 +6,7 @@ CREATE TABLE cursos (
     modalidade VARCHAR(50) NOT NULL 
 );
 
--- Adiciona a referência do Curso ao Usuário (Aluno)
+-- Adiciona a referência do Curso ao Usuário 
 ALTER TABLE usuarios ADD COLUMN curso_id UUID REFERENCES cursos(id);
 
 -- 2. Tabela de Disciplinas
@@ -17,7 +17,7 @@ CREATE TABLE disciplinas (
     carga_horaria INT NOT NULL
 );
 
--- 3. Tabela de Turmas (A instância da disciplina em um semestre)
+-- 3. Tabela de Turmas 
 CREATE TABLE turmas (
     id UUID PRIMARY KEY,
     disciplina_id UUID NOT NULL REFERENCES disciplinas(id) ON DELETE CASCADE,
@@ -27,7 +27,7 @@ CREATE TABLE turmas (
     data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 4. Tabela de Matrículas (Quais alunos estão em quais turmas)
+-- 4. Tabela de Matrículas 
 CREATE TABLE matriculas_turma (
     turma_id UUID NOT NULL REFERENCES turmas(id) ON DELETE CASCADE,
     aluno_id UUID NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,

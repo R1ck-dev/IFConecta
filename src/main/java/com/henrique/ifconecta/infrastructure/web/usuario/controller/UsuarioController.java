@@ -32,6 +32,7 @@ public class UsuarioController {
     public ResponseEntity<Void> registrarAluno(@RequestBody @Valid RegistrarAlunoRequest request) {
 
         RegistrarAlunoInput input = new RegistrarAlunoInput(
+            request.cursoId(),
             request.nome(),
             request.email(),
             request.password(),

@@ -28,6 +28,9 @@ import lombok.Setter;
 public class UsuarioJpaEntity {
     @Id
     private UUID id;
+
+    @Column(name = "curso_id")
+    private UUID cursoId;
     
     @Column(nullable = false)
     private String nome;

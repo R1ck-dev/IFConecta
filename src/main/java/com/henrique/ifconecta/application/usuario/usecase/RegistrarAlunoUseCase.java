@@ -3,6 +3,7 @@ package com.henrique.ifconecta.application.usuario.usecase;
 import org.springframework.stereotype.Service;
 
 import com.henrique.ifconecta.application.usuario.dto.RegistrarAlunoInput;
+import com.henrique.ifconecta.domain.academico.port.CursoRepository;
 import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
 import com.henrique.ifconecta.domain.usuario.model.Aluno;
 import com.henrique.ifconecta.domain.usuario.model.TokenVerificacao;
@@ -18,12 +19,13 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class RegistrarAlunoUseCase {
-    
+
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoderPort passwordEncoderPort;
     private final EmailValidatorPort emailValidatorPort;
     private final TokenVerificacaoRepository tokenVerificacaoRepository;
     private final EmailSenderPort emailSenderPort;
+    private final CursoRepository cursoRepository;
 
     @Transactional
     public void execute(RegistrarAlunoInput input) {
@@ -35,15 +37,19 @@ public class RegistrarAlunoUseCase {
             throw new NegocioException("Já existe um utilizador registrado com este endereço de e-mail.");
         }
 
+        if (input.cursoId() != null && !cursoRepository.existePorId(input.cursoId())) {
+            throw new NegocioException("O curso informado não existe.");
+        }
+
         String hash = passwordEncoderPort.encode(input.password());
 
-         Aluno novoAluno = new Aluno(
-            null,
-            input.nome(), 
-            input.email(), 
-            hash, 
-            input.prontuario()
-        );
+        Aluno novoAluno = new Aluno(
+                null,
+                input.cursoId(),
+                input.nome(),
+                input.email(),
+                hash,
+                input.prontuario());
 
         Aluno alunoSalvo = (Aluno) usuarioRepository.salvar(novoAluno);
 

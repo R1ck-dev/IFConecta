@@ -49,6 +49,7 @@ public class UsuarioMapper {
         if (realEntity instanceof AlunoJpaEntity alunoEntity) {
             return new Aluno(
                 alunoEntity.getId(),
+                alunoEntity.getCursoId(),
                 alunoEntity.getNome(),
                 alunoEntity.getEmailAcad(),
                 alunoEntity.getSenhaHash(),
@@ -62,6 +63,7 @@ public class UsuarioMapper {
         if (realEntity instanceof ProfessorJpaEntity professorEntity) {
             return new Professor(
                 professorEntity.getId(),
+                professorEntity.getCursoId(),
                 professorEntity.getNome(),
                 professorEntity.getEmailAcad(),
                 professorEntity.getSenhaHash(),
@@ -75,6 +77,7 @@ public class UsuarioMapper {
         if (realEntity instanceof InstitucionalJpaEntity instEntity) {
             return new Institucional(
                 instEntity.getId(),
+                instEntity.getCursoId(),
                 instEntity.getNome(),
                 instEntity.getEmailAcad(),
                 instEntity.getSenhaHash(),
@@ -91,6 +94,7 @@ public class UsuarioMapper {
 
     private void preencherDadosBaseParaEntity(UsuarioJpaEntity entity, Usuario domain) {
         entity.setId(domain.getId());
+        entity.setCursoId(domain.getCursoId());
         entity.setNome(domain.getNome());
         entity.setEmailAcad(domain.getEmailAcad());
         entity.setSenhaHash(domain.getSenhaHash());
