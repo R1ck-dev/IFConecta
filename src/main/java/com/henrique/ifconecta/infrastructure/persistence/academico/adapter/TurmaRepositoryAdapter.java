@@ -1,5 +1,6 @@
 package com.henrique.ifconecta.infrastructure.persistence.academico.adapter;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,5 +30,10 @@ public class TurmaRepositoryAdapter implements TurmaRepository {
     @Override
     public Optional<Turma> buscarPorId(UUID id) {
         return jpaRepository.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public List<UUID> buscarIdsAlunosMatriculados(UUID turmaId) {
+        return jpaRepository.findIdsAlunosMatriculadosByTurmaId(turmaId);
     }
 }

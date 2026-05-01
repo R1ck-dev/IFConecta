@@ -1,5 +1,6 @@
 package com.henrique.ifconecta.infrastructure.persistence.usuario.adapter;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,11 +17,11 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 // Cria automaticamente um construtor com todos os atributos marcados com Final.
-public class UsuarioRepositoryAdapter implements UsuarioRepository{
-    
+public class UsuarioRepositoryAdapter implements UsuarioRepository {
+
     private final SpringDataUsuarioRepository springDataUsuarioRepository;
     private final UsuarioMapper usuarioMapper;
-    
+
     @Override
     public Usuario salvar(Usuario usuario) {
         UsuarioJpaEntity entity = usuarioMapper.toEntity(usuario);
@@ -41,6 +42,16 @@ public class UsuarioRepositoryAdapter implements UsuarioRepository{
     @Override
     public boolean existePorEmail(String email) {
         return springDataUsuarioRepository.existsByEmailAcad(email);
+    }
+
+    @Override
+    public List<UUID> buscarTodosIdsAtivos() {
+        return springDataUsuarioRepository.findAllAtivosIds();
+    }
+
+    @Override
+    public List<UUID> buscarIdsPorCurso(UUID cursoId) {
+        return springDataUsuarioRepository.findIdsByCursoId(cursoId);
     }
 
 }

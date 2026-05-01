@@ -1,5 +1,6 @@
 package com.henrique.ifconecta.domain.clube.port;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,4 +12,5 @@ public interface ClubeRepository {
     Optional<Clube> buscarPorId(UUID id);
     Pagina<Clube> listarTodosAtivos(int pagina, int tamanho);
     boolean existePorNome(String nome);
+    List<UUID> buscarIdsMembrosAprovados(UUID clubeId);
 }

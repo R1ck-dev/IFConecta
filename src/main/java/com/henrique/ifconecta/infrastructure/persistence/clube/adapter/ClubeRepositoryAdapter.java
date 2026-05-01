@@ -67,4 +67,9 @@ public class ClubeRepositoryAdapter implements ClubeRepository {
                 pageJpa.getTotalElements());
     }
 
+    @Override
+    public List<UUID> buscarIdsMembrosAprovados(UUID clubeId) {
+        return springDataClubeRepository.findIdsMembrosAprovadosByClubeId(clubeId);
+    }
+
 }
