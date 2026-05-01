@@ -41,6 +41,10 @@ public abstract class Usuario {
         this.dataCriacao = dataCriacao;
     }
 
+    public void definirSenha(String novaSenhaHash) {
+        this.senhaHash = novaSenhaHash;
+    }
+
     public UUID getId() {
         return id;
     }

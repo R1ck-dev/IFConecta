@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/admin/academico")
 @RequiredArgsConstructor
-public class AcademicoSeederController {
+public class AdminAcademicoSeederController {
     private final CriarCursoComDisciplinasUseCase criarCursoComDisciplinasUseCase;
 
     // TODO: Proteger rota para perfis de ADMIN

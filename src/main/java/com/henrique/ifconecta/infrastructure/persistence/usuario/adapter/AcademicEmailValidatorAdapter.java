@@ -11,7 +11,8 @@ public class AcademicEmailValidatorAdapter implements EmailValidatorPort{
 
     // Caso existem variações para professores ou institucionais, adicionamos aqui.
     private final List<String> dominiosPermitidos = List.of(
-        "@aluno.ifsp.edu.br"
+        "@aluno.ifsp.edu.br",
+        "@ifsp.edu.br"
     ); 
 
     @Override

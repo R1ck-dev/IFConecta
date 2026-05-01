@@ -32,6 +32,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/clubes/{clubeId}/membros").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/clubes/{clubeId}/membros/{usuarioAlvoId}/avaliacao").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/admin/academico/seeder").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/usuarios/ativar-convidado").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
