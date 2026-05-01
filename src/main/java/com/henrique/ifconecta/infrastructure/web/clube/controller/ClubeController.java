@@ -24,6 +24,9 @@ import com.henrique.ifconecta.application.clube.usecase.ListarTimelineDoClubeUse
 import com.henrique.ifconecta.infrastructure.web.clube.dto.AvaliarMembroRequest;
 import com.henrique.ifconecta.infrastructure.web.clube.dto.CriarClubeRequest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 @RequestMapping("/api/clubes")
 @RequiredArgsConstructor
+@Tag(name = "Clubes", description = "Criação de clubes, gestão de membros e visualização de timelines")
 public class ClubeController {
 
     private final AvaliarMembroUseCase avaliarMembroUseCase;
@@ -41,6 +45,8 @@ public class ClubeController {
     private final ListarClubesUseCase listarClubesUseCase;
     private final ListarTimelineDoClubeUseCase listarTimelineDoClubeUseCase;
 
+    @Operation(summary = "Criar Clube", description = "Cria um novo clube. O usuário criador torna-se o líder automaticamente.")
+    @ApiResponse(responseCode = "201", description = "Clube criado com sucesso")
     @PostMapping
     public ResponseEntity<Void> criarClube(@RequestBody @Valid CriarClubeRequest request) {
         // Extraímos o ID do utilizador que o JwtAuthenticationFilter colocou no
@@ -59,6 +65,9 @@ public class ClubeController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(summary = "Solicitar Entrada", description = "Envia uma solicitação para participar de um clube. Se for público, a entrada é imediata.")
+    @ApiResponse(responseCode = "200", description = "Solicitação enviada ou entrada aprovada automaticamente")
+    @ApiResponse(responseCode = "400", description = "Usuário já é membro ou possui convite pendente")
     @PostMapping("/{clubeId}/membros")
     public ResponseEntity<Void> solicitarEntrada(@PathVariable UUID clubeId) {
         String userIdStr = extraiId();
@@ -69,6 +78,9 @@ public class ClubeController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Avaliar Membro", description = "Permite ao líder do clube aprovar ou rejeitar a entrada de um membro pendente.")
+    @ApiResponse(responseCode = "204", description = "Avaliação registrada com sucesso")
+    @ApiResponse(responseCode = "400", description = "Usuário não é líder ou membro alvo não está pendente")
     @PutMapping("/{clubeId}/membros/{usuarioAlvoId}/avaliacao")
     public ResponseEntity<Void> avaliarMembro(@PathVariable UUID clubeId, @PathVariable UUID usuarioAlvoId,
             @RequestBody @Valid AvaliarMembroRequest request) {
@@ -80,6 +92,7 @@ public class ClubeController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Listar Clubes", description = "Retorna uma lista paginada de todos os clubes ativos.")
     @GetMapping()
     public ResponseEntity<Pagina<ClubeResumoDTO>> listarClubes(@RequestParam(defaultValue = "0") int pagina,
             @RequestParam(defaultValue = "10") int tamanho) {
@@ -88,6 +101,9 @@ public class ClubeController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Timeline do Clube", description = "Retorna os posts feitos dentro de um clube específico.")
+    @ApiResponse(responseCode = "200", description = "Timeline recuperada com sucesso")
+    @ApiResponse(responseCode = "400", description = "Usuário não tem permissão para ver este clube privado")
     @GetMapping("/{clubeId}/posts")
     public ResponseEntity<Pagina<PostResumoDTO>> listarTimeline(
             @PathVariable UUID clubeId,

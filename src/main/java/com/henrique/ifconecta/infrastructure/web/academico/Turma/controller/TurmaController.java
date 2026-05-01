@@ -16,17 +16,23 @@ import com.henrique.ifconecta.application.academico.usecase.CriarTurmaUseCase;
 import com.henrique.ifconecta.application.academico.usecase.MatricularAlunoUseCase;
 import com.henrique.ifconecta.infrastructure.web.academico.Turma.dto.CriarTurmaRequest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/turmas")
 @RequiredArgsConstructor
+@Tag(name = "Turmas", description = "Gestão de turmas acadêmicas e matrículas")
 public class TurmaController {
 
     private final CriarTurmaUseCase criarTurmaUseCase;
     private final MatricularAlunoUseCase matricularAlunoUseCase;
 
+    @Operation(summary = "Criar Turma", description = "Cria uma nova turma vinculada a uma disciplina e a um professor.")
+    @ApiResponse(responseCode = "201", description = "Turma criada com sucesso")
     @PostMapping
     public ResponseEntity<Void> criarTurma(@RequestBody @Valid CriarTurmaRequest request) {
         
@@ -39,6 +45,8 @@ public class TurmaController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(summary = "Matricular Aluno", description = "Matricula o aluno logado em uma turma específica.")
+    @ApiResponse(responseCode = "200", description = "Matrícula realizada com sucesso")
     @PostMapping("/{turmaId}/matricular")
     public ResponseEntity<Void> matricular(@PathVariable UUID turmaId) {
         String alunoId = extraiId();

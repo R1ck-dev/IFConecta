@@ -19,17 +19,23 @@ import com.henrique.ifconecta.application.notificacao.usecase.ListarMinhasNotifi
 import com.henrique.ifconecta.domain.shared.Pagina;
 import com.henrique.ifconecta.infrastructure.web.notificacao.dto.EnviarComunicadoRequest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/comunicados")
 @RequiredArgsConstructor
+@Tag(name = "Comunicados", description = "Envio e listagem de notificações do sistema")
 public class ComunicadoController {
 
     private final EnviarComunicadoUseCase enviarComunicadoUseCase;
     private final ListarMinhasNotificacoesUseCase listarMinhasNotificacoesUseCase;
 
+    @Operation(summary = "Enviar Comunicado", description = "Gera notificações em massa baseadas em um alvo (GERAL, CURSO, TURMA ou CLUBE).")
+    @ApiResponse(responseCode = "202", description = "Comunicados processados e enviados")
     @PostMapping
     public ResponseEntity<Void> enviar(@RequestBody @Valid EnviarComunicadoRequest request) {
         String remetenteIdStr = extraiId();
@@ -44,6 +50,7 @@ public class ComunicadoController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
+    @Operation(summary = "Minhas Notificações", description = "Lista as notificações recebidas pelo usuário logado.")
     @GetMapping("/minhas")
     public ResponseEntity<Pagina<NotificacaoResumoDTO>> listarMinhasNotificacoes(
             @RequestParam(defaultValue = "0") int pagina,
