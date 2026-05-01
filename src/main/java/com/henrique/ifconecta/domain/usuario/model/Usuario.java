@@ -45,6 +45,10 @@ public abstract class Usuario {
         this.senhaHash = novaSenhaHash;
     }
 
+    public void promoverParaAdmin() {
+        this.role = RoleUsuario.ADMIN;
+    }
+
     public UUID getId() {
         return id;
     }
