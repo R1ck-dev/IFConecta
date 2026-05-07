@@ -1,6 +1,7 @@
 package com.henrique.ifconecta.infrastructure.persistence.notificacao.adapter;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -45,5 +46,16 @@ public class NotificacaoRepositoryAdapter implements NotificacaoRepository {
                 pageJpa.getNumber(),
                 pageJpa.getTotalPages(),
                 pageJpa.getTotalElements());
+    }
+
+    @Override
+    public Optional<Notificacao> buscarPorId(UUID id) {
+        return repository.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public Notificacao salvar(Notificacao notificacao) {
+        var entity = mapper.toEntity(notificacao);
+        return mapper.toDomain(repository.save(entity));
     }
 }

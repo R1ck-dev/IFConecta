@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +18,7 @@ import com.henrique.ifconecta.application.notificacao.dto.EnviarComunicadoInput;
 import com.henrique.ifconecta.application.notificacao.dto.NotificacaoResumoDTO;
 import com.henrique.ifconecta.application.notificacao.usecase.EnviarComunicadoUseCase;
 import com.henrique.ifconecta.application.notificacao.usecase.ListarMinhasNotificacoesUseCase;
+import com.henrique.ifconecta.application.notificacao.usecase.MarcarNotificacaoComoLidaUseCase;
 import com.henrique.ifconecta.domain.shared.Pagina;
 import com.henrique.ifconecta.infrastructure.web.notificacao.dto.EnviarComunicadoRequest;
 
@@ -33,6 +36,7 @@ public class ComunicadoController {
 
     private final EnviarComunicadoUseCase enviarComunicadoUseCase;
     private final ListarMinhasNotificacoesUseCase listarMinhasNotificacoesUseCase;
+    private final MarcarNotificacaoComoLidaUseCase marcarNotificacaoComoLidaUseCase;
 
     @Operation(summary = "Enviar Comunicado", description = "Gera notificações em massa baseadas em um alvo (GERAL, CURSO, TURMA ou CLUBE).")
     @ApiResponse(responseCode = "202", description = "Comunicados processados e enviados")
@@ -62,6 +66,18 @@ public class ComunicadoController {
         Pagina<NotificacaoResumoDTO> response = listarMinhasNotificacoesUseCase.execute(usuarioId, pagina, tamanho);
 
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Visualizar Notificação", description = "Marca como 'lido' a notificação em questão.")
+    @PatchMapping("/{notificacaoId}/lida")
+    public ResponseEntity<Void> marcarComoLida(@PathVariable UUID notificacaoId) {
+        
+        String userIdStr = extraiId();
+        UUID usuarioId = UUID.fromString(userIdStr);
+
+        marcarNotificacaoComoLidaUseCase.execute(notificacaoId, usuarioId);
+
+        return ResponseEntity.noContent().build(); 
     }
 
     private String extraiId() {

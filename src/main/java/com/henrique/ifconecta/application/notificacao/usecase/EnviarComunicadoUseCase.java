@@ -40,7 +40,6 @@ public class EnviarComunicadoUseCase {
 
         List<UUID> destinatariosIds = new ArrayList<>();
 
-        // 1. Validação de Segurança e Resgate de Audiência (Fan-Out)
         switch (input.tipoAlvo()) {
             case GERAL -> {
                 validarPermissaoGlobal(remetente);
@@ -84,7 +83,6 @@ public class EnviarComunicadoUseCase {
             }
         }
 
-        // 2. Geração em Massa
         if (destinatariosIds.isEmpty()) {
             throw new NegocioException("Nenhum destinatário encontrado para este alvo.");
         }
@@ -101,7 +99,6 @@ public class EnviarComunicadoUseCase {
                         input.alvoId()))
                 .collect(Collectors.toList());
 
-        // 3. Persistência
         notificacaoRepository.salvarEmLote(notificacoesGeradas);
     }
 
