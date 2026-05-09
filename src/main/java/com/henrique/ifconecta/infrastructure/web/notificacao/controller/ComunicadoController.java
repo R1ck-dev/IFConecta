@@ -38,7 +38,7 @@ public class ComunicadoController {
     private final ListarMinhasNotificacoesUseCase listarMinhasNotificacoesUseCase;
     private final MarcarNotificacaoComoLidaUseCase marcarNotificacaoComoLidaUseCase;
 
-    @Operation(summary = "Enviar Comunicado", description = "Gera notificações em massa baseadas em um alvo (GERAL, CURSO, TURMA ou CLUBE).")
+    @Operation(summary = "Enviar Comunicado", description = "Gera notificações em massa baseadas em um alvo (GERAL ou CLUBE).")
     @ApiResponse(responseCode = "202", description = "Comunicados processados e enviados")
     @PostMapping
     public ResponseEntity<Void> enviar(@RequestBody @Valid EnviarComunicadoRequest request) {
