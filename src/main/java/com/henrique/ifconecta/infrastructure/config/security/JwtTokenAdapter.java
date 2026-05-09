@@ -14,7 +14,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 @Component
-public class JwtTokenAdapter implements TokenServicePort{
+public class JwtTokenAdapter implements TokenServicePort {
 
     @Value("${api.security.jwt.secret}")
     private String secret;
@@ -33,7 +33,7 @@ public class JwtTokenAdapter implements TokenServicePort{
         return Jwts.builder()
                 .subject(usuario.getEmailAcad())
                 .claim("id", usuario.getId().toString())
-                .claim("role", "ROLE_" + usuario.getRole().name())
+                .claim("role", "ROLE_USER") 
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(key)
@@ -59,5 +59,5 @@ public class JwtTokenAdapter implements TokenServicePort{
                 .getPayload()
                 .get("role", String.class); // Busca a claim de role
     }
-    
+
 }
