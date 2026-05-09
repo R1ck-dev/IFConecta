@@ -1,7 +1,7 @@
 package com.henrique.ifconecta.infrastructure.config.security;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,27 +19,27 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter{
-    
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final TokenServicePort tokenServicePort;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         String token = recuperarToken(request);
 
         if (token != null) {
             try {
-                // Se a assinatura for inválida ou estiver expirado, o Adapter lança exceção
                 String subjectId = tokenServicePort.obterIdDoUsuario(token);
-                String role = tokenServicePort.obterRoleDoUsuario(token);
+                var authorities = new ArrayList<SimpleGrantedAuthority>();
+                tokenServicePort.obterRoleDoUsuario(token)
+                        .ifPresent(role -> authorities.add(new SimpleGrantedAuthority(role)));
 
-                // Converte a String de Role para a classe de Autoridade do Spring
-                var authorities = List.of(new SimpleGrantedAuthority(role));
-
-                // Avisa ao Spring que a autenticação foi concluída e passa o id e permissões
                 var authentication = new UsernamePasswordAuthenticationToken(subjectId, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                SecurityContextHolder.clearContext();
+            }
         }
 
         filterChain.doFilter(request, response);
@@ -55,6 +55,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
         return authHeader.replace("Bearer ", "");
     }
-
-    
 }
