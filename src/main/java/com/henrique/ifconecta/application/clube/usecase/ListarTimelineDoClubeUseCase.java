@@ -34,13 +34,10 @@ public class ListarTimelineDoClubeUseCase {
 
         List<PostResumoDTO> resumos = paginaDePosts.itens().stream()
                 .map(post -> {
-                    String nomeExibicao = post.isAnonimo() ? "Estudante Anônimo" : post.getAutorNome();
-
                     return new PostResumoDTO(
                             post.getId(),
-                            nomeExibicao,
+                            post.getAutorNome(),
                             post.getConteudo(),
-                            post.getQtdUpVotes(),
                             post.getComentarios().size(),
                             post.getDataCriacao());
                 })

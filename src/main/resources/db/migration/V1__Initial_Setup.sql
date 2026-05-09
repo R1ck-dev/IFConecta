@@ -33,12 +33,11 @@ CREATE TABLE membros_clube (
     id UUID PRIMARY KEY,
     clube_id UUID NOT NULL,
     usuario_id UUID NOT NULL,
-    papel VARCHAR(50) NOT NULL, -- ADMIN (criador), MEMBRO
-    data_entrada TIMESTAMP NOT NULL,
-    status VARCHAR(50) NOT NULL, -- ATIVO, SUSPENSO
+    papel VARCHAR(50) NOT NULL, -- LIDER, MEMBRO
+    data_ingresso TIMESTAMP NOT NULL, -- Corrigido para data_ingresso
     CONSTRAINT fk_membro_clube FOREIGN KEY (clube_id) REFERENCES clubes(id) ON DELETE CASCADE,
     CONSTRAINT fk_membro_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-    CONSTRAINT uk_usuario_clube UNIQUE (clube_id, usuario_id) -- Um usuário só pode entrar uma vez no mesmo clube
+    CONSTRAINT uk_usuario_clube UNIQUE (clube_id, usuario_id)
 );
 
 -- 5. Criação da Tabela de Posts (Timeline do Clube, sem upvotes ou anonimato)
