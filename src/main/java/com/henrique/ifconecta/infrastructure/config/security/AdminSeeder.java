@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.henrique.ifconecta.domain.usuario.model.Institucional;
+import com.henrique.ifconecta.domain.usuario.model.Usuario;
 import com.henrique.ifconecta.domain.usuario.port.PasswordEncoderPort;
 import com.henrique.ifconecta.domain.usuario.port.UsuarioRepository;
 
@@ -35,14 +35,12 @@ public class AdminSeeder implements CommandLineRunner {
 
             String hash = passwordEncoder.encode(adminPassword);
 
-            Institucional admin = new Institucional(
-                    null, 
-                    null, 
-                    "Administrador IFConecta", 
-                    adminEmail, 
-                    hash, 
-                    "TI", 
-                    "Super Admin"
+            Usuario admin = new Usuario(
+                    null,
+                    "Administrador IFConecta",
+                    adminEmail,
+                    hash,
+                    null
             );
 
             admin.promoverParaAdmin();
