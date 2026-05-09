@@ -29,9 +29,7 @@ public class PostMapper {
 
         entity.setAutor(entityManager.getReference(UsuarioJpaEntity.class, domain.getAutorId()));
 
-        if (domain.getClubeId() != null) {
-            entity.setClube(entityManager.getReference(ClubeJpaEntity.class, domain.getClubeId()));
-        }
+        entity.setClube(entityManager.getReference(ClubeJpaEntity.class, domain.getClubeId()));
 
         entity.setComentarios(domain.getComentarios().stream()
                 .map(c -> toComentarioEntity(c, entity))
@@ -51,13 +49,11 @@ public class PostMapper {
     }
 
     public Post toDomain(PostJpaEntity entity) {
-        UUID clubeId = entity.getClube() != null ? entity.getClube().getId() : null;
-
         return new Post(
                 entity.getId(),
                 entity.getAutor().getId(),
                 entity.getAutor().getNome(),
-                clubeId,
+                entity.getClube().getId(),
                 entity.getConteudo(),
                 entity.getDataCriacao(),
                 entity.getComentarios().stream()
