@@ -34,12 +34,11 @@ public class UsuarioController {
 
     @Operation(summary = "Registrar Aluno", description = "Cria a conta de um novo aluno. Requer um e-mail acadêmico válido.")
     @ApiResponse(responseCode = "201", description = "Aluno registrado com sucesso. E-mail de ativação enviado.")
-    @ApiResponse(responseCode = "400", description = "Dados inválidos, e-mail já registrado ou curso inexistente.")
+    @ApiResponse(responseCode = "400", description = "Dados inválidos ou e-mail já registrado.")
     @PostMapping("/alunos")
     public ResponseEntity<Void> registrarAluno(@RequestBody @Valid RegistrarAlunoRequest request) {
 
         RegistrarAlunoInput input = new RegistrarAlunoInput(
-                request.cursoId(),
                 request.nome(),
                 request.email(),
                 request.password(),
