@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 
 import com.henrique.ifconecta.application.usuario.dto.RegistrarAlunoInput;
 import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
-import com.henrique.ifconecta.domain.usuario.model.Aluno;
 import com.henrique.ifconecta.domain.usuario.model.TokenVerificacao;
+import com.henrique.ifconecta.domain.usuario.model.Usuario;
 import com.henrique.ifconecta.domain.usuario.port.EmailSenderPort;
 import com.henrique.ifconecta.domain.usuario.port.EmailValidatorPort;
 import com.henrique.ifconecta.domain.usuario.port.PasswordEncoderPort;
@@ -38,19 +38,19 @@ public class RegistrarAlunoUseCase {
 
         String hash = passwordEncoderPort.encode(input.password());
 
-        Aluno novoAluno = new Aluno(
+        Usuario novoUsuario = new Usuario(
                 null,
                 input.nome(),
                 input.email(),
                 hash,
                 input.prontuario());
 
-        Aluno alunoSalvo = (Aluno) usuarioRepository.salvar(novoAluno);
+        Usuario usuarioSalvo = usuarioRepository.salvar(novoUsuario);
 
-        TokenVerificacao token = new TokenVerificacao(alunoSalvo);
+        TokenVerificacao token = new TokenVerificacao(usuarioSalvo);
 
         tokenVerificacaoRepository.salvar(token);
 
-        emailSenderPort.enviarEmailAtivacao(alunoSalvo.getEmailAcad(), alunoSalvo.getNome(), token.getToken());
+        emailSenderPort.enviarEmailAtivacao(usuarioSalvo.getEmailAcad(), usuarioSalvo.getNome(), token.getToken());
     }
 }

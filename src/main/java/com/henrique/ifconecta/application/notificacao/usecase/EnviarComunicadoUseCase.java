@@ -15,7 +15,6 @@ import com.henrique.ifconecta.domain.notificacao.model.Notificacao;
 import com.henrique.ifconecta.domain.notificacao.port.NotificacaoRepository;
 import com.henrique.ifconecta.domain.usuario.enums.RoleUsuario;
 import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
-import com.henrique.ifconecta.domain.usuario.model.Institucional;
 import com.henrique.ifconecta.domain.usuario.model.Usuario;
 import com.henrique.ifconecta.domain.usuario.port.UsuarioRepository;
 
@@ -82,9 +81,8 @@ public class EnviarComunicadoUseCase {
     }
 
     private void validarPermissaoGlobal(Usuario remetente) {
-        if (remetente.getRole() != RoleUsuario.ADMIN && !(remetente instanceof Institucional)) {
-            throw new NegocioException(
-                    "Apenas membros institucionais ou administradores podem enviar comunicados gerais.");
+        if (remetente.getRole() != RoleUsuario.ADMIN) {
+            throw new NegocioException("Apenas administradores podem enviar comunicados gerais.");
         }
     }
 }
