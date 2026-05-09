@@ -3,6 +3,7 @@ package com.henrique.ifconecta.application.post.usecase;
 import org.springframework.stereotype.Service;
 
 import com.henrique.ifconecta.application.post.dto.CriarPostInput;
+import com.henrique.ifconecta.domain.clube.enums.StatusMembro;
 import com.henrique.ifconecta.domain.clube.model.Clube;
 import com.henrique.ifconecta.domain.clube.port.ClubeRepository;
 import com.henrique.ifconecta.domain.post.model.Post;
