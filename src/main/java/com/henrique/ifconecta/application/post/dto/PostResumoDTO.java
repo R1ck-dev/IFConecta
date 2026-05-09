@@ -7,7 +7,6 @@ public record PostResumoDTO(
     UUID id,
     String autorNome,
     String conteudo,
-    int qtdUpvotes,
     int qtdComentarios,
     LocalDateTime dataCriacao
 ) {

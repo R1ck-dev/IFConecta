@@ -31,7 +31,6 @@ public class ListarTimelineGeralUseCase {
                             post.getId(),
                             nomeExibicao,
                             post.getConteudo(),
-                            post.getQtdUpVotes(),
                             post.getComentarios().size(),
                             post.getDataCriacao());
                 })
