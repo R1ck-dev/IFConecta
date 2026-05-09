@@ -18,6 +18,6 @@ public interface SpringDataClubeRepository extends JpaRepository<ClubeJpaEntity,
     boolean existsByNome(String nome);
 
     Page<ClubeJpaEntity> findAllByStatus(StatusClube status, Pageable pageable);
-    @Query("SELECT m.usuario.id FROM MembroClubeJpaEntity m WHERE m.clube.id = :clubeId AND m.status = 'APROVADO'")
+    @Query("SELECT m.usuario.id FROM MembroClubeJpaEntity m WHERE m.clube.id = :clubeId ")
     List<UUID> findIdsMembrosAprovadosByClubeId(@Param("clubeId") UUID clubeId);
 }
