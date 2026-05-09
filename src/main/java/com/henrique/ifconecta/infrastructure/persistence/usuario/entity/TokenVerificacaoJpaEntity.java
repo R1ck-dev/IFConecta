@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "tokens_verificacao")
+@Table(name = "token_verificacao")
 @Getter
 @Setter
 public class TokenVerificacaoJpaEntity {
