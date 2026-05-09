@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class ClubeMapper {
-    
+
     private final EntityManager entityManager;
 
     public ClubeJpaEntity toEntity(Clube domain) {
@@ -26,7 +26,6 @@ public class ClubeMapper {
         entity.setNome(domain.getNome());
         entity.setDescricao(domain.getDescricao());
         entity.setStatus(domain.getStatus());
-        entity.setTipoAcesso(domain.getTipoAcesso());
         entity.setDataCriacao(domain.getDataCriacao());
 
         entity.setMembros(domain.getMembros().stream()
@@ -42,10 +41,10 @@ public class ClubeMapper {
         entity.setId(domain.getId());
         entity.setClube(clubeEntity);
         entity.setPapel(domain.getPapel());
-        entity.setStatus(domain.getStatus());
         entity.setDataIngresso(domain.getDataIngresso());
 
-        // Obtemos uma referência "proxy" do utilizador pelo ID para não fazer SELECT desnecessário
+        // Obtemos uma referência "proxy" do utilizador pelo ID para não fazer SELECT
+        // desnecessário
         entity.setUsuario(entityManager.getReference(UsuarioJpaEntity.class, domain.getUsuarioId()));
 
         return entity;
@@ -57,12 +56,10 @@ public class ClubeMapper {
                 entity.getNome(),
                 entity.getDescricao(),
                 entity.getStatus(),
-                entity.getTipoAcesso(),
                 entity.getDataCriacao(),
                 entity.getMembros().stream()
                         .map(this::toMembroDomain)
-                        .collect(Collectors.toList())
-        );
+                        .collect(Collectors.toList()));
     }
 
     private MembroClube toMembroDomain(MembroClubeJpaEntity entity) {
@@ -70,8 +67,6 @@ public class ClubeMapper {
                 entity.getId(),
                 entity.getUsuario().getId(),
                 entity.getPapel(),
-                entity.getStatus(),
-                entity.getDataIngresso()
-        );
+                entity.getDataIngresso());
     }
 }
