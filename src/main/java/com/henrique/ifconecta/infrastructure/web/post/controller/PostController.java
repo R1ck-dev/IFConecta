@@ -37,7 +37,7 @@ public class PostController {
     private final AdicionarComentarioUseCase adicionarComentarioUseCase;
     private final DarUpvoteUseCase darUpvoteUseCase;
 
-    @Operation(summary = "Criar Post", description = "Publica um novo post vinculado a um clube.")
+    @Operation(summary = "Criar Post", description = "Publica um novo post vinculado a um clube. Suporta postagens anônimas.")
     @ApiResponse(responseCode = "201", description = "Post criado com sucesso")
     @PostMapping
     public ResponseEntity<Void> criarPost(@RequestBody @Valid CriarPostRequest request) {
