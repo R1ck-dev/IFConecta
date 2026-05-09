@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import com.henrique.ifconecta.domain.post.model.Post;
@@ -37,8 +38,11 @@ public class PostRepositoryAdapter implements PostRepository {
 
     @Override
     public Pagina<Post> listarTimelineDoClube(UUID clubeId, int pagina, int tamanho) {
-        PageRequest pageRequest = PageRequest.of(pagina, tamanho);
-        var pageJpa = springDataPostRepository.findAllByClubeIdOrderByDataCriacaoDescIdDesc(clubeId, pageRequest);
+        PageRequest pageRequest = PageRequest.of(
+                pagina,
+                tamanho,
+                Sort.by(Sort.Order.desc("dataCriacao"), Sort.Order.desc("id")));
+        var pageJpa = springDataPostRepository.findAllByClubeId(clubeId, pageRequest);
 
         return new Pagina<>(
                 pageJpa.getContent().stream().map(postMapper::toDomain).collect(Collectors.toList()),

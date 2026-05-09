@@ -33,7 +33,7 @@ public class PostJpaEntity {
     private UsuarioJpaEntity autor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "clube_id")
+    @JoinColumn(name = "clube_id", nullable = false)
     private ClubeJpaEntity clube;
 
     @Column(nullable = false, columnDefinition = "TEXT")
