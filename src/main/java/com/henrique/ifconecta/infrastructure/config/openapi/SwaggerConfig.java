@@ -19,7 +19,7 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title("IFConecta API")
                         .version("v1")
-                        .description("API REST para a plataforma web de comunicação e comunidade do campus IFSP Salto."))
+                        .description("API REST para a plataforma IFConecta, com foco no fluxo público de alunos."))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
                         .addSecuritySchemes(securitySchemeName, new SecurityScheme()
