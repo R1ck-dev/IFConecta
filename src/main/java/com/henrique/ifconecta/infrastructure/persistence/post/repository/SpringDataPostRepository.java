@@ -14,5 +14,5 @@ import com.henrique.ifconecta.infrastructure.persistence.post.entity.PostJpaEnti
 @Repository
 public interface SpringDataPostRepository extends JpaRepository<PostJpaEntity, UUID> {
     @EntityGraph(attributePaths = {"autor"})
-    Page<PostJpaEntity> findAllByClubeIdOrderByDataCriacaoDescIdDesc(UUID clubeId, Pageable pageable);
+    Page<PostJpaEntity> findAllByClubeId(UUID clubeId, Pageable pageable);
 }
