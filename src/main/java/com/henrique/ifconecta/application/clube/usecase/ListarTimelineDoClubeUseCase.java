@@ -46,17 +46,13 @@ public class ListarTimelineDoClubeUseCase {
         var paginaDePosts = postRepository.listarTimelineDoClube(clubeId, pagina, tamanho);
 
         List<PostResumoDTO> resumos = paginaDePosts.itens().stream()
-                .map(post -> {
-                    String nomeExibicao = post.isAnonimo() ? "Estudante Anônimo" : post.getAutorNome();
-
-                    return new PostResumoDTO(
+                .map(post -> new PostResumoDTO(
                             post.getId(),
-                            nomeExibicao,
+                            post.getAutorNome(),
                             post.getConteudo(),
                             post.getQtdUpVotes(),
                             post.getComentarios().size(),
-                            post.getDataCriacao());
-                })
+                            post.getDataCriacao()))
                 .collect(Collectors.toList());
 
         return new Pagina<>(resumos, paginaDePosts.paginaAtual(),
