@@ -31,12 +31,12 @@ public class ListarTimelineDoClubeUseCase {
 
         List<PostResumoDTO> resumos = paginaDePosts.itens().stream()
                 .map(post -> new PostResumoDTO(
-                        post.getId(),
-                        post.isAnonimo() ? "Estudante Anônimo" : post.getAutorNome(),
-                        post.getConteudo(),
-                        post.getQtdUpVotes(),
-                        post.getComentarios().size(),
-                        post.getDataCriacao()))
+                            post.getId(),
+                            post.getAutorNome(),
+                            post.getConteudo(),
+                            post.getQtdUpVotes(),
+                            post.getComentarios().size(),
+                            post.getDataCriacao()))
                 .collect(Collectors.toList());
 
         return new Pagina<>(resumos, paginaDePosts.paginaAtual(), paginaDePosts.totalPaginas(), paginaDePosts.totalItens());

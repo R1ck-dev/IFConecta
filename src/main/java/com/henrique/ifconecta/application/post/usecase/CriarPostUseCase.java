@@ -21,24 +21,25 @@ public class CriarPostUseCase {
 
     @Transactional
     public void execute(CriarPostInput input) {
-        if (input.clubeId() != null) {
-            Clube clube = clubeRepository.buscarPorId(input.clubeId())
-                    .orElseThrow(() -> new NegocioException("Clube não encontrado."));
+        if (input.clubeId() == null) {
+            throw new NegocioException("Post deve ser publicado em um clube.");
+        }
 
-            boolean isMembroAprovado = clube.getMembros().stream()
-                    .anyMatch(member -> member.getUsuarioId().equals(input.autorId())
-                            );
+        Clube clube = clubeRepository.buscarPorId(input.clubeId())
+                .orElseThrow(() -> new NegocioException("Clube não encontrado."));
 
-            if (!isMembroAprovado) {
-                throw new NegocioException("Apenas membros podem publicar neste clube.");
-            }
+        boolean isMembroAprovado = clube.getMembros().stream()
+                .anyMatch(member -> member.getUsuarioId().equals(input.autorId())
+                        && member.getStatus() == StatusMembro.APROVADO);
+
+        if (!isMembroAprovado) {
+            throw new NegocioException("Apenas membros aprovados podem publicar neste clube.");
         }
 
         Post novoPost = new Post(
             input.autorId(),
             input.clubeId(),
-            input.conteudo(),
-            input.anonimo()
+            input.conteudo()
         );
 
         postRepository.salvar(novoPost);
