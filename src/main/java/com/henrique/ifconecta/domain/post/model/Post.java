@@ -15,13 +15,15 @@ public class Post {
     private String autorNome;
     private UUID clubeId;
     private String conteudo;
-    private boolean anonimo;
     private Set<UUID> upvotes;
     private LocalDateTime dataCriacao;
     private List<Comentario> comentarios;
 
-    // Construtor de Criação
-    public Post(UUID autorId, UUID clubeId, String conteudo, boolean anonimo) {
+    public Post(UUID autorId, UUID clubeId, String conteudo) {
+        if (clubeId == null) {
+            throw new NegocioException("Post deve ser publicado em um clube.");
+        }
+
         if (conteudo == null | conteudo.trim().isEmpty()) {
             throw new NegocioException("O conteúdo do post não pode estar vazio.");
         }
@@ -34,15 +36,12 @@ public class Post {
         this.autorId = autorId;
         this.clubeId = clubeId;
         this.conteudo = conteudo;
-        this.anonimo = anonimo;
         this.upvotes = new HashSet<>();
         this.dataCriacao = LocalDateTime.now();
         this.comentarios = new ArrayList<>();
     }
 
-    // Construtor de Reconstituição
-    public Post(UUID id, UUID autorId, String autorNome, UUID clubeId, String conteudo, boolean anonimo,
-            Set<UUID> upvotes,
+    public Post(UUID id, UUID autorId, String autorNome, UUID clubeId, String conteudo, Set<UUID> upvotes,
             LocalDateTime dataCriacao,
             List<Comentario> comentarios) {
         this.id = id;
@@ -50,7 +49,6 @@ public class Post {
         this.autorNome = autorNome;
         this.clubeId = clubeId;
         this.conteudo = conteudo;
-        this.anonimo = anonimo;
         this.upvotes = (upvotes != null) ? upvotes : new HashSet<>();
         this.dataCriacao = dataCriacao;
         this.comentarios = (comentarios != null) ? comentarios : new ArrayList<>();
@@ -73,40 +71,12 @@ public class Post {
         return this.upvotes.size();
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getAutorId() {
-        return autorId;
-    }
-
-    public UUID getClubeId() {
-        return clubeId;
-    }
-
-    public String getConteudo() {
-        return conteudo;
-    }
-
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public List<Comentario> getComentarios() {
-        return comentarios;
-    }
-
-    public Set<UUID> getUpvotes() {
-        return upvotes;
-    }
-
-    public String getAutorNome() {
-        return autorNome;
-    }
-
-    public boolean isAnonimo() {
-        return anonimo;
-    }
-
+    public UUID getId() { return id; }
+    public UUID getAutorId() { return autorId; }
+    public UUID getClubeId() { return clubeId; }
+    public String getConteudo() { return conteudo; }
+    public LocalDateTime getDataCriacao() { return dataCriacao; }
+    public List<Comentario> getComentarios() { return comentarios; }
+    public Set<UUID> getUpvotes() { return upvotes; }
+    public String getAutorNome() { return autorNome; }
 }

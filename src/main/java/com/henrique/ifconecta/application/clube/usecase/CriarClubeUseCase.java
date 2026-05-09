@@ -25,7 +25,6 @@ public class CriarClubeUseCase {
         Clube novoClube = new Clube(
             input.nome(),
             input.descricao(),
-            input.tipoAcesso(),
             input.criadorId()
         );
 

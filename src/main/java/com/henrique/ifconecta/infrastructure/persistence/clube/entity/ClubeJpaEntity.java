@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.UUID;
 
 import com.henrique.ifconecta.domain.clube.enums.StatusClube;
-import com.henrique.ifconecta.domain.clube.enums.TipoAcesso;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -26,7 +25,7 @@ import lombok.Setter;
 public class ClubeJpaEntity {
     @Id
     private UUID id;
-    
+
     @Column(nullable = false)
     private String nome;
 
@@ -36,10 +35,6 @@ public class ClubeJpaEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusClube status;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_acesso", nullable = false)
-    private TipoAcesso tipoAcesso;
 
     @Column(name = "data_criacao", nullable = false, updatable = false)
     private LocalDateTime dataCriacao;

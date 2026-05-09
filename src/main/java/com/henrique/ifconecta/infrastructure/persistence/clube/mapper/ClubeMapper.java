@@ -16,38 +16,27 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class ClubeMapper {
-    
+
     private final EntityManager entityManager;
 
     public ClubeJpaEntity toEntity(Clube domain) {
         ClubeJpaEntity entity = new ClubeJpaEntity();
-
         entity.setId(domain.getId());
         entity.setNome(domain.getNome());
         entity.setDescricao(domain.getDescricao());
         entity.setStatus(domain.getStatus());
-        entity.setTipoAcesso(domain.getTipoAcesso());
         entity.setDataCriacao(domain.getDataCriacao());
-
-        entity.setMembros(domain.getMembros().stream()
-                .map(membro -> toMembroEntity(membro, entity))
-                .collect(Collectors.toList()));
-
+        entity.setMembros(domain.getMembros().stream().map(m -> toMembroEntity(m, entity)).collect(Collectors.toList()));
         return entity;
     }
 
     public MembroClubeJpaEntity toMembroEntity(MembroClube domain, ClubeJpaEntity clubeEntity) {
         MembroClubeJpaEntity entity = new MembroClubeJpaEntity();
-
         entity.setId(domain.getId());
         entity.setClube(clubeEntity);
         entity.setPapel(domain.getPapel());
-        entity.setStatus(domain.getStatus());
         entity.setDataIngresso(domain.getDataIngresso());
-
-        // Obtemos uma referência "proxy" do utilizador pelo ID para não fazer SELECT desnecessário
         entity.setUsuario(entityManager.getReference(UsuarioJpaEntity.class, domain.getUsuarioId()));
-
         return entity;
     }
 
@@ -57,21 +46,11 @@ public class ClubeMapper {
                 entity.getNome(),
                 entity.getDescricao(),
                 entity.getStatus(),
-                entity.getTipoAcesso(),
                 entity.getDataCriacao(),
-                entity.getMembros().stream()
-                        .map(this::toMembroDomain)
-                        .collect(Collectors.toList())
-        );
+                entity.getMembros().stream().map(this::toMembroDomain).collect(Collectors.toList()));
     }
 
     private MembroClube toMembroDomain(MembroClubeJpaEntity entity) {
-        return new MembroClube(
-                entity.getId(),
-                entity.getUsuario().getId(),
-                entity.getPapel(),
-                entity.getStatus(),
-                entity.getDataIngresso()
-        );
+        return new MembroClube(entity.getId(), entity.getUsuario().getId(), entity.getPapel(), entity.getDataIngresso());
     }
 }

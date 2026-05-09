@@ -49,9 +49,4 @@ public class UsuarioRepositoryAdapter implements UsuarioRepository {
         return springDataUsuarioRepository.findAllAtivosIds();
     }
 
-    @Override
-    public List<UUID> buscarIdsPorCurso(UUID cursoId) {
-        return springDataUsuarioRepository.findIdsByCursoId(cursoId);
-    }
-
 }

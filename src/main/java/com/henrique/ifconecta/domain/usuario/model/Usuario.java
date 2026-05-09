@@ -8,7 +8,6 @@ import com.henrique.ifconecta.domain.usuario.enums.StatusUsuario;
 
 public abstract class Usuario {
     protected UUID id;
-    protected UUID cursoId;
     protected String nome;
     protected String emailAcad;
     protected String senhaHash;
@@ -17,9 +16,8 @@ public abstract class Usuario {
     protected LocalDateTime dataCriacao;
 
     // Construtor de Criação
-    protected Usuario(UUID id, UUID cursoId, String nome, String emailAcad, String senhaHash, RoleUsuario role) {
+    protected Usuario(UUID id, String nome, String emailAcad, String senhaHash, RoleUsuario role) {
         this.id = (id != null) ? id : UUID.randomUUID();
-        this.cursoId = cursoId;
         this.nome = nome;
         this.emailAcad = emailAcad;
         this.senhaHash = senhaHash;
@@ -29,10 +27,9 @@ public abstract class Usuario {
     }
 
     // Construtor de Reconstituição
-    protected Usuario(UUID id, UUID cursoId, String nome, String emailAcad, String senhaHash, StatusUsuario status,
+    protected Usuario(UUID id, String nome, String emailAcad, String senhaHash, StatusUsuario status,
             RoleUsuario role, LocalDateTime dataCriacao) {
         this.id = id;
-        this.cursoId = cursoId;
         this.nome = nome;
         this.emailAcad = emailAcad;
         this.senhaHash = senhaHash;
@@ -81,8 +78,5 @@ public abstract class Usuario {
         this.status = StatusUsuario.ATIVO;
     }
 
-    public UUID getCursoId() {
-        return cursoId;
-    }
 
 }

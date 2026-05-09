@@ -31,7 +31,7 @@ import lombok.Setter;
 public class PostJpaEntity {
     @Id
     private UUID id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "autor_id", nullable = false)
     private UsuarioJpaEntity autor;
@@ -42,9 +42,6 @@ public class PostJpaEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String conteudo;
-
-    @Column(nullable = false)
-    private boolean anonimo;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "post_upvotes", joinColumns = @JoinColumn(name = "post_id"))
