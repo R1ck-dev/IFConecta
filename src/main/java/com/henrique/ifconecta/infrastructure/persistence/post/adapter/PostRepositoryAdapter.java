@@ -1,11 +1,9 @@
 package com.henrique.ifconecta.infrastructure.persistence.post.adapter;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
@@ -38,26 +36,9 @@ public class PostRepositoryAdapter implements PostRepository {
     }
 
     @Override
-    public Pagina<Post> listarTimelineGeral(int pagina, int tamanho) {
-        PageRequest pageRequest = PageRequest.of(pagina, tamanho);
-
-        Page<PostJpaEntity> pageJpa = springDataPostRepository.findAllByClubeIsNullOrderByDataCriacaoDesc(pageRequest);
-
-        List<Post> postsDomain = pageJpa.getContent().stream()
-                .map(postMapper::toDomain)
-                .collect(Collectors.toList());
-
-        return new Pagina<>(
-                postsDomain,
-                pageJpa.getNumber(),
-                pageJpa.getTotalPages(),
-                pageJpa.getTotalElements());
-    }
-
-    @Override
     public Pagina<Post> listarTimelineDoClube(UUID clubeId, int pagina, int tamanho) {
         PageRequest pageRequest = PageRequest.of(pagina, tamanho);
-        var pageJpa = springDataPostRepository.findAllByClubeIdOrderByDataCriacaoDesc(clubeId, pageRequest);
+        var pageJpa = springDataPostRepository.findAllByClubeIdOrderByDataCriacaoDescIdDesc(clubeId, pageRequest);
 
         return new Pagina<>(
                 pageJpa.getContent().stream().map(postMapper::toDomain).collect(Collectors.toList()),

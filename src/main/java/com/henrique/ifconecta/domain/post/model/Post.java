@@ -13,7 +13,7 @@ public class Post {
     private UUID id;
     private UUID autorId;
     private String autorNome;
-    private UUID clubeId; // Se for null, o post pertence à timeline geral
+    private UUID clubeId;
     private String conteudo;
     private boolean anonimo;
     private Set<UUID> upvotes;

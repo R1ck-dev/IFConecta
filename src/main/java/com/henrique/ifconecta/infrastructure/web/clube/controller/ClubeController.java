@@ -101,10 +101,10 @@ public class ClubeController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Timeline do Clube", description = "Retorna os posts feitos dentro de um clube específico.")
+    @Operation(summary = "Timeline do Clube", description = "Retorna os posts do clube de forma paginada e ordenada por data.")
     @ApiResponse(responseCode = "200", description = "Timeline recuperada com sucesso")
     @ApiResponse(responseCode = "400", description = "Usuário não tem permissão para ver este clube privado")
-    @GetMapping("/{clubeId}/posts")
+    @GetMapping("/{clubeId}/timeline")
     public ResponseEntity<Pagina<PostResumoDTO>> listarTimeline(
             @PathVariable UUID clubeId,
             @RequestParam(defaultValue = "0") int pagina,
