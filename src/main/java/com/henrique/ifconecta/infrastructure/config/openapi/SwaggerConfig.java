@@ -1,6 +1,7 @@
 package com.henrique.ifconecta.infrastructure.config.openapi;
 
 import io.swagger.v3.oas.models.Components;
+import org.springdoc.core.models.GroupedOpenApi;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -10,6 +11,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfig {
+    @Bean
+    public GroupedOpenApi usuarioPublicoApi() {
+        return GroupedOpenApi.builder()
+                .group("acesso-publico")
+                .pathsToMatch("/api/usuarios/alunos", "/api/usuarios/ativar", "/api/auth/login")
+                .build();
+    }
 
     @Bean
     public OpenAPI customOpenAPI() {
