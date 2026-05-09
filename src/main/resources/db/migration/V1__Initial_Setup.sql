@@ -13,9 +13,8 @@ CREATE TABLE usuarios (
 CREATE TABLE token_verificacao (
     id UUID PRIMARY KEY,
     token VARCHAR(255) NOT NULL UNIQUE,
-    data_criacao TIMESTAMP NOT NULL,
     data_expiracao TIMESTAMP NOT NULL,
-    utilizado BOOLEAN NOT NULL, -- Coluna adicionada aqui!
+    utilizado BOOLEAN NOT NULL, 
     usuario_id UUID NOT NULL,
     CONSTRAINT fk_token_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
