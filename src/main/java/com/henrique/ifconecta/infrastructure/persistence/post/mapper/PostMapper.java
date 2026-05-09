@@ -25,7 +25,6 @@ public class PostMapper {
         PostJpaEntity entity = new PostJpaEntity();
         entity.setId(domain.getId());
         entity.setConteudo(domain.getConteudo());
-        entity.setAnonimo(domain.isAnonimo());
         entity.setDataCriacao(domain.getDataCriacao());
 
         entity.setAutor(entityManager.getReference(UsuarioJpaEntity.class, domain.getAutorId()));
@@ -60,7 +59,6 @@ public class PostMapper {
                 entity.getAutor().getNome(),
                 clubeId,
                 entity.getConteudo(),
-                entity.isAnonimo(),
                 entity.getDataCriacao(),
                 entity.getComentarios().stream()
                         .map(this::toComentarioDomain)

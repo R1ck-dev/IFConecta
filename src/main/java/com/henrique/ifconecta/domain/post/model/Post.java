@@ -11,14 +11,16 @@ public class Post {
     private UUID id;
     private UUID autorId;
     private String autorNome;
-    private UUID clubeId; // Se for null, o post pertence à timeline geral
+    private UUID clubeId;
     private String conteudo;
-    private boolean anonimo;
     private LocalDateTime dataCriacao;
     private List<Comentario> comentarios;
 
-    // Construtor de Criação
-    public Post(UUID autorId, UUID clubeId, String conteudo, boolean anonimo) {
+    public Post(UUID autorId, UUID clubeId, String conteudo) {
+        if (clubeId == null) {
+            throw new NegocioException("Post deve ser publicado em um clube.");
+        }
+
         if (conteudo == null | conteudo.trim().isEmpty()) {
             throw new NegocioException("O conteúdo do post não pode estar vazio.");
         }
@@ -31,13 +33,11 @@ public class Post {
         this.autorId = autorId;
         this.clubeId = clubeId;
         this.conteudo = conteudo;
-        this.anonimo = anonimo;
         this.dataCriacao = LocalDateTime.now();
         this.comentarios = new ArrayList<>();
     }
 
-    // Construtor de Reconstituição
-    public Post(UUID id, UUID autorId, String autorNome, UUID clubeId, String conteudo, boolean anonimo,
+    public Post(UUID id, UUID autorId, String autorNome, UUID clubeId, String conteudo,
             LocalDateTime dataCriacao,
             List<Comentario> comentarios) {
         this.id = id;
@@ -45,7 +45,6 @@ public class Post {
         this.autorNome = autorNome;
         this.clubeId = clubeId;
         this.conteudo = conteudo;
-        this.anonimo = anonimo;
         this.dataCriacao = dataCriacao;
         this.comentarios = (comentarios != null) ? comentarios : new ArrayList<>();
     }
@@ -54,7 +53,6 @@ public class Post {
         Comentario novoComentario = new Comentario(autorId, conteudo);
         this.comentarios.add(novoComentario);
     }
-
 
     public UUID getId() {
         return id;
@@ -83,9 +81,4 @@ public class Post {
     public String getAutorNome() {
         return autorNome;
     }
-
-    public boolean isAnonimo() {
-        return anonimo;
-    }
-
 }

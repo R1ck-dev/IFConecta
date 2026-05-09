@@ -1,16 +1,9 @@
 package com.henrique.ifconecta.infrastructure.web.post.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.henrique.ifconecta.application.post.dto.AdicionarComentarioInput;
 import com.henrique.ifconecta.application.post.dto.CriarPostInput;
-import com.henrique.ifconecta.application.post.dto.PostResumoDTO;
 import com.henrique.ifconecta.application.post.usecase.AdicionarComentarioUseCase;
 import com.henrique.ifconecta.application.post.usecase.CriarPostUseCase;
-import com.henrique.ifconecta.application.post.usecase.ListarTimelineGeralUseCase;
-import com.henrique.ifconecta.domain.shared.Pagina;
 import com.henrique.ifconecta.infrastructure.web.post.dto.AdicionarComentarioRequest;
 import com.henrique.ifconecta.infrastructure.web.post.dto.CriarPostRequest;
 
@@ -25,10 +18,11 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -38,9 +32,8 @@ public class PostController {
 
     private final CriarPostUseCase criarPostUseCase;
     private final AdicionarComentarioUseCase adicionarComentarioUseCase;
-    private final ListarTimelineGeralUseCase listarTimelineGeralUseCase;
 
-    @Operation(summary = "Criar Post", description = "Publica um novo post, podendo ser na timeline geral ou vinculado a um clube. Suporta postagens anônimas.")
+    @Operation(summary = "Criar Post", description = "Publica um novo post vinculado a um clube.")
     @ApiResponse(responseCode = "201", description = "Post criado com sucesso")
     @PostMapping
     public ResponseEntity<Void> criarPost(@RequestBody @Valid CriarPostRequest request) {
@@ -50,8 +43,7 @@ public class PostController {
         CriarPostInput input = new CriarPostInput(
                 autorId,
                 request.clubeId(),
-                request.conteudo(),
-                request.anonimo());
+                request.conteudo());
 
         criarPostUseCase.execute(input);
 
@@ -74,17 +66,6 @@ public class PostController {
         adicionarComentarioUseCase.execute(input);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @Operation(summary = "Timeline Geral", description = "Recupera posts globais (não vinculados a clubes específicos) de forma paginada.")
-    @GetMapping
-    public ResponseEntity<Pagina<PostResumoDTO>> listarTimelineGeral(
-            @RequestParam(defaultValue = "0") int pagina,
-            @RequestParam(defaultValue = "10") int tamanho) {
-
-        Pagina<PostResumoDTO> response = listarTimelineGeralUseCase.execute(pagina, tamanho);
-
-        return ResponseEntity.ok(response);
     }
 
     private String extraiId() {

@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.henrique.ifconecta.domain.clube.enums.PapelMembro;
-import com.henrique.ifconecta.domain.clube.enums.StatusMembro;
 import com.henrique.ifconecta.infrastructure.persistence.usuario.entity.UsuarioJpaEntity;
 
 import jakarta.persistence.Column;
@@ -30,7 +29,7 @@ public class MembroClubeJpaEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clube_id", nullable = false)
     private ClubeJpaEntity clube;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private UsuarioJpaEntity usuario;
@@ -39,10 +38,6 @@ public class MembroClubeJpaEntity {
     @Column(nullable = false)
     private PapelMembro papel;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private StatusMembro status;
-
     @Column(name = "data_ingresso", nullable = false, updatable = false)
-    private LocalDateTime dataIngresso; 
+    private LocalDateTime dataIngresso;
 }
