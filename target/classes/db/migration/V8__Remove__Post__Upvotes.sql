@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS post_upvotes;
+ALTER TABLE posts DROP COLUMN IF EXISTS qtd_upvotes;

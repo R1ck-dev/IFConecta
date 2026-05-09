@@ -2,9 +2,7 @@ package com.henrique.ifconecta.domain.post.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
@@ -15,7 +13,6 @@ public class Post {
     private String autorNome;
     private UUID clubeId;
     private String conteudo;
-    private Set<UUID> upvotes;
     private LocalDateTime dataCriacao;
     private List<Comentario> comentarios;
 
@@ -36,12 +33,11 @@ public class Post {
         this.autorId = autorId;
         this.clubeId = clubeId;
         this.conteudo = conteudo;
-        this.upvotes = new HashSet<>();
         this.dataCriacao = LocalDateTime.now();
         this.comentarios = new ArrayList<>();
     }
 
-    public Post(UUID id, UUID autorId, String autorNome, UUID clubeId, String conteudo, Set<UUID> upvotes,
+    public Post(UUID id, UUID autorId, String autorNome, UUID clubeId, String conteudo,
             LocalDateTime dataCriacao,
             List<Comentario> comentarios) {
         this.id = id;
@@ -49,7 +45,6 @@ public class Post {
         this.autorNome = autorNome;
         this.clubeId = clubeId;
         this.conteudo = conteudo;
-        this.upvotes = (upvotes != null) ? upvotes : new HashSet<>();
         this.dataCriacao = dataCriacao;
         this.comentarios = (comentarios != null) ? comentarios : new ArrayList<>();
     }
@@ -59,24 +54,31 @@ public class Post {
         this.comentarios.add(novoComentario);
     }
 
-    public void darUpVote(UUID usuarioId) {
-        if (this.upvotes.contains(usuarioId)) {
-            this.upvotes.remove(usuarioId);
-        } else {
-            this.upvotes.add(usuarioId);
-        }
+    public UUID getId() {
+        return id;
     }
 
-    public int getQtdUpVotes() {
-        return this.upvotes.size();
+    public UUID getAutorId() {
+        return autorId;
     }
 
-    public UUID getId() { return id; }
-    public UUID getAutorId() { return autorId; }
-    public UUID getClubeId() { return clubeId; }
-    public String getConteudo() { return conteudo; }
-    public LocalDateTime getDataCriacao() { return dataCriacao; }
-    public List<Comentario> getComentarios() { return comentarios; }
-    public Set<UUID> getUpvotes() { return upvotes; }
-    public String getAutorNome() { return autorNome; }
+    public UUID getClubeId() {
+        return clubeId;
+    }
+
+    public String getConteudo() {
+        return conteudo;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public String getAutorNome() {
+        return autorNome;
+    }
 }

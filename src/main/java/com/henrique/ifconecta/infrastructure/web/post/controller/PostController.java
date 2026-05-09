@@ -1,13 +1,9 @@
 package com.henrique.ifconecta.infrastructure.web.post.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.henrique.ifconecta.application.post.dto.AdicionarComentarioInput;
 import com.henrique.ifconecta.application.post.dto.CriarPostInput;
 import com.henrique.ifconecta.application.post.usecase.AdicionarComentarioUseCase;
 import com.henrique.ifconecta.application.post.usecase.CriarPostUseCase;
-import com.henrique.ifconecta.application.post.usecase.DarUpvoteUseCase;
 import com.henrique.ifconecta.infrastructure.web.post.dto.AdicionarComentarioRequest;
 import com.henrique.ifconecta.infrastructure.web.post.dto.CriarPostRequest;
 
@@ -25,17 +21,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
-@Tag(name = "Posts", description = "Criação de posts, comentários e curtidas (upvotes)")
+@Tag(name = "Posts", description = "Criação de posts e comentários")
 public class PostController {
 
     private final CriarPostUseCase criarPostUseCase;
     private final AdicionarComentarioUseCase adicionarComentarioUseCase;
-    private final DarUpvoteUseCase darUpvoteUseCase;
 
     @Operation(summary = "Criar Post", description = "Publica um novo post vinculado a um clube. Suporta postagens anônimas.")
     @ApiResponse(responseCode = "201", description = "Post criado com sucesso")
@@ -70,18 +66,6 @@ public class PostController {
         adicionarComentarioUseCase.execute(input);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @Operation(summary = "Dar Upvote", description = "Adiciona ou remove um upvote em um post (funciona como um toggle).")
-    @ApiResponse(responseCode = "204", description = "Upvote computado")
-    @PutMapping("/{postId}/upvote")
-    public ResponseEntity<Void> darUpVote(@PathVariable UUID postId) {
-        String userIdStr = extraiId();
-        UUID autorId = UUID.fromString(userIdStr);
-
-        darUpvoteUseCase.execute(postId, autorId);
-
-        return ResponseEntity.noContent().build();
     }
 
     private String extraiId() {
