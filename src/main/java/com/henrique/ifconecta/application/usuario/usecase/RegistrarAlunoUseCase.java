@@ -35,6 +35,10 @@ public class RegistrarAlunoUseCase {
             throw new NegocioException("Já existe um utilizador registrado com este endereço de e-mail.");
         }
 
+        if (usuarioRepository.existePorProntuario(input.prontuario())) {
+            throw new NegocioException("Já existe um utilizador registrado com este prontuário.");
+        }
+
         String hash = passwordEncoderPort.encode(input.password());
 
         Usuario novoUsuario = new Usuario(

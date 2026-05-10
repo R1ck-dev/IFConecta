@@ -3,6 +3,7 @@ package com.henrique.ifconecta.application.post.usecase;
 import org.springframework.stereotype.Service;
 
 import com.henrique.ifconecta.application.post.dto.CriarPostInput;
+import com.henrique.ifconecta.domain.clube.model.Clube;
 import com.henrique.ifconecta.domain.clube.port.ClubeRepository;
 import com.henrique.ifconecta.domain.post.model.Post;
 import com.henrique.ifconecta.domain.post.port.PostRepository;
@@ -21,8 +22,15 @@ public class CriarPostUseCase {
     @Transactional
     public void execute(CriarPostInput input) {
         if (input.clubeId() != null) {
-            clubeRepository.buscarPorId(input.clubeId())
+            Clube clube = clubeRepository.buscarPorId(input.clubeId())
                     .orElseThrow(() -> new NegocioException("Clube não encontrado."));
+
+            boolean isMembro = clube.getMembros().stream()
+                    .anyMatch(member -> member.getUsuarioId().equals(input.autorId()));
+
+            if (!isMembro) {
+                throw new NegocioException("Apenas membros podem publicar neste clube.");
+            }
 
         }
 

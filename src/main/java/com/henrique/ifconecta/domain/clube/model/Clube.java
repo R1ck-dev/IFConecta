@@ -41,21 +41,38 @@ public class Clube {
         this.membros = (membros != null) ? membros : new ArrayList<>();
     }
 
-    public void solicitarEntrada(UUID usuarioId) {
+    public void entrar(UUID usuarioId) {
         boolean jaEhMembro = membros.stream().anyMatch(userId -> userId.getUsuarioId().equals(usuarioId));
 
         if (jaEhMembro) {
-            throw new NegocioException("O usuário já faz parte deste clube ou tem um convite pendente");
+            throw new NegocioException("O usuário já faz parte deste clube.");
         }
 
         MembroClube novoMembro = new MembroClube(usuarioId, PapelMembro.MEMBRO);
         this.membros.add(novoMembro);
     }
 
-    public UUID getId() { return id; }
-    public String getNome() { return nome; }
-    public String getDescricao() { return descricao; }
-    public StatusClube getStatus() { return status; }
-    public LocalDateTime getDataCriacao() { return dataCriacao; }
-    public List<MembroClube> getMembros() { return membros; }
+    public UUID getId() {
+        return id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public StatusClube getStatus() {
+        return status;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public List<MembroClube> getMembros() {
+        return membros;
+    }
 }

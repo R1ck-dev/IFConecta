@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.henrique.ifconecta.application.clube.dto.ClubeResumoDTO;
 import com.henrique.ifconecta.application.clube.dto.CriarClubeInput;
 import com.henrique.ifconecta.application.clube.usecase.CriarClubeUseCase;
+import com.henrique.ifconecta.application.clube.usecase.EntrarClubeUseCase;
 import com.henrique.ifconecta.application.clube.usecase.ListarClubesUseCase;
 import com.henrique.ifconecta.application.clube.usecase.ListarTimelineDoClubeUseCase;
 import com.henrique.ifconecta.infrastructure.web.clube.dto.CriarClubeRequest;
@@ -38,6 +39,7 @@ public class ClubeController {
     private final CriarClubeUseCase criarClubeUseCase;
     private final ListarClubesUseCase listarClubesUseCase;
     private final ListarTimelineDoClubeUseCase listarTimelineDoClubeUseCase;
+    private final EntrarClubeUseCase entrarClubeUseCase;
 
     @Operation(summary = "Criar Clube", description = "Cria um novo clube. O usuário criador torna-se o líder automaticamente.")
     @ApiResponse(responseCode = "201", description = "Clube criado com sucesso")
@@ -65,6 +67,16 @@ public class ClubeController {
         Pagina<ClubeResumoDTO> response = listarClubesUseCase.execute(pagina, tamanho);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{clubeId}/entrar")
+    public ResponseEntity<Void> entrarNoClube(@PathVariable UUID clubeId) {
+        String userIdStr = extraiId();
+        UUID usuarioId = UUID.fromString(userIdStr);
+
+        entrarClubeUseCase.execute(clubeId, usuarioId);
+
+        return ResponseEntity.noContent().build(); 
     }
 
     @Operation(summary = "Timeline do Clube", description = "Retorna os posts feitos dentro de um clube específico.")

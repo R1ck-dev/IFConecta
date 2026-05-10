@@ -16,6 +16,8 @@ public interface SpringDataUsuarioRepository extends JpaRepository<UsuarioJpaEnt
 
     boolean existsByEmailAcad(String emailAcad);
 
+    boolean existsByProntuario(String prontuario);
+
     @Query("SELECT u.id FROM UsuarioJpaEntity u WHERE u.status = 'ATIVO'")
     List<UUID> findAllAtivosIds();
 }

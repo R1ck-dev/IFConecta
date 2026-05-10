@@ -49,4 +49,9 @@ public class UsuarioRepositoryAdapter implements UsuarioRepository {
         return springDataUsuarioRepository.findAllAtivosIds();
     }
 
+    @Override
+    public boolean existePorProntuario(String prontuario) {
+        return springDataUsuarioRepository.existsByProntuario(prontuario);
+    }
+
 }

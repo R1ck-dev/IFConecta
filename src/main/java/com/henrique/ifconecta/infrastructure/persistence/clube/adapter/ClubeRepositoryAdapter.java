@@ -68,7 +68,7 @@ public class ClubeRepositoryAdapter implements ClubeRepository {
     }
 
     @Override
-    public List<UUID> buscarIdsMembrosAprovados(UUID clubeId) {
+    public List<UUID> buscarIdsMembros(UUID clubeId) {
         return springDataClubeRepository.findIdsMembrosByClubeId(clubeId);
     }
 
