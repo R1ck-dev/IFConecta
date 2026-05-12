@@ -35,10 +35,6 @@ public class Usuario {
         this.prontuario = prontuario;
     }
 
-    public void definirSenha(String novaSenhaHash) {
-        this.senhaHash = novaSenhaHash;
-    }
-
     public void ativarConta() {
         this.status = StatusUsuario.ATIVO;
     }
