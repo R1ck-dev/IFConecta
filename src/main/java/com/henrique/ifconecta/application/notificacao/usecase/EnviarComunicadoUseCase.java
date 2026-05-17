@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.henrique.ifconecta.application.notificacao.dto.EnviarComunicadoInput;
 import com.henrique.ifconecta.domain.academico.model.Turma;
 import com.henrique.ifconecta.domain.academico.port.TurmaRepository;
-import com.henrique.ifconecta.domain.clube.enums.PapelMembro;
 import com.henrique.ifconecta.domain.clube.model.Clube;
 import com.henrique.ifconecta.domain.clube.port.ClubeRepository;
 import com.henrique.ifconecta.domain.notificacao.model.Notificacao;
@@ -69,17 +68,11 @@ public class EnviarComunicadoUseCase {
                 Clube clube = clubeRepository.buscarPorId(input.alvoId())
                         .orElseThrow(() -> new NegocioException("Clube não encontrado."));
 
-                boolean isLider = clube.getMembros().stream()
-                        .anyMatch(m -> m.getUsuarioId().equals(remetente.getId()) && m.getPapel() == PapelMembro.LIDER);
-
-                if (!isLider) {
+                if (!clube.isLider(remetente.getId())) {
                     throw new NegocioException("Apenas o líder pode enviar comunicados para todo o clube.");
                 }
 
-                // Pega todos os membros aprovados
-                destinatariosIds = clube.getMembros().stream()
-                        .map(m -> m.getUsuarioId())
-                        .collect(Collectors.toList());
+                destinatariosIds = clube.obterIdsMembrosAprovados();
             }
         }
 
