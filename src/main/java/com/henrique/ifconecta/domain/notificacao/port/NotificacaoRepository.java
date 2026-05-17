@@ -13,4 +13,6 @@ public interface NotificacaoRepository {
     Pagina<Notificacao> listarPorUsuario(UUID usuarioId, int pagina, int tamanho);
     Optional<Notificacao> buscarPorId(UUID id);
     Notificacao salvar(Notificacao notificacao);
+    int marcarTodasComoLidasPorUsuario(UUID usuarioId);
+    long contarNaoLidasPorUsuario(UUID usuarioId);
 }

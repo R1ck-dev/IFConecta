@@ -12,7 +12,8 @@ public record NotificacaoResumoDTO(
     boolean lida,
     TipoAlvoComunicado tipoAlvo,
     UUID referenciaId,
-    LocalDateTime dataCriacao
+    LocalDateTime dataCriacao,
+    UUID remetenteId,
+    String remetenteNome
 ) {
-    
 }

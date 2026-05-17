@@ -58,4 +58,14 @@ public class NotificacaoRepositoryAdapter implements NotificacaoRepository {
         var entity = mapper.toEntity(notificacao);
         return mapper.toDomain(repository.save(entity));
     }
+
+    @Override
+    public int marcarTodasComoLidasPorUsuario(UUID usuarioId) {
+        return repository.marcarTodasComoLidasPorUsuario(usuarioId);
+    }
+
+    @Override
+    public long contarNaoLidasPorUsuario(UUID usuarioId) {
+        return repository.countByUsuarioIdAndLidaFalse(usuarioId);
+    }
 }
