@@ -72,4 +72,11 @@ public class ClubeRepositoryAdapter implements ClubeRepository {
         return springDataClubeRepository.findIdsMembrosAprovadosByClubeId(clubeId);
     }
 
+    @Override
+    public List<Clube> listarClubesPorMembroAprovado(UUID usuarioId) {
+        return springDataClubeRepository.findClubesByMembroAprovado(usuarioId).stream()
+                .map(clubeMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
 }

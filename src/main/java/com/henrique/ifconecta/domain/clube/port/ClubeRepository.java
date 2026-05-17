@@ -13,4 +13,5 @@ public interface ClubeRepository {
     Pagina<Clube> listarTodosAtivos(int pagina, int tamanho);
     boolean existePorNome(String nome);
     List<UUID> buscarIdsMembrosAprovados(UUID clubeId);
+    List<Clube> listarClubesPorMembroAprovado(UUID usuarioId);
 }
