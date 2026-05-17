@@ -17,6 +17,7 @@ import { ClubeDetailPage, ClubesListPage } from './pages/clubes.jsx';
 import { NotificacoesPage } from './pages/notificacoes.jsx';
 import { ProfileMePage, ProfilePublicPage } from './pages/perfil.jsx';
 import { AcademicoPage } from './pages/academico.jsx';
+import { AdminPage } from './pages/admin.jsx';
 
 function useTheme() {
   const [theme, setTheme] = useState(() => {
@@ -44,6 +45,12 @@ function PrivateRoute() {
   const location = useLocation();
   if (loading) return <div style={{ padding: 24, color: 'var(--fg-muted)' }}>Carregando…</div>;
   if (!token || !me) return <Navigate to="/login" replace state={{ from: location }} />;
+  return <Outlet />;
+}
+
+function AdminRoute() {
+  const { me } = useAuth();
+  if (me?.role !== 'ADMIN') return <Navigate to="/timeline" replace />;
   return <Outlet />;
 }
 
@@ -144,6 +151,9 @@ export default function App() {
           <Route path="/perfil/:id" element={<ProfilePublicPage />} />
           <Route path="/academico" element={<AcademicoPage />} />
           <Route path="/cursos" element={<AcademicoPage />} />
+          <Route element={<AdminRoute />}>
+            <Route path="/admin" element={<AdminPage />} />
+          </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Route>
