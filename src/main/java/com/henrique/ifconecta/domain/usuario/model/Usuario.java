@@ -45,6 +45,10 @@ public abstract class Usuario {
         this.senhaHash = novaSenhaHash;
     }
 
+    public void atualizarNome(String nome) {
+        this.nome = nome;
+    }
+
     public void promoverParaAdmin() {
         this.role = RoleUsuario.ADMIN;
     }
