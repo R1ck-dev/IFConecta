@@ -1,4 +1,4 @@
-package com.henrique.ifconecta.infrastructure.web.academico.Turma.dto;
+package com.henrique.ifconecta.infrastructure.web.academico.dto;
 
 import java.util.UUID;
 
