@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Navigate, Outlet, Route, Routes, useLocation, useNavigate,
+  Navigate, Outlet, Route, Routes, matchPath, useLocation, useNavigate,
 } from 'react-router-dom';
 import { AppShell } from './components/layout.jsx';
 import { Icon } from './components/icons.jsx';
@@ -59,6 +59,7 @@ function AppShellLayout({ theme, onToggleTheme }) {
   const [createClubeOpen, setCreateClubeOpen] = useState(false);
   const [comunicadoOpen, setComunicadoOpen] = useState(false);
   const [refreshSignal, setRefreshSignal] = useState(0);
+  const location = useLocation();
 
   const openCreatePost = (clubeId = null) => setCreatePost({ open: true, clubeId });
 
@@ -68,12 +69,13 @@ function AppShellLayout({ theme, onToggleTheme }) {
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
       if (e.key === 'c' && !e.metaKey && !e.ctrlKey) {
         e.preventDefault();
-        openCreatePost();
+        const match = matchPath('/clubes/:id', location.pathname);
+        openCreatePost(match?.params?.id || null);
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [location.pathname]);
 
   const ctx = {
     openCreatePost,

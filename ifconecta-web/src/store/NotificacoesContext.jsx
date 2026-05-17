@@ -23,6 +23,13 @@ export function NotificacoesProvider({ children }) {
 
   useEffect(() => { refresh(); }, [refresh]);
 
+  useEffect(() => {
+    if (!me || !token) return undefined;
+    const onFocus = () => { refresh(); };
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, [me, token, refresh]);
+
   return (
     <NotificacoesCtx.Provider value={{ naoLidas, refresh }}>
       {children}
