@@ -2,10 +2,12 @@ package com.henrique.ifconecta.infrastructure.web.usuario.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,10 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.henrique.ifconecta.application.usuario.dto.AtivarConvidadoInput;
+import com.henrique.ifconecta.application.usuario.dto.MeuPerfilDTO;
 import com.henrique.ifconecta.application.usuario.dto.RegistrarAlunoInput;
+import com.henrique.ifconecta.application.usuario.dto.UsuarioPublicoDTO;
 import com.henrique.ifconecta.application.usuario.usecase.AtivarContaUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.AtivarConvidadoUseCase;
+import com.henrique.ifconecta.application.usuario.usecase.BuscarMeuPerfilUseCase;
+import com.henrique.ifconecta.application.usuario.usecase.BuscarUsuarioPublicoUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.RegistrarAlunoUseCase;
+import com.henrique.ifconecta.infrastructure.config.security.CurrentUserId;
 import com.henrique.ifconecta.infrastructure.web.usuario.dto.DefinirSenhaRequest;
 import com.henrique.ifconecta.infrastructure.web.usuario.dto.RegistrarAlunoRequest;
 
@@ -31,6 +38,8 @@ public class UsuarioController {
     private final RegistrarAlunoUseCase registrarAlunoUseCase;
     private final AtivarContaUseCase ativarContaUseCase;
     private final AtivarConvidadoUseCase ativarConvidadoUseCase;
+    private final BuscarMeuPerfilUseCase buscarMeuPerfilUseCase;
+    private final BuscarUsuarioPublicoUseCase buscarUsuarioPublicoUseCase;
 
     @PostMapping("/alunos")
     public ResponseEntity<Void> registrarAluno(@RequestBody @Valid RegistrarAlunoRequest request) {
@@ -66,8 +75,13 @@ public class UsuarioController {
         return ResponseEntity.ok(response);
     }
 
-    // @GetMapping("/me")
-    // public ResponseEntity<String> testarAutenticacao() {
-    // return ResponseEntity.ok("Estou logado!");
-    // }
+    @GetMapping("/me")
+    public ResponseEntity<MeuPerfilDTO> meuPerfil(@CurrentUserId UUID usuarioId) {
+        return ResponseEntity.ok(buscarMeuPerfilUseCase.execute(usuarioId));
+    }
+
+    @GetMapping("/{usuarioId}")
+    public ResponseEntity<UsuarioPublicoDTO> buscarPorId(@PathVariable UUID usuarioId) {
+        return ResponseEntity.ok(buscarUsuarioPublicoUseCase.execute(usuarioId));
+    }
 }
