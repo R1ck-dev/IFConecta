@@ -30,3 +30,7 @@ export async function ativarConvidado({ token, novaSenha }) {
 export async function atualizarMeuPerfil({ nome }) {
   await api.patch('/usuarios/me', { nome });
 }
+
+export async function alterarMinhaSenha({ senhaAtual, novaSenha }) {
+  await api.patch('/usuarios/me/senha', { senhaAtual, novaSenha });
+}

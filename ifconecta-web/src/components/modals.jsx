@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Avatar, Button, Checkbox, Dialog, Field, Input, RadioCard, Select, Textarea, useToast,
+  Avatar, Button, Checkbox, Dialog, Field, Input, PwStrength, pwScore, RadioCard, Select, Textarea, useToast,
 } from './ui.jsx';
 import { Icon } from './icons.jsx';
 import { podeComunicar, useAuth } from '../store/AuthContext.jsx';
@@ -236,6 +236,104 @@ export function EditarPerfilDialog({ open, onClose }) {
         <Icon name="info" size={14} style={{ flexShrink: 0, marginTop: 1 }} />
         <span>E-mail, prontuário e SIAPE são vínculos institucionais e não podem ser alterados aqui.</span>
       </div>
+    </Dialog>
+  );
+}
+
+export function AlterarSenhaDialog({ open, onClose }) {
+  const toast = useToast();
+  const [senhaAtual, setSenhaAtual] = useState('');
+  const [novaSenha, setNovaSenha] = useState('');
+  const [confirma, setConfirma] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (open) { setSenhaAtual(''); setNovaSenha(''); setConfirma(''); }
+  }, [open]);
+
+  const forteOk = pwScore(novaSenha) >= 2;
+  const tamanhoOk = novaSenha.length >= 8;
+  const confereOk = novaSenha === confirma;
+  const diferenteAtual = novaSenha !== senhaAtual;
+  const canSubmit = senhaAtual.length > 0
+    && tamanhoOk
+    && forteOk
+    && confereOk
+    && diferenteAtual
+    && !submitting;
+
+  const handleSubmit = async () => {
+    if (!canSubmit) return;
+    setSubmitting(true);
+    try {
+      await authService.alterarMinhaSenha({ senhaAtual, novaSenha });
+      toast.success('Senha alterada com sucesso.');
+      onClose();
+    } catch (err) {
+      toast.error('Não foi possível alterar a senha', extractErrorMessage(err));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const novaSenhaErro = novaSenha.length > 0 && !tamanhoOk
+    ? 'Mínimo de 8 caracteres.'
+    : novaSenha.length > 0 && !forteOk
+      ? 'Senha precisa ser mais forte.'
+      : novaSenha.length > 0 && !diferenteAtual
+        ? 'A nova senha deve ser diferente da atual.'
+        : null;
+  const confirmaErro = confirma.length > 0 && !confereOk ? 'As senhas não conferem.' : null;
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      title="Alterar senha"
+      subtitle="Informe sua senha atual e a nova senha"
+      footer={
+        <>
+          <Button variant="ghost" onClick={onClose}>Cancelar</Button>
+          <Button variant="primary" onClick={handleSubmit} disabled={!canSubmit} loading={submitting}>
+            Alterar senha
+          </Button>
+        </>
+      }
+    >
+      <Field label="Senha atual">
+        <Input
+          icon="lock"
+          type="password"
+          autoFocus
+          autoComplete="current-password"
+          value={senhaAtual}
+          onChange={(e) => setSenhaAtual(e.target.value)}
+          placeholder="Sua senha atual"
+        />
+      </Field>
+      <Field label="Nova senha" error={novaSenhaErro}>
+        <Input
+          icon="lock"
+          type="password"
+          autoComplete="new-password"
+          value={novaSenha}
+          error={novaSenhaErro}
+          onChange={(e) => setNovaSenha(e.target.value)}
+          placeholder="Mínimo de 8 caracteres"
+        />
+        <PwStrength pw={novaSenha} />
+      </Field>
+      <Field label="Confirmar nova senha" error={confirmaErro}>
+        <Input
+          icon="lock"
+          type="password"
+          autoComplete="new-password"
+          value={confirma}
+          error={confirmaErro}
+          onChange={(e) => setConfirma(e.target.value)}
+          placeholder="Repita a nova senha"
+        />
+      </Field>
     </Dialog>
   );
 }

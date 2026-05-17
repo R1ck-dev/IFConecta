@@ -4,14 +4,13 @@ import {
   Avatar, Badge, Button, Card, Empty, Skel, useToast,
 } from '../components/ui.jsx';
 import { Icon } from '../components/icons.jsx';
-import { EditarPerfilDialog } from '../components/modals.jsx';
+import { AlterarSenhaDialog, EditarPerfilDialog } from '../components/modals.jsx';
 import { tipoLabel, useAuth } from '../store/AuthContext.jsx';
 import api, { extractErrorMessage } from '../services/api.js';
 import * as cursosService from '../services/cursos.js';
 import * as clubesService from '../services/clubes.js';
 
-function ProfileHero({ user, isMe, onEditar }) {
-  const toast = useToast();
+function ProfileHero({ user, isMe, onEditar, onAlterarSenha }) {
   return (
     <Card style={{ padding: 0 }}>
       <div style={{
@@ -42,7 +41,7 @@ function ProfileHero({ user, isMe, onEditar }) {
             <Button variant="outline" size="sm" icon={<Icon name="edit" size={13} />} onClick={onEditar}>
               Editar perfil
             </Button>
-            <Button variant="outline" size="sm" icon={<Icon name="lock" size={13} />} onClick={() => toast.info('Em breve', 'Endpoint de alteração de senha ainda não disponível.')}>
+            <Button variant="outline" size="sm" icon={<Icon name="lock" size={13} />} onClick={onAlterarSenha}>
               Alterar senha
             </Button>
           </div>
@@ -165,19 +164,26 @@ export function ProfileMePage() {
   const { me } = useAuth();
   const { cursoNome, loading: cursoLoading } = useCursoNome(me?.cursoId);
   const [editarOpen, setEditarOpen] = useState(false);
+  const [senhaOpen, setSenhaOpen] = useState(false);
 
   if (!me) return null;
 
   return (
     <div className="app-content app-content-wide" data-screen-label="PerfilMe">
       <div className="stack-lg">
-        <ProfileHero user={me} isMe onEditar={() => setEditarOpen(true)} />
+        <ProfileHero
+          user={me}
+          isMe
+          onEditar={() => setEditarOpen(true)}
+          onAlterarSenha={() => setSenhaOpen(true)}
+        />
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 18, alignItems: 'start' }}>
           <ProfileInfo user={me} isMe cursoNome={cursoNome} cursoLoading={cursoLoading} />
           <MeusClubesCard />
         </div>
       </div>
       <EditarPerfilDialog open={editarOpen} onClose={() => setEditarOpen(false)} />
+      <AlterarSenhaDialog open={senhaOpen} onClose={() => setSenhaOpen(false)} />
     </div>
   );
 }
