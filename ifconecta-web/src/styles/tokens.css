@@ -1,0 +1,151 @@
+/* IFConecta — Design Tokens
+   ─────────────────────────────────────────────────────────
+   Original visual identity for an academic community platform.
+   NOT a recreation of IFSP brand assets — green primary is a
+   generic institutional choice. */
+
+:root {
+  /* Primary (institutional green) — adjustable via Tweaks */
+  --primary-h: 150;
+  --primary-c: 0.11;
+  --primary-l: 0.42;
+  --primary: oklch(var(--primary-l) var(--primary-c) var(--primary-h));
+  --primary-hover: oklch(calc(var(--primary-l) - 0.04) var(--primary-c) var(--primary-h));
+  --primary-soft: oklch(0.96 0.03 var(--primary-h));
+  --primary-soft-2: oklch(0.92 0.05 var(--primary-h));
+  --primary-fg: #ffffff;
+  --primary-ring: oklch(var(--primary-l) var(--primary-c) var(--primary-h) / 0.35);
+
+  /* Accent (warm, used sparingly for streaks/highlights) */
+  --accent: oklch(0.72 0.14 60);
+
+  /* Surfaces — warm-neutral light */
+  --bg: oklch(0.985 0.003 100);
+  --surface: #ffffff;
+  --surface-2: oklch(0.97 0.004 100);
+  --surface-hover: oklch(0.955 0.005 100);
+
+  /* Borders & dividers */
+  --border: oklch(0.91 0.005 100);
+  --border-strong: oklch(0.84 0.006 100);
+  --divider: oklch(0.93 0.004 100);
+
+  /* Text */
+  --fg: oklch(0.21 0.008 250);
+  --fg-muted: oklch(0.46 0.01 250);
+  --fg-subtle: oklch(0.6 0.008 250);
+  --fg-on-primary: #ffffff;
+
+  /* States */
+  --danger: oklch(0.58 0.18 25);
+  --danger-soft: oklch(0.96 0.04 25);
+  --warning: oklch(0.72 0.14 75);
+  --success: oklch(0.6 0.13 155);
+  --info: oklch(0.6 0.12 240);
+
+  /* Radii */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-full: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 30, 0.04);
+  --shadow-md: 0 4px 12px -2px rgba(15, 23, 30, 0.06), 0 2px 4px -2px rgba(15, 23, 30, 0.04);
+  --shadow-lg: 0 12px 32px -8px rgba(15, 23, 30, 0.12), 0 4px 12px -4px rgba(15, 23, 30, 0.06);
+  --shadow-pop: 0 24px 48px -12px rgba(15, 23, 30, 0.18);
+
+  /* Density */
+  --space-card-y: 18px;
+  --space-card-x: 20px;
+  --space-stack: 14px;
+
+  /* Type */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Consolas, monospace;
+
+  color-scheme: light;
+}
+
+.dark {
+  --bg: oklch(0.16 0.01 240);
+  --surface: oklch(0.2 0.012 240);
+  --surface-2: oklch(0.235 0.014 240);
+  --surface-hover: oklch(0.26 0.015 240);
+  --border: oklch(0.32 0.014 240);
+  --border-strong: oklch(0.42 0.018 240);
+  --divider: oklch(0.28 0.013 240);
+
+  --fg: oklch(0.96 0.005 240);
+  --fg-muted: oklch(0.72 0.012 240);
+  --fg-subtle: oklch(0.58 0.012 240);
+
+  --primary-soft: oklch(0.28 0.06 var(--primary-h));
+  --primary-soft-2: oklch(0.34 0.08 var(--primary-h));
+  --primary-l: 0.62;
+  --primary-c: 0.13;
+
+  --danger-soft: oklch(0.28 0.07 25);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 32px -8px rgba(0, 0, 0, 0.5), 0 4px 12px -4px rgba(0, 0, 0, 0.3);
+  --shadow-pop: 0 24px 48px -12px rgba(0, 0, 0, 0.6);
+
+  color-scheme: dark;
+}
+
+/* Density variants */
+[data-density="compact"] {
+  --space-card-y: 12px;
+  --space-card-x: 14px;
+  --space-stack: 10px;
+}
+[data-density="comfortable"] {
+  --space-card-y: 18px;
+  --space-card-x: 20px;
+  --space-stack: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+button { font-family: inherit; }
+input, textarea, select { font-family: inherit; color: inherit; }
+a { color: inherit; text-decoration: none; }
+
+::selection { background: var(--primary-soft-2); color: var(--fg); }
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Smooth theme transitions on key surfaces */
+.theme-anim,
+.theme-anim * {
+  transition: background-color .25s ease, border-color .25s ease, color .25s ease;
+}
