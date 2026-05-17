@@ -7,14 +7,12 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.henrique.ifconecta.application.post.dto.PostResumoDTO;
-import com.henrique.ifconecta.domain.clube.enums.StatusMembro;
 import com.henrique.ifconecta.domain.clube.enums.TipoAcesso;
 import com.henrique.ifconecta.domain.clube.model.Clube;
 import com.henrique.ifconecta.domain.clube.port.ClubeRepository;
 import com.henrique.ifconecta.domain.post.port.PostRepository;
 import com.henrique.ifconecta.domain.shared.Pagina;
 import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
-// import com.henrique.ifconecta.domain.usuario.port.UsuarioRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -33,14 +31,8 @@ public class ListarTimelineDoClubeUseCase {
         Clube clube = clubeRepository.buscarPorId(clubeId)
                 .orElseThrow(() -> new NegocioException("Clube não encontrado."));
 
-        if (clube.getTipoAcesso() == TipoAcesso.PRIVADO) {
-            boolean isMembroAprovado = clube.getMembros().stream()
-                    .anyMatch(m -> m.getUsuarioId().equals(usuarioAutenticadoId)
-                            && m.getStatus() == StatusMembro.APROVADO);
-
-            if (!isMembroAprovado) {
-                throw new NegocioException("Apenas membros aprovados podem visualizar o conteúdo deste clube privado.");
-            }
+        if (clube.getTipoAcesso() == TipoAcesso.PRIVADO && !clube.isMembroAprovado(usuarioAutenticadoId)) {
+            throw new NegocioException("Apenas membros aprovados podem visualizar o conteúdo deste clube privado.");
         }
 
         var paginaDePosts = postRepository.listarTimelineDoClube(clubeId, pagina, tamanho);

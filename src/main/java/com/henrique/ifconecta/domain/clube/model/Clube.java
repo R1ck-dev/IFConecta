@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.henrique.ifconecta.domain.clube.enums.PapelMembro;
 import com.henrique.ifconecta.domain.clube.enums.StatusClube;
@@ -110,6 +111,30 @@ public class Clube {
 
     public List<MembroClube> getMembros() {
         return membros;
+    }
+
+    public List<MembroClube> getMembrosAprovados() {
+        return this.membros.stream()
+                .filter(m -> m.getStatus() == StatusMembro.APROVADO)
+                .collect(Collectors.toList());
+    }
+
+    public List<UUID> obterIdsMembrosAprovados() {
+        return this.membros.stream()
+                .filter(m -> m.getStatus() == StatusMembro.APROVADO)
+                .map(MembroClube::getUsuarioId)
+                .collect(Collectors.toList());
+    }
+
+    public boolean isMembroAprovado(UUID usuarioId) {
+        return this.membros.stream()
+                .anyMatch(m -> m.getUsuarioId().equals(usuarioId)
+                        && m.getStatus() == StatusMembro.APROVADO);
+    }
+
+    public boolean isLider(UUID usuarioId) {
+        return this.membros.stream()
+                .anyMatch(m -> m.getUsuarioId().equals(usuarioId) && m.getPapel() == PapelMembro.LIDER);
     }
 
 }
