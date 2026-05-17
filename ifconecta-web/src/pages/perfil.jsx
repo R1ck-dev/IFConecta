@@ -12,7 +12,7 @@ import * as clubesService from '../services/clubes.js';
 
 function ProfileHero({ user, isMe, onEditar, onAlterarSenha }) {
   return (
-    <Card style={{ padding: 0 }}>
+    <Card style={{ padding: 0, overflow: 'hidden' }}>
       <div style={{
         height: 96,
         background: 'linear-gradient(120deg, var(--primary) 0%, oklch(0.6 0.12 calc(var(--primary-h) + 30)) 100%)',
@@ -22,30 +22,34 @@ function ProfileHero({ user, isMe, onEditar, onAlterarSenha }) {
         <div style={{ position: 'absolute', inset: 0, opacity: 0.5,
           backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.18) 0%, transparent 50%)' }} />
       </div>
-      <div style={{ padding: '0 22px 22px', marginTop: -42, display: 'flex', alignItems: 'flex-end', gap: 18, flexWrap: 'wrap' }}>
-        <Avatar name={user.nome} size="xl" style={{ border: '4px solid var(--surface)', boxShadow: 'var(--shadow-md)' }} />
-        <div style={{ flex: 1, minWidth: 200, paddingBottom: 4 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            <h1 className="profile-name">{user.nome}</h1>
-            <Badge variant={user.tipo === 'PROFESSOR' || user.tipo === 'INSTITUCIONAL' ? 'primary' : 'default'} dot>
-              {tipoLabel(user.tipo)}
-            </Badge>
-            {user.role === 'ADMIN' && <Badge variant="warning"><Icon name="shield" size={10} /> Admin</Badge>}
-          </div>
-          <div className="profile-meta">
-            {isMe && user.emailAcad && <span>{user.emailAcad}</span>}
-          </div>
+      <div style={{ padding: '0 22px 22px' }}>
+        <div style={{ marginTop: -42, marginBottom: 12 }}>
+          <Avatar name={user.nome} size="xl" style={{ border: '4px solid var(--surface)', boxShadow: 'var(--shadow-md)' }} />
         </div>
-        {isMe && (
-          <div style={{ display: 'flex', gap: 8, paddingBottom: 4 }}>
-            <Button variant="outline" size="sm" icon={<Icon name="edit" size={13} />} onClick={onEditar}>
-              Editar perfil
-            </Button>
-            <Button variant="outline" size="sm" icon={<Icon name="lock" size={13} />} onClick={onAlterarSenha}>
-              Alterar senha
-            </Button>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <h1 className="profile-name">{user.nome}</h1>
+              <Badge variant={user.tipo === 'PROFESSOR' || user.tipo === 'INSTITUCIONAL' ? 'primary' : 'default'} dot>
+                {tipoLabel(user.tipo)}
+              </Badge>
+              {user.role === 'ADMIN' && <Badge variant="warning"><Icon name="shield" size={10} /> Admin</Badge>}
+            </div>
+            {isMe && user.emailAcad && (
+              <div className="profile-meta">{user.emailAcad}</div>
+            )}
           </div>
-        )}
+          {isMe && (
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <Button variant="outline" size="sm" icon={<Icon name="edit" size={13} />} onClick={onEditar}>
+                Editar perfil
+              </Button>
+              <Button variant="outline" size="sm" icon={<Icon name="lock" size={13} />} onClick={onAlterarSenha}>
+                Alterar senha
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </Card>
   );
