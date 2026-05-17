@@ -1,0 +1,806 @@
+{
+  "info": {
+    "_postman_id": "9da07951-37ee-4264-94d9-ef04f5deeacd",
+    "name": "IF Conecta - Otimizado",
+    "description": "Ambiente organizado para a API do IFConecta com variáveis dinâmicas.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47450528"
+  },
+  "item": [
+    {
+      "name": "01. Auth & Usuários",
+      "item": [
+        {
+          "name": "Registrar Aluno",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"cursoId\": \"{{cursoId}}\",\n    \"nome\": \"Matheus\",\n    \"email\": \"matheus@aluno.ifsp.edu.br\",\n    \"password\": \"senhaSegura123\",\n    \"prontuario\": \"SP300002X\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/alunos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "alunos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if(jsonData.token) {",
+                  "    pm.collectionVariables.set(\"token\", jsonData.token);",
+                  "    console.log(\"Token atualizado automaticamente!\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"pedro@aluno.ifsp.edu.br\",\n    \"password\": \"senhaSegura123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ativar Conta (Aluno)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/ativar?token={{tokenConvite}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "ativar"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "{{tokenConvite}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ativar Conta (Convidado)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{tokenConvite}}\",\n  \"novaSenha\": \"MinhaSenhaSuperForte123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/ativar-convidado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "ativar-convidado"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Meu Perfil (GET /me)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.id) {",
+                  "    pm.collectionVariables.set(\"meuUsuarioId\", jsonData.id);",
+                  "    console.log(\"meuUsuarioId capturado: \" + jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Perfil Público por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/{{usuarioAlvoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "{{usuarioAlvoId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02. Admin",
+      "item": [
+        {
+          "name": "Cursos Seeder",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Bacharelado em Ciência da Computação\",\n  \"sigla\": \"BCC\",\n  \"modalidade\": \"SUPERIOR\",\n  \"disciplinas\": [\n    { \"nome\": \"Algoritmos e Estruturas de Dados I\", \"cargaHoraria\": 80 },\n    { \"nome\": \"Engenharia de Software\", \"cargaHoraria\": 40 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/academico/seeder",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "academico",
+                "seeder"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Convidar Professor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Giovana\",\n    \"emailAcad\": \"giovana@ifsp.edu.br\",\n    \"siape\": \"12345678\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/usuarios/professores/convidar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "usuarios",
+                "professores",
+                "convidar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Convidar Institucional",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Secretaria\",\n    \"emailAcad\": \"secretaria@ifsp.edu.br\",\n    \"setor\": \"CRA\",\n    \"cargo\": \"Assistente em Administração\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/usuarios/institucionais/convidar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "usuarios",
+                "institucionais",
+                "convidar"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03. Acadêmico",
+      "item": [
+        {
+          "name": "Listar Cursos (público)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cursos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cursos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Criar Turma",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"disciplinaId\": \"{{disciplinaId}}\",\n    \"professorId\": \"{{professorId}}\",\n    \"semestre\": \"2026/1\",\n    \"codigoTurma\": \"Estrutura de Dados\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/turmas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turmas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Matricular Aluno em Turma",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/turmas/{{turmaId}}/matricular",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turmas",
+                "{{turmaId}}",
+                "matricular"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04. Clubes",
+      "item": [
+        {
+          "name": "Criar Clube",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Clube de RPG\",\n    \"descricao\": \"Espaço para falarmos sobre RPG\",\n    \"tipoAcesso\": \"PRIVADO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/clubes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Clubes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/clubes?pagina=0&tamanho=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubes"
+              ],
+              "query": [
+                {
+                  "key": "pagina",
+                  "value": "0"
+                },
+                {
+                  "key": "tamanho",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Solicitar Entrada em Clube",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/clubes/{{clubeId}}/membros",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubes",
+                "{{clubeId}}",
+                "membros"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Avaliar Solicitação de Membro",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"aprovado\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/clubes/{{clubeId}}/membros/{{usuarioAlvoId}}/avaliacao",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubes",
+                "{{clubeId}}",
+                "membros",
+                "{{usuarioAlvoId}}",
+                "avaliacao"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05. Posts & Timeline",
+      "item": [
+        {
+          "name": "Criar Post (Timeline Geral)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"conteudo\": \"Alguém sabe onde posso achar kitnets em Salto?\",\n    \"anonimo\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Criar Post em Clube",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"conteudo\": \"Post exclusivo do clube\",\n    \"clubeId\": \"{{clubeId}}\",\n    \"anonimo\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Criar Comentário",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"conteudo\": \"Muito legal este post, concordo totalmente!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{postId}}/comentarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "{{postId}}",
+                "comentarios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Dar Upvote",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{postId}}/upvote",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "{{postId}}",
+                "upvote"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Timeline Geral",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts?pagina=0&tamanho=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts"
+              ],
+              "query": [
+                {
+                  "key": "pagina",
+                  "value": "0"
+                },
+                {
+                  "key": "tamanho",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Detalhe do Post (com comentários)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{postId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "{{postId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Posts do Clube",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/clubes/{{clubeId}}/posts?pagina=0&tamanho=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubes",
+                "{{clubeId}}",
+                "posts"
+              ],
+              "query": [
+                {
+                  "key": "pagina",
+                  "value": "0"
+                },
+                {
+                  "key": "tamanho",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "06. Comunicados e Notificações",
+      "item": [
+        {
+          "name": "Enviar Comunicado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Sessão Presencial Sexta-Feira\",\n  \"mensagem\": \"Sessão presencial no IF bloco B sala 101 14h00\",\n  \"tipoAlvo\": \"GERAL\",\n  \"alvoId\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/comunicados",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "comunicados"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Minhas Notificações",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/comunicados/minhas?pagina=0&tamanho=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "comunicados",
+                "minhas"
+              ],
+              "query": [
+                {
+                  "key": "pagina",
+                  "value": "0"
+                },
+                {
+                  "key": "tamanho",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Visualizar Notificação",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/comunicados/{{notificacaoId}}/lida",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "comunicados",
+                "{{notificacaoId}}",
+                "lida"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "tokenConvite",
+      "value": ""
+    },
+    {
+      "key": "cursoId",
+      "value": ""
+    },
+    {
+      "key": "disciplinaId",
+      "value": ""
+    },
+    {
+      "key": "professorId",
+      "value": ""
+    },
+    {
+      "key": "turmaId",
+      "value": ""
+    },
+    {
+      "key": "clubeId",
+      "value": ""
+    },
+    {
+      "key": "postId",
+      "value": ""
+    },
+    {
+      "key": "usuarioAlvoId",
+      "value": ""
+    },
+    {
+      "key": "meuUsuarioId",
+      "value": ""
+    },
+    {
+      "key": "notificacaoId",
+      "value": ""
+    }
+  ]
+}
