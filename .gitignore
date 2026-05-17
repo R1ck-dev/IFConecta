@@ -10,3 +10,6 @@ application-prod.yml
 
 data/
 db-data/
+
+# Build artifacts
+target/
