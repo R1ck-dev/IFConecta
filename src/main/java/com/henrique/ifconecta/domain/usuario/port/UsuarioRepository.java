@@ -1,5 +1,6 @@
 package com.henrique.ifconecta.domain.usuario.port;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,4 +14,6 @@ public interface UsuarioRepository {
     boolean existePorEmail(String email);
     List<UUID> buscarTodosIdsAtivos();
     List<UUID> buscarIdsPorCurso(UUID cursoId);
-} 
+    List<Usuario> buscarPorIds(Collection<UUID> ids);
+}
+

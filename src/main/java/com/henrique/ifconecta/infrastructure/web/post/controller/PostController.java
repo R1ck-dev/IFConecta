@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.henrique.ifconecta.application.post.dto.AdicionarComentarioInput;
 import com.henrique.ifconecta.application.post.dto.CriarPostInput;
+import com.henrique.ifconecta.application.post.dto.PostDetalheDTO;
 import com.henrique.ifconecta.application.post.dto.PostResumoDTO;
 import com.henrique.ifconecta.application.post.usecase.AdicionarComentarioUseCase;
+import com.henrique.ifconecta.application.post.usecase.BuscarPostDetalheUseCase;
 import com.henrique.ifconecta.application.post.usecase.CriarPostUseCase;
 import com.henrique.ifconecta.application.post.usecase.DarUpvoteUseCase;
 import com.henrique.ifconecta.application.post.usecase.ListarTimelineGeralUseCase;
@@ -37,6 +39,7 @@ public class PostController {
     private final AdicionarComentarioUseCase adicionarComentarioUseCase;
     private final DarUpvoteUseCase darUpvoteUseCase;
     private final ListarTimelineGeralUseCase listarTimelineGeralUseCase;
+    private final BuscarPostDetalheUseCase buscarPostDetalheUseCase;
 
     @PostMapping
     public ResponseEntity<Void> criarPost(@RequestBody @Valid CriarPostRequest request, @CurrentUserId UUID autorId) {
@@ -79,5 +82,12 @@ public class PostController {
         Pagina<PostResumoDTO> response = listarTimelineGeralUseCase.execute(pagina, tamanho);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDetalheDTO> buscarDetalhe(
+            @PathVariable UUID postId,
+            @CurrentUserId UUID usuarioId) {
+        return ResponseEntity.ok(buscarPostDetalheUseCase.execute(postId, usuarioId));
     }
 }
