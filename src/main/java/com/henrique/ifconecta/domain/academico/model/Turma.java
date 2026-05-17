@@ -44,6 +44,13 @@ public class Turma {
         this.alunosMatriculados.add(alunoId);
     }
 
+    public void cancelarMatricula(UUID alunoId) {
+        if (!this.alunosMatriculados.contains(alunoId)) {
+            throw new NegocioException("O aluno não está matriculado nesta turma.");
+        }
+        this.alunosMatriculados.remove(alunoId);
+    }
+
     public UUID getId() {
         return id;
     }
