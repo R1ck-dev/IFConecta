@@ -8,8 +8,9 @@ public record PostResumoDTO(
     String autorNome,
     String conteudo,
     int qtdUpvotes,
+    boolean jaDeiUpvote,
     int qtdComentarios,
     LocalDateTime dataCriacao
 ) {
-    
+
 }

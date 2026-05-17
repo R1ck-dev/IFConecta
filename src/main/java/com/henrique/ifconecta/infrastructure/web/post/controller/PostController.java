@@ -77,9 +77,10 @@ public class PostController {
     @GetMapping
     public ResponseEntity<Pagina<PostResumoDTO>> listarTimelineGeral(
             @RequestParam(defaultValue = "0") int pagina,
-            @RequestParam(defaultValue = "10") int tamanho) {
+            @RequestParam(defaultValue = "10") int tamanho,
+            @CurrentUserId UUID usuarioId) {
 
-        Pagina<PostResumoDTO> response = listarTimelineGeralUseCase.execute(pagina, tamanho);
+        Pagina<PostResumoDTO> response = listarTimelineGeralUseCase.execute(usuarioId, pagina, tamanho);
 
         return ResponseEntity.ok(response);
     }

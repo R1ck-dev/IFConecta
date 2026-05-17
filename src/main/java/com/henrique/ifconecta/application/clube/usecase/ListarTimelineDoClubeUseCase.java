@@ -46,6 +46,7 @@ public class ListarTimelineDoClubeUseCase {
                             nomeExibicao,
                             post.getConteudo(),
                             post.getQtdUpVotes(),
+                            post.getUpvotes().contains(usuarioAutenticadoId),
                             post.getComentarios().size(),
                             post.getDataCriacao());
                 })

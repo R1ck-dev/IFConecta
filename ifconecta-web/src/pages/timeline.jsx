@@ -47,12 +47,13 @@ function PostCard({ post, onUpvote, upvoting }) {
       <div className="post-body">{post.conteudo}</div>
       <div className="post-ft">
         <button
-          className="post-action"
+          className={`post-action ${post.jaDeiUpvote ? 'active' : ''}`}
           onClick={() => onUpvote(post.id)}
           disabled={upvoting}
-          aria-label="Dar upvote"
+          aria-label={post.jaDeiUpvote ? 'Remover upvote' : 'Dar upvote'}
+          aria-pressed={!!post.jaDeiUpvote}
         >
-          <Icon name="arrowUp" size={15} />
+          {post.jaDeiUpvote ? <IconFilled name="arrowUp" size={15} /> : <Icon name="arrowUp" size={15} />}
           <span>{post.qtdUpvotes ?? 0}</span>
         </button>
         <button className="post-action" onClick={() => navigate(`/posts/${post.id}`)}>
@@ -115,11 +116,17 @@ export function TimelinePage() {
 
   const handleUpvote = useCallback(async (postId) => {
     setUpvotingId(postId);
-    setPosts((prev) => prev.map((p) => (p.id === postId ? { ...p, qtdUpvotes: (p.qtdUpvotes ?? 0) + 1 } : p)));
+    let snapshot = null;
+    setPosts((prev) => prev.map((p) => {
+      if (p.id !== postId) return p;
+      snapshot = p;
+      const delta = p.jaDeiUpvote ? -1 : 1;
+      return { ...p, jaDeiUpvote: !p.jaDeiUpvote, qtdUpvotes: Math.max(0, (p.qtdUpvotes ?? 0) + delta) };
+    }));
     try {
       await postsService.upvote(postId);
     } catch (err) {
-      setPosts((prev) => prev.map((p) => (p.id === postId ? { ...p, qtdUpvotes: Math.max(0, (p.qtdUpvotes ?? 1) - 1) } : p)));
+      if (snapshot) setPosts((prev) => prev.map((p) => (p.id === postId ? snapshot : p)));
       toast.error('Não foi possível registrar o upvote', extractErrorMessage(err));
     } finally {
       setUpvotingId(null);
@@ -251,7 +258,12 @@ export function PostDetailPage() {
   const handleUpvote = async () => {
     setUpvoting(true);
     const prev = detail;
-    setDetail({ ...detail, qtdUpvotes: (detail.qtdUpvotes ?? 0) + (detail.jaDeiUpvote ? 0 : 1), jaDeiUpvote: true });
+    const delta = detail.jaDeiUpvote ? -1 : 1;
+    setDetail({
+      ...detail,
+      jaDeiUpvote: !detail.jaDeiUpvote,
+      qtdUpvotes: Math.max(0, (detail.qtdUpvotes ?? 0) + delta),
+    });
     try {
       await postsService.upvote(detail.id);
     } catch (err) {

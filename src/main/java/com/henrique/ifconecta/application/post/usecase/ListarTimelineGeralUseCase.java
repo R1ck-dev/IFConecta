@@ -1,6 +1,7 @@
 package com.henrique.ifconecta.application.post.usecase;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class ListarTimelineGeralUseCase {
     private final PostRepository postRepository;
 
     @Transactional
-    public Pagina<PostResumoDTO> execute(int pagina, int tamanho) {
+    public Pagina<PostResumoDTO> execute(UUID usuarioLogadoId, int pagina, int tamanho) {
         Pagina<Post> paginaDePosts = postRepository.listarTimelineGeral(pagina, tamanho);
 
         List<PostResumoDTO> resumos = paginaDePosts.itens().stream()
@@ -32,6 +33,7 @@ public class ListarTimelineGeralUseCase {
                             nomeExibicao,
                             post.getConteudo(),
                             post.getQtdUpVotes(),
+                            post.getUpvotes().contains(usuarioLogadoId),
                             post.getComentarios().size(),
                             post.getDataCriacao());
                 })
