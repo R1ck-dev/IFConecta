@@ -32,6 +32,8 @@ public class JavaMailSenderAdapter implements EmailSenderPort {
         mailSender.send(message);
     }
 
+    //DESATIVADO:
+
     @Override
     public void enviarEmailConvite(String destinatario, String nome, String token) {
         SimpleMailMessage message = new SimpleMailMessage();
