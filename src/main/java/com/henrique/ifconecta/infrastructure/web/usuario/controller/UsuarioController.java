@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.henrique.ifconecta.application.usuario.dto.AlterarMinhaSenhaInput;
 import com.henrique.ifconecta.application.usuario.dto.AtivarConvidadoInput;
 import com.henrique.ifconecta.application.usuario.dto.AtualizarMeuPerfilInput;
 import com.henrique.ifconecta.application.usuario.dto.MeuPerfilDTO;
 import com.henrique.ifconecta.application.usuario.dto.RegistrarAlunoInput;
 import com.henrique.ifconecta.application.usuario.dto.UsuarioPublicoDTO;
+import com.henrique.ifconecta.application.usuario.usecase.AlterarMinhaSenhaUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.AtivarContaUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.AtivarConvidadoUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.AtualizarMeuPerfilUseCase;
@@ -27,6 +29,7 @@ import com.henrique.ifconecta.application.usuario.usecase.BuscarMeuPerfilUseCase
 import com.henrique.ifconecta.application.usuario.usecase.BuscarUsuarioPublicoUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.RegistrarAlunoUseCase;
 import com.henrique.ifconecta.infrastructure.config.security.CurrentUserId;
+import com.henrique.ifconecta.infrastructure.web.usuario.dto.AlterarMinhaSenhaRequest;
 import com.henrique.ifconecta.infrastructure.web.usuario.dto.AtualizarMeuPerfilRequest;
 import com.henrique.ifconecta.infrastructure.web.usuario.dto.DefinirSenhaRequest;
 import com.henrique.ifconecta.infrastructure.web.usuario.dto.RegistrarAlunoRequest;
@@ -45,6 +48,7 @@ public class UsuarioController {
     private final BuscarMeuPerfilUseCase buscarMeuPerfilUseCase;
     private final BuscarUsuarioPublicoUseCase buscarUsuarioPublicoUseCase;
     private final AtualizarMeuPerfilUseCase atualizarMeuPerfilUseCase;
+    private final AlterarMinhaSenhaUseCase alterarMinhaSenhaUseCase;
 
     @PostMapping("/alunos")
     public ResponseEntity<Void> registrarAluno(@RequestBody @Valid RegistrarAlunoRequest request) {
@@ -89,6 +93,14 @@ public class UsuarioController {
     public ResponseEntity<Void> atualizarMeuPerfil(@CurrentUserId UUID usuarioId,
             @RequestBody @Valid AtualizarMeuPerfilRequest request) {
         atualizarMeuPerfilUseCase.execute(new AtualizarMeuPerfilInput(usuarioId, request.nome()));
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/me/senha")
+    public ResponseEntity<Void> alterarMinhaSenha(@CurrentUserId UUID usuarioId,
+            @RequestBody @Valid AlterarMinhaSenhaRequest request) {
+        alterarMinhaSenhaUseCase.execute(new AlterarMinhaSenhaInput(
+                usuarioId, request.senhaAtual(), request.novaSenha()));
         return ResponseEntity.noContent().build();
     }
 
