@@ -10,6 +10,7 @@ import * as clubesService from '../services/clubes.js';
 import * as notificacoesService from '../services/notificacoes.js';
 import * as authService from '../services/auth.js';
 import * as academicoService from '../services/academico.js';
+import * as cursosService from '../services/cursos.js';
 import { extractErrorMessage } from '../services/api.js';
 
 const POST_LIMIT = 1000;
@@ -545,28 +546,46 @@ export function ComunicadoDialog({ open, onClose }) {
   const [tipoAlvo, setTipoAlvo] = useState('GERAL');
   const [alvoId, setAlvoId] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [clubesLiderados, setClubesLiderados] = useState([]);
+  const [clubesDisponiveis, setClubesDisponiveis] = useState([]);
   const [carregandoClubes, setCarregandoClubes] = useState(false);
+  const [cursos, setCursos] = useState([]);
+  const [carregandoCursos, setCarregandoCursos] = useState(false);
+  const [turmasDisponiveis, setTurmasDisponiveis] = useState([]);
+  const [carregandoTurmas, setCarregandoTurmas] = useState(false);
 
   const podeGeral = podeComunicar(me);
-  const temClubesLiderados = clubesLiderados.length > 0;
+  const isProfessor = me?.tipo === 'PROFESSOR';
+  const temClubes = clubesDisponiveis.length > 0;
+  const temTurmas = turmasDisponiveis.length > 0;
 
   useEffect(() => {
     if (!open) return;
     setTitulo('');
     setMensagem('');
     setAlvoId('');
-    setTipoAlvo(podeGeral ? 'GERAL' : 'CLUBE');
 
     let cancelled = false;
     setCarregandoClubes(true);
     (async () => {
       try {
-        const meus = await clubesService.listarMeus();
-        if (!meus.length) {
-          if (!cancelled) setClubesLiderados([]);
+        if (podeGeral) {
+          // admin/institucional: todos os clubes da plataforma
+          const pagina = await clubesService.listar({ pagina: 0, tamanho: 200 });
+          if (cancelled) return;
+          setClubesDisponiveis((pagina.itens || []).map((c) => ({ id: c.id, nome: c.nome })));
           return;
         }
+        const meus = await clubesService.listarMeus();
+        if (!meus.length) {
+          if (!cancelled) setClubesDisponiveis([]);
+          return;
+        }
+        if (isProfessor) {
+          // professor: qualquer clube em que participa (membro aprovado)
+          if (!cancelled) setClubesDisponiveis(meus.map((c) => ({ id: c.id, nome: c.nome })));
+          return;
+        }
+        // demais: somente clubes que lidera
         const detalhes = await Promise.all(
           meus.map((c) => clubesService.getDetail(c.id).catch(() => null))
         );
@@ -574,26 +593,56 @@ export function ComunicadoDialog({ open, onClose }) {
         const liderados = detalhes
           .filter((d) => d && d.souLider)
           .map((d) => ({ id: d.id, nome: d.nome }));
-        setClubesLiderados(liderados);
+        setClubesDisponiveis(liderados);
       } catch {
-        if (!cancelled) setClubesLiderados([]);
+        if (!cancelled) setClubesDisponiveis([]);
       } finally {
         if (!cancelled) setCarregandoClubes(false);
       }
     })();
-    return () => { cancelled = true; };
-  }, [open, podeGeral]);
 
-  useEffect(() => { setAlvoId(''); }, [tipoAlvo]);
+    if (podeGeral) {
+      setCarregandoCursos(true);
+      cursosService.listar()
+        .then((cs) => { if (!cancelled) setCursos(cs); })
+        .catch(() => { if (!cancelled) setCursos([]); })
+        .finally(() => { if (!cancelled) setCarregandoCursos(false); });
+    }
+
+    if (podeGeral || isProfessor) {
+      setCarregandoTurmas(true);
+      const carregar = podeGeral
+        ? academicoService.listarTurmas({ pagina: 0, tamanho: 200 }).then((p) => p.itens || [])
+        : academicoService.listarTurmasLecionadas();
+      carregar
+        .then((ts) => { if (!cancelled) setTurmasDisponiveis(ts); })
+        .catch(() => { if (!cancelled) setTurmasDisponiveis([]); })
+        .finally(() => { if (!cancelled) setCarregandoTurmas(false); });
+    }
+
+    return () => { cancelled = true; };
+  }, [open, podeGeral, isProfessor]);
 
   const opcoesAlvo = useMemo(() => {
     const arr = [];
     if (podeGeral) arr.push({ value: 'GERAL', label: 'Toda a comunidade' });
-    if (temClubesLiderados) arr.push({ value: 'CLUBE', label: 'Um clube que lidero' });
+    if (podeGeral) arr.push({ value: 'CURSO', label: 'Alunos de um curso' });
+    if ((podeGeral || isProfessor) && temTurmas) arr.push({ value: 'TURMA', label: 'Alunos de uma turma' });
+    if (temClubes) arr.push({ value: 'CLUBE', label: podeGeral ? 'Membros de um clube' : isProfessor ? 'Um clube que participo' : 'Um clube que lidero' });
     return arr;
-  }, [podeGeral, temClubesLiderados]);
+  }, [podeGeral, isProfessor, temTurmas, temClubes]);
 
-  const needsAlvo = tipoAlvo === 'CLUBE';
+  useEffect(() => {
+    if (!open) return;
+    if (opcoesAlvo.length === 0) return;
+    if (!opcoesAlvo.some((o) => o.value === tipoAlvo)) {
+      setTipoAlvo(opcoesAlvo[0].value);
+    }
+  }, [open, opcoesAlvo, tipoAlvo]);
+
+  useEffect(() => { setAlvoId(''); }, [tipoAlvo]);
+
+  const needsAlvo = tipoAlvo === 'CLUBE' || tipoAlvo === 'CURSO' || tipoAlvo === 'TURMA';
   const canSubmit = titulo.trim().length >= 3
     && mensagem.trim().length >= 10
     && opcoesAlvo.length > 0
@@ -625,7 +674,7 @@ export function ComunicadoDialog({ open, onClose }) {
       open={open}
       onClose={onClose}
       title="Enviar comunicado"
-      subtitle="Comunique-se com a comunidade ou com um clube que você lidera"
+      subtitle="Escolha o alcance: comunidade inteira, curso, turma que leciona ou clube que lidera"
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>Cancelar</Button>
@@ -641,10 +690,10 @@ export function ComunicadoDialog({ open, onClose }) {
         </>
       }
     >
-      {opcoesAlvo.length === 0 && !carregandoClubes && (
+      {opcoesAlvo.length === 0 && !carregandoClubes && !carregandoTurmas && (
         <div className="card-flat" style={{ padding: 12, borderRadius: 'var(--r-md)', fontSize: 13, color: 'var(--fg-muted)', display: 'flex', gap: 8 }}>
           <Icon name="alertCircle" size={14} style={{ flexShrink: 0, marginTop: 2 }} />
-          <span>Você ainda não pode enviar comunicados. Apenas servidores institucionais, administradores e líderes de clube têm permissão.</span>
+          <span>Você ainda não pode enviar comunicados. Precisa ser servidor institucional, admin, professor com turma ativa ou líder de clube.</span>
         </div>
       )}
 
@@ -661,11 +710,33 @@ export function ComunicadoDialog({ open, onClose }) {
             {opcoesAlvo.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </Select>
         </Field>
-        {needsAlvo ? (
+        {tipoAlvo === 'CLUBE' ? (
           <Field label="Clube">
             <Select value={alvoId} onChange={(e) => setAlvoId(e.target.value)} disabled={carregandoClubes}>
               <option value="">{carregandoClubes ? 'Carregando…' : 'Selecione…'}</option>
-              {clubesLiderados.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
+              {clubesDisponiveis.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
+            </Select>
+          </Field>
+        ) : tipoAlvo === 'CURSO' ? (
+          <Field label="Curso">
+            <Select value={alvoId} onChange={(e) => setAlvoId(e.target.value)} disabled={carregandoCursos}>
+              <option value="">{carregandoCursos ? 'Carregando…' : 'Selecione…'}</option>
+              {cursos.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.sigla ? `${c.sigla} — ${c.nome}` : c.nome}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        ) : tipoAlvo === 'TURMA' ? (
+          <Field label="Turma">
+            <Select value={alvoId} onChange={(e) => setAlvoId(e.target.value)} disabled={carregandoTurmas}>
+              <option value="">{carregandoTurmas ? 'Carregando…' : 'Selecione…'}</option>
+              {turmasDisponiveis.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.disciplinaNome} · {t.codigoTurma} ({t.semestre})
+                </option>
+              ))}
             </Select>
           </Field>
         ) : tipoAlvo === 'GERAL' ? (

@@ -17,6 +17,7 @@ import com.henrique.ifconecta.domain.notificacao.port.NotificacaoRepository;
 import com.henrique.ifconecta.domain.usuario.enums.RoleUsuario;
 import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
 import com.henrique.ifconecta.domain.usuario.model.Institucional;
+import com.henrique.ifconecta.domain.usuario.model.Professor;
 import com.henrique.ifconecta.domain.usuario.model.Usuario;
 import com.henrique.ifconecta.domain.usuario.port.UsuarioRepository;
 
@@ -56,9 +57,11 @@ public class EnviarComunicadoUseCase {
                 Turma turma = turmaRepository.buscarPorId(input.alvoId())
                         .orElseThrow(() -> new NegocioException("Turma não encontrada."));
 
-                if (!turma.getProfessorId().equals(remetente.getId())) {
+                boolean isAdminOuInstitucional = temPapelGlobal(remetente);
+                boolean isProfessorResponsavel = turma.getProfessorId().equals(remetente.getId());
+                if (!isAdminOuInstitucional && !isProfessorResponsavel) {
                     throw new NegocioException(
-                            "Apenas o professor responsável pode enviar comunicados para esta turma.");
+                            "Apenas admin, institucional ou o professor responsável pode enviar comunicados para esta turma.");
                 }
                 destinatariosIds = new ArrayList<>(turma.getAlunosMatriculados());
             }
@@ -68,8 +71,13 @@ public class EnviarComunicadoUseCase {
                 Clube clube = clubeRepository.buscarPorId(input.alvoId())
                         .orElseThrow(() -> new NegocioException("Clube não encontrado."));
 
-                if (!clube.isLider(remetente.getId())) {
-                    throw new NegocioException("Apenas o líder pode enviar comunicados para todo o clube.");
+                boolean isAdminOuInstitucional = temPapelGlobal(remetente);
+                boolean isLider = clube.isLider(remetente.getId());
+                boolean isProfessorMembro = remetente instanceof Professor
+                        && clube.isMembroAprovado(remetente.getId());
+                if (!isAdminOuInstitucional && !isLider && !isProfessorMembro) {
+                    throw new NegocioException(
+                            "Apenas admin, institucional, líder ou professor membro pode enviar comunicados para este clube.");
                 }
 
                 destinatariosIds = clube.obterIdsMembrosAprovados();
@@ -96,9 +104,13 @@ public class EnviarComunicadoUseCase {
     }
 
     private void validarPermissaoGlobal(Usuario remetente) {
-        if (remetente.getRole() != RoleUsuario.ADMIN && !(remetente instanceof Institucional)) {
+        if (!temPapelGlobal(remetente)) {
             throw new NegocioException(
                     "Apenas membros institucionais ou administradores podem enviar comunicados gerais ou por curso.");
         }
+    }
+
+    private boolean temPapelGlobal(Usuario remetente) {
+        return remetente.getRole() == RoleUsuario.ADMIN || remetente instanceof Institucional;
     }
 }
