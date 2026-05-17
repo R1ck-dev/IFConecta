@@ -50,7 +50,7 @@ public class RegistrarAlunoUseCase {
                 input.nome(),
                 input.email(),
                 hash,
-                input.prontuario());
+                input.prontuario().toUpperCase());
 
         Aluno alunoSalvo = (Aluno) usuarioRepository.salvar(novoAluno);
 

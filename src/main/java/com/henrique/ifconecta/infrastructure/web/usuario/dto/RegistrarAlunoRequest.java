@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record RegistrarAlunoRequest(
@@ -21,7 +22,8 @@ public record RegistrarAlunoRequest(
     String password,
 
     @NotBlank(message = "O prontuário é obrigatório.")
+    @Pattern(regexp = "^[Ss][Ll]\\d{6}[A-Za-z]$", message = "O prontuário deve seguir o formato SL000000X (SL + 6 dígitos + 1 letra).")
     String prontuario
 ) {
-    
+
 }
