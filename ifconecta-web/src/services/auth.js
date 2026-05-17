@@ -34,3 +34,11 @@ export async function atualizarMeuPerfil({ nome }) {
 export async function alterarMinhaSenha({ senhaAtual, novaSenha }) {
   await api.patch('/usuarios/me/senha', { senhaAtual, novaSenha });
 }
+
+export async function esqueciSenha(email) {
+  await api.post('/usuarios/esqueci-senha', { email });
+}
+
+export async function redefinirSenha({ token, novaSenha }) {
+  await api.post('/usuarios/redefinir-senha', { token, novaSenha });
+}

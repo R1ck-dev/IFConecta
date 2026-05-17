@@ -10,7 +10,7 @@ import {
 } from './components/modals.jsx';
 import { useAuth } from './store/AuthContext.jsx';
 import {
-  AtivarConvidadoPage, AtivarPage, CadastroPage, LoginPage,
+  AtivarConvidadoPage, AtivarPage, CadastroPage, LoginPage, RedefinirSenhaPage,
 } from './pages/auth.jsx';
 import { PostDetailPage, TimelinePage } from './pages/timeline.jsx';
 import { ClubeDetailPage, ClubesListPage } from './pages/clubes.jsx';
@@ -138,6 +138,7 @@ export default function App() {
       </Route>
       <Route path="/ativar" element={<AtivarPage />} />
       <Route path="/ativar-convidado" element={<AtivarConvidadoPage />} />
+      <Route path="/redefinir-senha" element={<RedefinirSenhaPage />} />
 
       <Route element={<PrivateRoute />}>
         <Route element={<AppShellLayout theme={theme} onToggleTheme={toggle} />}>

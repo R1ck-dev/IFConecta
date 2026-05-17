@@ -241,6 +241,78 @@ export function EditarPerfilDialog({ open, onClose }) {
   );
 }
 
+export function EsqueciSenhaDialog({ open, onClose }) {
+  const toast = useToast();
+  const [email, setEmail] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [enviado, setEnviado] = useState(false);
+
+  useEffect(() => {
+    if (open) { setEmail(''); setEnviado(false); }
+  }, [open]);
+
+  const valido = /^\S+@\S+\.\S+$/.test(email);
+  const canSubmit = valido && !submitting;
+
+  const handleSubmit = async () => {
+    if (!canSubmit) return;
+    setSubmitting(true);
+    try {
+      await authService.esqueciSenha(email.trim());
+      setEnviado(true);
+    } catch (err) {
+      toast.error('Não foi possível processar a solicitação', extractErrorMessage(err));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      title="Esqueci minha senha"
+      subtitle={enviado ? 'Verifique seu e-mail' : 'Informe seu e-mail institucional'}
+      footer={enviado ? (
+        <Button variant="primary" onClick={onClose}>Entendi</Button>
+      ) : (
+        <>
+          <Button variant="ghost" onClick={onClose}>Cancelar</Button>
+          <Button variant="primary" onClick={handleSubmit} disabled={!canSubmit} loading={submitting}>
+            Enviar link
+          </Button>
+        </>
+      )}
+    >
+      {enviado ? (
+        <div style={{ textAlign: 'center', padding: '12px 0' }}>
+          <div style={{
+            width: 56, height: 56, borderRadius: 999, background: 'var(--primary-soft)',
+            color: 'var(--primary)', display: 'grid', placeItems: 'center', margin: '0 auto 12px',
+          }}>
+            <Icon name="mail" size={24} />
+          </div>
+          <div style={{ fontSize: 14, color: 'var(--fg-muted)', lineHeight: 1.5 }}>
+            Se houver uma conta com <b style={{ color: 'var(--fg)' }}>{email}</b>, enviaremos um link de redefinição. <br />
+            O link expira em 1 hora.
+          </div>
+        </div>
+      ) : (
+        <Field label="E-mail institucional">
+          <Input
+            icon="mail"
+            type="email"
+            autoFocus
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="seu.nome@aluno.ifsp.edu.br"
+          />
+        </Field>
+      )}
+    </Dialog>
+  );
+}
+
 export function CreateTurmaDialog({ open, onClose, onCreated }) {
   const { me } = useAuth();
   const toast = useToast();

@@ -5,6 +5,7 @@ import {
 } from '../components/ui.jsx';
 import { Icon } from '../components/icons.jsx';
 import { BrandMark } from '../components/layout.jsx';
+import { EsqueciSenhaDialog } from '../components/modals.jsx';
 import { useAuth } from '../store/AuthContext.jsx';
 import * as authService from '../services/auth.js';
 import * as cursosService from '../services/cursos.js';
@@ -41,6 +42,7 @@ export function LoginPage() {
   const [showPw, setShowPw] = useState(false);
   const [errs, setErrs] = useState({});
   const [loading, setLoading] = useState(false);
+  const [esqueciOpen, setEsqueciOpen] = useState(false);
 
   const submit = async (e) => {
     e?.preventDefault();
@@ -89,7 +91,7 @@ export function LoginPage() {
 
           <Field
             label="Senha"
-            rightLabel={<a className="auth-link" onClick={() => toast.info('Em breve', 'Recuperação de senha em desenvolvimento.')}>Esqueci minha senha</a>}
+            rightLabel={<a className="auth-link" onClick={() => setEsqueciOpen(true)}>Esqueci minha senha</a>}
             error={errs.senha}
           >
             <div style={{ position: 'relative' }}>
@@ -126,6 +128,7 @@ export function LoginPage() {
           </div>
         </form>
       </div>
+      <EsqueciSenhaDialog open={esqueciOpen} onClose={() => setEsqueciOpen(false)} />
     </div>
   );
 }
@@ -354,6 +357,61 @@ export function AtivarPage() {
             </>
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+export function RedefinirSenhaPage() {
+  const [params] = useSearchParams();
+  const navigate = useNavigate();
+  const toast = useToast();
+  const [senha, setSenha] = useState('');
+  const [confirma, setConfirma] = useState('');
+  const [errs, setErrs] = useState({});
+  const [loading, setLoading] = useState(false);
+  const token = params.get('token') || '';
+
+  const submit = async (e) => {
+    e?.preventDefault();
+    const newErrs = {};
+    if (!token) newErrs.senha = 'Token ausente na URL — solicite um novo link.';
+    if (!senha) newErrs.senha = 'Crie uma nova senha.';
+    else if (senha.length < 8) newErrs.senha = 'A senha precisa ter pelo menos 8 caracteres.';
+    else if (pwScore(senha) < 2) newErrs.senha = 'Senha precisa ser mais forte.';
+    if (senha !== confirma) newErrs.confirma = 'As senhas não conferem.';
+    setErrs(newErrs);
+    if (Object.keys(newErrs).length) return;
+
+    setLoading(true);
+    try {
+      await authService.redefinirSenha({ token, novaSenha: senha });
+      toast.success('Senha redefinida!', 'Faça login com a nova senha.');
+      navigate('/login');
+    } catch (err) {
+      toast.error('Não foi possível redefinir', extractErrorMessage(err, 'Link inválido ou expirado.'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="auth-shell" data-screen-label="Redefinir Senha">
+      <AuthArt />
+      <div className="auth-form-wrap">
+        <form className="auth-form" onSubmit={submit}>
+          <BrandMark size={32} />
+          <h1>Redefinir senha</h1>
+          <p>Escolha uma nova senha para acessar sua conta.</p>
+          <Field label="Nova senha" error={errs.senha}>
+            <Input icon="lock" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} error={errs.senha} placeholder="Mínimo 8 caracteres" />
+            <PwStrength pw={senha} />
+          </Field>
+          <Field label="Confirmar nova senha" error={errs.confirma}>
+            <Input icon="lock" type="password" value={confirma} onChange={(e) => setConfirma(e.target.value)} error={errs.confirma} placeholder="Repita a senha" />
+          </Field>
+          <Button type="submit" block loading={loading}>Redefinir senha</Button>
+        </form>
       </div>
     </div>
   );
