@@ -20,6 +20,11 @@ export async function listarSolicitacoes(clubeId) {
   return data;
 }
 
+export async function listarMembros(clubeId) {
+  const { data } = await api.get(`/clubes/${clubeId}/membros`);
+  return data;
+}
+
 export async function create({ nome, descricao, tipoAcesso }) {
   await api.post('/clubes', { nome, descricao, tipoAcesso });
 }

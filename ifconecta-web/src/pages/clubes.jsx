@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
+import { Link, useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import {
   Avatar, Badge, Button, Card, Empty, Skel, Tabs, timeAgo, useToast,
 } from '../components/ui.jsx';
 import { Icon } from '../components/icons.jsx';
-import { useAuth } from '../store/AuthContext.jsx';
+import { tipoLabel, useAuth } from '../store/AuthContext.jsx';
 import * as clubesService from '../services/clubes.js';
 import { extractErrorMessage } from '../services/api.js';
 
@@ -240,13 +240,56 @@ function PostsTab({ clubeId }) {
   );
 }
 
-function MembrosTab() {
+function MembrosTab({ clubeId, souMembro }) {
+  const toast = useToast();
+  const [membros, setMembros] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!souMembro) { setLoading(false); return; }
+    let cancelled = false;
+    setLoading(true);
+    clubesService.listarMembros(clubeId)
+      .then((lista) => { if (!cancelled) setMembros(lista); })
+      .catch((err) => { if (!cancelled) toast.error('Não foi possível carregar os membros', extractErrorMessage(err)); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [clubeId, souMembro]);
+
+  if (!souMembro) {
+    return <Empty icon="lock" title="Acesso restrito" message="Apenas membros aprovados podem ver a lista de membros." />;
+  }
+  if (loading) {
+    return <Card><Skel w="60%" h={14} /><Skel w="100%" h={12} style={{ marginTop: 12 }} /></Card>;
+  }
+  if (membros.length === 0) {
+    return <Empty icon="users" title="Sem membros" message="Este clube ainda não tem membros aprovados." />;
+  }
+
   return (
-    <Empty
-      icon="users"
-      title="Em breve"
-      message="A listagem de membros depende de um endpoint do backend que ainda não existe."
-    />
+    <div className="stack-md">
+      {membros.map((m) => (
+        <Link
+          key={m.usuarioId}
+          to={`/perfil/${m.usuarioId}`}
+          style={{ display: 'block' }}
+        >
+          <Card className="card-tight" style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+            <Avatar name={m.nome} size="md" />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <span style={{ fontWeight: 600, fontSize: 14 }}>{m.nome}</span>
+                {m.papel === 'LIDER' && <Badge variant="warning" dot>Líder</Badge>}
+              </div>
+              <div style={{ fontSize: 11.5, color: 'var(--fg-subtle)', marginTop: 4 }}>
+                {tipoLabel(m.tipo)} · entrou {timeAgo(m.dataIngresso)}
+              </div>
+            </div>
+            <Icon name="chevronRight" size={14} className="text-subtle" />
+          </Card>
+        </Link>
+      ))}
+    </div>
   );
 }
 
@@ -464,7 +507,7 @@ export function ClubeDetailPage() {
       <Tabs value={tab} onChange={setTab} items={tabs} />
 
       {tab === 'posts' && <PostsTab clubeId={clube.id} />}
-      {tab === 'membros' && <MembrosTab />}
+      {tab === 'membros' && <MembrosTab clubeId={clube.id} souMembro={isMember} />}
       {tab === 'solicitacoes' && isLider && <SolicitacoesTab clubeId={clube.id} onAvaliado={carregar} />}
       {tab === 'sobre' && <SobreTab clube={clube} />}
     </div>
