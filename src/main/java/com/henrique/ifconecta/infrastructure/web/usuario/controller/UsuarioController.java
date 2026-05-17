@@ -19,7 +19,9 @@ import com.henrique.ifconecta.application.usuario.dto.AlterarMinhaSenhaInput;
 import com.henrique.ifconecta.application.usuario.dto.AtivarConvidadoInput;
 import com.henrique.ifconecta.application.usuario.dto.AtualizarMeuPerfilInput;
 import com.henrique.ifconecta.application.usuario.dto.MeuPerfilDTO;
+import com.henrique.ifconecta.application.usuario.dto.RedefinirSenhaInput;
 import com.henrique.ifconecta.application.usuario.dto.RegistrarAlunoInput;
+import com.henrique.ifconecta.application.usuario.dto.SolicitarRedefinicaoSenhaInput;
 import com.henrique.ifconecta.application.usuario.dto.UsuarioPublicoDTO;
 import com.henrique.ifconecta.application.usuario.usecase.AlterarMinhaSenhaUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.AtivarContaUseCase;
@@ -27,11 +29,15 @@ import com.henrique.ifconecta.application.usuario.usecase.AtivarConvidadoUseCase
 import com.henrique.ifconecta.application.usuario.usecase.AtualizarMeuPerfilUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.BuscarMeuPerfilUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.BuscarUsuarioPublicoUseCase;
+import com.henrique.ifconecta.application.usuario.usecase.RedefinirSenhaUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.RegistrarAlunoUseCase;
+import com.henrique.ifconecta.application.usuario.usecase.SolicitarRedefinicaoSenhaUseCase;
 import com.henrique.ifconecta.infrastructure.config.security.CurrentUserId;
 import com.henrique.ifconecta.infrastructure.web.usuario.dto.AlterarMinhaSenhaRequest;
 import com.henrique.ifconecta.infrastructure.web.usuario.dto.AtualizarMeuPerfilRequest;
 import com.henrique.ifconecta.infrastructure.web.usuario.dto.DefinirSenhaRequest;
+import com.henrique.ifconecta.infrastructure.web.usuario.dto.EsqueciSenhaRequest;
+import com.henrique.ifconecta.infrastructure.web.usuario.dto.RedefinirSenhaRequest;
 import com.henrique.ifconecta.infrastructure.web.usuario.dto.RegistrarAlunoRequest;
 
 import jakarta.validation.Valid;
@@ -49,6 +55,8 @@ public class UsuarioController {
     private final BuscarUsuarioPublicoUseCase buscarUsuarioPublicoUseCase;
     private final AtualizarMeuPerfilUseCase atualizarMeuPerfilUseCase;
     private final AlterarMinhaSenhaUseCase alterarMinhaSenhaUseCase;
+    private final SolicitarRedefinicaoSenhaUseCase solicitarRedefinicaoSenhaUseCase;
+    private final RedefinirSenhaUseCase redefinirSenhaUseCase;
 
     @PostMapping("/alunos")
     public ResponseEntity<Void> registrarAluno(@RequestBody @Valid RegistrarAlunoRequest request) {
@@ -82,6 +90,20 @@ public class UsuarioController {
         Map<String, String> response = new HashMap<>();
         response.put("mensagem", "Conta ativada e senha definida com sucesso!");
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/esqueci-senha")
+    public ResponseEntity<Map<String, String>> esqueciSenha(@RequestBody @Valid EsqueciSenhaRequest request) {
+        solicitarRedefinicaoSenhaUseCase.execute(new SolicitarRedefinicaoSenhaInput(request.email()));
+        return ResponseEntity.ok(Map.of(
+                "mensagem", "Se houver uma conta com este e-mail, enviaremos um link de redefinição."));
+    }
+
+    @PostMapping("/redefinir-senha")
+    public ResponseEntity<Map<String, String>> redefinirSenha(@RequestBody @Valid RedefinirSenhaRequest request) {
+        redefinirSenhaUseCase.execute(new RedefinirSenhaInput(request.token(), request.novaSenha()));
+        return ResponseEntity.ok(Map.of(
+                "mensagem", "Senha redefinida com sucesso! Faça login com a nova senha."));
     }
 
     @GetMapping("/me")

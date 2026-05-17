@@ -3,8 +3,12 @@ package com.henrique.ifconecta.infrastructure.persistence.usuario.entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.henrique.ifconecta.domain.usuario.enums.TipoToken;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -33,4 +37,8 @@ public class TokenVerificacaoJpaEntity {
 
     @Column(nullable = false)
     private boolean utilizado;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoToken tipo;
 }

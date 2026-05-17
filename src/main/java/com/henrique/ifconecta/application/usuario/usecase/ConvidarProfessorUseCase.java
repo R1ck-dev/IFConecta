@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.henrique.ifconecta.application.usuario.dto.ConvidarProfessorInput;
+import com.henrique.ifconecta.domain.usuario.enums.TipoToken;
 import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
 import com.henrique.ifconecta.domain.usuario.model.Professor;
 import com.henrique.ifconecta.domain.usuario.model.TokenVerificacao;
@@ -54,7 +55,7 @@ public class ConvidarProfessorUseCase {
         Professor professorSalvo = (Professor) usuarioRepository.salvar(novoProfessor);
 
         // Gera o token de convite
-        TokenVerificacao token = new TokenVerificacao(professorSalvo);
+        TokenVerificacao token = new TokenVerificacao(professorSalvo, TipoToken.ATIVACAO);
         tokenVerificacaoRepository.salvar(token);
 
         // Dispara o e-mail

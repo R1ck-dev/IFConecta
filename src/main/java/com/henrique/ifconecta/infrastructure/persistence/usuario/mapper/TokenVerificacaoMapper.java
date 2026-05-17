@@ -15,24 +15,26 @@ public class TokenVerificacaoMapper {
 
     public TokenVerificacaoJpaEntity toEntity(TokenVerificacao domain) {
         TokenVerificacaoJpaEntity entity = new TokenVerificacaoJpaEntity();
-        
+
         entity.setId(domain.getId());
         entity.setToken(domain.getToken());
         entity.setDataExpiracao(domain.getDataExpiracao());
         entity.setUtilizado(domain.isUtilizado());
-        
+        entity.setTipo(domain.getTipo());
+
         entity.setUsuario(usuarioMapper.toEntity(domain.getUsuario()));
-        
+
         return entity;
     }
 
     public TokenVerificacao toDomain(TokenVerificacaoJpaEntity entity) {
         return new TokenVerificacao(
                 entity.getId(),
-                usuarioMapper.toDomain(entity.getUsuario()), 
+                usuarioMapper.toDomain(entity.getUsuario()),
                 entity.getToken(),
                 entity.getDataExpiracao(),
-                entity.isUtilizado()
+                entity.isUtilizado(),
+                entity.getTipo()
         );
     }
 }

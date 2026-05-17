@@ -3,6 +3,7 @@ package com.henrique.ifconecta.application.usuario.usecase;
 import org.springframework.stereotype.Service;
 
 import com.henrique.ifconecta.application.usuario.dto.AtivarConvidadoInput;
+import com.henrique.ifconecta.domain.usuario.enums.TipoToken;
 import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
 import com.henrique.ifconecta.domain.usuario.model.TokenVerificacao;
 import com.henrique.ifconecta.domain.usuario.model.Usuario;
@@ -25,6 +26,10 @@ public class AtivarConvidadoUseCase {
     public void execute(AtivarConvidadoInput input) {
         TokenVerificacao tokenVerificacao = tokenVerificacaoRepository.buscarPorToken(input.token())
                 .orElseThrow(() -> new NegocioException("Token de verificação inválido ou não encontrado."));
+
+        if (tokenVerificacao.getTipo() != TipoToken.ATIVACAO) {
+            throw new NegocioException("Token inválido para ativação de convite.");
+        }
 
         tokenVerificacao.validar();
 

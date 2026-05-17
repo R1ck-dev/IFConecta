@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.henrique.ifconecta.application.usuario.dto.RegistrarAlunoInput;
 import com.henrique.ifconecta.domain.academico.port.CursoRepository;
+import com.henrique.ifconecta.domain.usuario.enums.TipoToken;
 import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
 import com.henrique.ifconecta.domain.usuario.model.Aluno;
 import com.henrique.ifconecta.domain.usuario.model.TokenVerificacao;
@@ -53,7 +54,7 @@ public class RegistrarAlunoUseCase {
 
         Aluno alunoSalvo = (Aluno) usuarioRepository.salvar(novoAluno);
 
-        TokenVerificacao token = new TokenVerificacao(alunoSalvo);
+        TokenVerificacao token = new TokenVerificacao(alunoSalvo, TipoToken.ATIVACAO);
 
         tokenVerificacaoRepository.salvar(token);
 

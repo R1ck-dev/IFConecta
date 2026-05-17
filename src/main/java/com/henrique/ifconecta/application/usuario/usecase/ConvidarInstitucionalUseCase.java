@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.henrique.ifconecta.application.usuario.dto.ConvidarInstitucionalInput;
+import com.henrique.ifconecta.domain.usuario.enums.TipoToken;
 import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
 import com.henrique.ifconecta.domain.usuario.model.Institucional;
 import com.henrique.ifconecta.domain.usuario.model.TokenVerificacao;
@@ -53,7 +54,7 @@ public class ConvidarInstitucionalUseCase {
         Institucional institucionalSalvo = (Institucional) usuarioRepository.salvar(novoInstitucional);
 
         // Gera o token de convite
-        TokenVerificacao token = new TokenVerificacao(institucionalSalvo);
+        TokenVerificacao token = new TokenVerificacao(institucionalSalvo, TipoToken.ATIVACAO);
         tokenVerificacaoRepository.salvar(token);
 
         // Dispara o e-mail

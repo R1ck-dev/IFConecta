@@ -3,6 +3,7 @@ package com.henrique.ifconecta.application.usuario.usecase;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.henrique.ifconecta.domain.usuario.enums.TipoToken;
 import com.henrique.ifconecta.domain.usuario.exception.NegocioException;
 import com.henrique.ifconecta.domain.usuario.model.TokenVerificacao;
 import com.henrique.ifconecta.domain.usuario.model.Usuario;
@@ -22,6 +23,10 @@ public class AtivarContaUseCase {
     public void execute(String token) {
         TokenVerificacao tokenVerificacao = tokenVerificacaoRepository.buscarPorToken(token)
                 .orElseThrow(() -> new NegocioException("Token de verificação inválido ou não encontrado."));
+
+        if (tokenVerificacao.getTipo() != TipoToken.ATIVACAO) {
+            throw new NegocioException("Token inválido para ativação de conta.");
+        }
 
         tokenVerificacao.validar();
 
