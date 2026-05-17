@@ -18,11 +18,13 @@ import java.util.List;
 import com.henrique.ifconecta.application.clube.dto.ClubeDetalheDTO;
 import com.henrique.ifconecta.application.clube.dto.ClubeResumoDTO;
 import com.henrique.ifconecta.application.clube.dto.CriarClubeInput;
+import com.henrique.ifconecta.application.clube.dto.MembroClubeDTO;
 import com.henrique.ifconecta.application.clube.dto.SolicitacaoMembroDTO;
 import com.henrique.ifconecta.application.clube.usecase.AvaliarMembroUseCase;
 import com.henrique.ifconecta.application.clube.usecase.BuscarClubeDetalheUseCase;
 import com.henrique.ifconecta.application.clube.usecase.CriarClubeUseCase;
 import com.henrique.ifconecta.application.clube.usecase.ListarClubesUseCase;
+import com.henrique.ifconecta.application.clube.usecase.ListarMembrosClubeUseCase;
 import com.henrique.ifconecta.application.clube.usecase.ListarMeusClubesUseCase;
 import com.henrique.ifconecta.application.clube.usecase.ListarSolicitacoesClubeUseCase;
 import com.henrique.ifconecta.application.clube.usecase.ListarTimelineDoClubeUseCase;
@@ -49,6 +51,7 @@ public class ClubeController {
     private final BuscarClubeDetalheUseCase buscarClubeDetalheUseCase;
     private final ListarMeusClubesUseCase listarMeusClubesUseCase;
     private final ListarSolicitacoesClubeUseCase listarSolicitacoesClubeUseCase;
+    private final ListarMembrosClubeUseCase listarMembrosClubeUseCase;
 
     @PostMapping
     public ResponseEntity<Void> criarClube(@RequestBody @Valid CriarClubeRequest request,
@@ -112,5 +115,11 @@ public class ClubeController {
     public ResponseEntity<List<SolicitacaoMembroDTO>> listarSolicitacoes(@PathVariable UUID clubeId,
             @CurrentUserId UUID liderId) {
         return ResponseEntity.ok(listarSolicitacoesClubeUseCase.execute(clubeId, liderId));
+    }
+
+    @GetMapping("/{clubeId}/membros")
+    public ResponseEntity<List<MembroClubeDTO>> listarMembros(@PathVariable UUID clubeId,
+            @CurrentUserId UUID usuarioId) {
+        return ResponseEntity.ok(listarMembrosClubeUseCase.execute(clubeId, usuarioId));
     }
 }
