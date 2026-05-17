@@ -621,7 +621,7 @@ export function ComunicadoDialog({ open, onClose }) {
       </Field>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
         <Field label="Alcance">
-          <Select value={tipoAlvo} onChange={(e) => setTipoAlvo(e.target.value)} disabled={opcoesAlvo.length <= 1}>
+          <Select value={tipoAlvo} onChange={(e) => setTipoAlvo(e.target.value)} disabled={opcoesAlvo.length === 0}>
             {opcoesAlvo.length === 0 && <option value="">—</option>}
             {opcoesAlvo.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </Select>
