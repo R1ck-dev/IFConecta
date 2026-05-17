@@ -15,5 +15,6 @@ public interface UsuarioRepository {
     List<UUID> buscarTodosIdsAtivos();
     List<UUID> buscarIdsPorCurso(UUID cursoId);
     List<Usuario> buscarPorIds(Collection<UUID> ids);
+    List<Usuario> listarProfessoresAtivos();
 }
 

@@ -23,12 +23,16 @@ public class TurmaMapper {
         entity.setId(domain.getId());
         entity.setSemestre(domain.getSemestre());
         entity.setCodigoTurma(domain.getCodigoTurma());
+        entity.setStatus(domain.getStatus());
         entity.setDataCriacao(domain.getDataCriacao());
         entity.setAlunosMatriculados(new HashSet<>(domain.getAlunosMatriculados()));
-        
+
         entity.setDisciplina(entityManager.getReference(DisciplinaJpaEntity.class, domain.getDisciplinaId()));
         entity.setProfessor(entityManager.getReference(UsuarioJpaEntity.class, domain.getProfessorId()));
-        
+        if (domain.getSolicitanteId() != null) {
+            entity.setSolicitante(entityManager.getReference(UsuarioJpaEntity.class, domain.getSolicitanteId()));
+        }
+
         return entity;
     }
 
@@ -39,6 +43,8 @@ public class TurmaMapper {
                 entity.getProfessor().getId(),
                 entity.getSemestre(),
                 entity.getCodigoTurma(),
+                entity.getStatus(),
+                entity.getSolicitante() != null ? entity.getSolicitante().getId() : null,
                 entity.getDataCriacao(),
                 new HashSet<>(entity.getAlunosMatriculados())
         );

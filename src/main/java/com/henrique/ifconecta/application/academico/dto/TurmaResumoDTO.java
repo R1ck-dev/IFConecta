@@ -14,6 +14,9 @@ public record TurmaResumoDTO(
     UUID cursoId,
     String cursoSigla,
     String cursoNome,
-    int qtdMatriculados
+    int qtdMatriculados,
+    String status,
+    UUID solicitanteId,
+    String solicitanteNome
 ) {
 }

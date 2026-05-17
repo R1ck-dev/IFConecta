@@ -316,9 +316,14 @@ export function EsqueciSenhaDialog({ open, onClose }) {
 export function CreateTurmaDialog({ open, onClose, onCreated }) {
   const { me } = useAuth();
   const toast = useToast();
+  const isAluno = me?.tipo === 'ALUNO';
+
   const [disciplinas, setDisciplinas] = useState([]);
   const [carregandoDisciplinas, setCarregandoDisciplinas] = useState(false);
+  const [professores, setProfessores] = useState([]);
+  const [carregandoProfessores, setCarregandoProfessores] = useState(false);
   const [disciplinaId, setDisciplinaId] = useState('');
+  const [professorId, setProfessorId] = useState('');
   const [semestre, setSemestre] = useState('');
   const [codigoTurma, setCodigoTurma] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -328,6 +333,7 @@ export function CreateTurmaDialog({ open, onClose, onCreated }) {
     setDisciplinaId('');
     setSemestre('');
     setCodigoTurma('');
+    setProfessorId('');
 
     let cancelled = false;
     setCarregandoDisciplinas(true);
@@ -335,12 +341,21 @@ export function CreateTurmaDialog({ open, onClose, onCreated }) {
       .then((lista) => { if (!cancelled) setDisciplinas(lista); })
       .catch(() => { if (!cancelled) setDisciplinas([]); })
       .finally(() => { if (!cancelled) setCarregandoDisciplinas(false); });
+
+    if (isAluno) {
+      setCarregandoProfessores(true);
+      academicoService.listarProfessores()
+        .then((lista) => { if (!cancelled) setProfessores(lista); })
+        .catch(() => { if (!cancelled) setProfessores([]); })
+        .finally(() => { if (!cancelled) setCarregandoProfessores(false); });
+    }
     return () => { cancelled = true; };
-  }, [open]);
+  }, [open, isAluno]);
 
   const semestreOk = /^\d{4}\.[12]$/.test(semestre.trim());
   const codigoOk = codigoTurma.trim().length > 0;
-  const canSubmit = disciplinaId && semestreOk && codigoOk && me?.id && !submitting;
+  const professorOk = isAluno ? !!professorId : true;
+  const canSubmit = disciplinaId && semestreOk && codigoOk && professorOk && me?.id && !submitting;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -348,15 +363,19 @@ export function CreateTurmaDialog({ open, onClose, onCreated }) {
     try {
       await academicoService.criarTurma({
         disciplinaId,
-        professorId: me.id,
+        professorId: isAluno ? professorId : me.id,
         semestre: semestre.trim(),
         codigoTurma: codigoTurma.trim(),
       });
-      toast.success('Turma criada!', 'Já aparece na sua lista de turmas lecionadas.');
+      if (isAluno) {
+        toast.success('Solicitação enviada!', 'O professor escolhido vai revisar e decidir.');
+      } else {
+        toast.success('Turma criada!', 'Já aparece na sua lista de turmas lecionadas.');
+      }
       onCreated?.();
       onClose();
     } catch (err) {
-      toast.error('Não foi possível criar a turma', extractErrorMessage(err));
+      toast.error('Não foi possível enviar', extractErrorMessage(err));
     } finally {
       setSubmitting(false);
     }
@@ -366,13 +385,15 @@ export function CreateTurmaDialog({ open, onClose, onCreated }) {
     <Dialog
       open={open}
       onClose={onClose}
-      title="Nova turma"
-      subtitle="Crie uma turma para uma disciplina existente"
+      title={isAluno ? 'Sugerir nova turma' : 'Nova turma'}
+      subtitle={isAluno
+        ? 'A turma só fica ativa depois que o professor escolhido aprovar.'
+        : 'Crie uma turma para uma disciplina existente'}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>Cancelar</Button>
           <Button variant="primary" onClick={handleSubmit} disabled={!canSubmit} loading={submitting}>
-            Criar turma
+            {isAluno ? 'Enviar solicitação' : 'Criar turma'}
           </Button>
         </>
       }
@@ -387,6 +408,16 @@ export function CreateTurmaDialog({ open, onClose, onCreated }) {
           ))}
         </Select>
       </Field>
+      {isAluno && (
+        <Field label="Professor responsável">
+          <Select value={professorId} onChange={(e) => setProfessorId(e.target.value)} disabled={carregandoProfessores}>
+            <option value="">{carregandoProfessores ? 'Carregando…' : 'Selecione…'}</option>
+            {professores.map((p) => (
+              <option key={p.id} value={p.id}>{p.nome}</option>
+            ))}
+          </Select>
+        </Field>
+      )}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
         <Field label="Semestre" hint={semestre.length > 0 && !semestreOk ? 'Formato: AAAA.S (ex.: 2026.1)' : 'Formato: AAAA.S'}>
           <Input value={semestre} onChange={(e) => setSemestre(e.target.value)} placeholder="2026.1" />
@@ -397,7 +428,11 @@ export function CreateTurmaDialog({ open, onClose, onCreated }) {
       </div>
       <div className="card-flat" style={{ padding: 11, borderRadius: 'var(--r-md)', fontSize: 12, color: 'var(--fg-muted)', display: 'flex', gap: 8 }}>
         <Icon name="info" size={14} style={{ flexShrink: 0, marginTop: 1 }} />
-        <span>Você (<b>{me?.nome}</b>) é definido como professor responsável.</span>
+        <span>
+          {isAluno
+            ? 'Sua solicitação aparece na fila do professor escolhido. Ele pode aprovar ou rejeitar.'
+            : <>Você (<b>{me?.nome}</b>) é definido como professor responsável.</>}
+        </span>
       </div>
     </Dialog>
   );

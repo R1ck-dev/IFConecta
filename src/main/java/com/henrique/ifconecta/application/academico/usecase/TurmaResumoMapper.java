@@ -32,7 +32,11 @@ public class TurmaResumoMapper {
         if (turmas == null || turmas.isEmpty()) return List.of();
 
         Set<UUID> disciplinaIds = turmas.stream().map(Turma::getDisciplinaId).collect(Collectors.toSet());
-        Set<UUID> professorIds = turmas.stream().map(Turma::getProfessorId).collect(Collectors.toSet());
+        Set<UUID> usuarioIds = turmas.stream()
+                .flatMap(t -> t.getSolicitanteId() != null
+                        ? java.util.stream.Stream.of(t.getProfessorId(), t.getSolicitanteId())
+                        : java.util.stream.Stream.of(t.getProfessorId()))
+                .collect(Collectors.toSet());
 
         Map<UUID, Disciplina> disciplinas = disciplinaRepository.buscarPorIds(disciplinaIds).stream()
                 .collect(Collectors.toMap(Disciplina::getId, Function.identity()));
@@ -45,13 +49,14 @@ public class TurmaResumoMapper {
                 .filter(c -> cursoIds.contains(c.getId()))
                 .collect(Collectors.toMap(Curso::getId, Function.identity()));
 
-        Map<UUID, Usuario> professores = usuarioRepository.buscarPorIds(professorIds).stream()
+        Map<UUID, Usuario> usuarios = usuarioRepository.buscarPorIds(usuarioIds).stream()
                 .collect(Collectors.toMap(Usuario::getId, Function.identity()));
 
         return turmas.stream().map(turma -> {
             Disciplina disciplina = disciplinas.get(turma.getDisciplinaId());
             Curso curso = disciplina != null ? cursos.get(disciplina.getCursoId()) : null;
-            Usuario professor = professores.get(turma.getProfessorId());
+            Usuario professor = usuarios.get(turma.getProfessorId());
+            Usuario solicitante = turma.getSolicitanteId() != null ? usuarios.get(turma.getSolicitanteId()) : null;
 
             return new TurmaResumoDTO(
                     turma.getId(),
@@ -65,7 +70,10 @@ public class TurmaResumoMapper {
                     curso != null ? curso.getId() : null,
                     curso != null ? curso.getSigla() : "",
                     curso != null ? curso.getNome() : "",
-                    turma.getAlunosMatriculados() != null ? turma.getAlunosMatriculados().size() : 0
+                    turma.getAlunosMatriculados() != null ? turma.getAlunosMatriculados().size() : 0,
+                    turma.getStatus() != null ? turma.getStatus().name() : null,
+                    turma.getSolicitanteId(),
+                    solicitante != null ? solicitante.getNome() : null
             );
         }).collect(Collectors.toList());
     }

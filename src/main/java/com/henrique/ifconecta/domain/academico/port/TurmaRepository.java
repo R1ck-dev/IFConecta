@@ -11,7 +11,8 @@ public interface TurmaRepository {
     Turma salvar(Turma turma);
     Optional<Turma> buscarPorId(UUID id);
     List<UUID> buscarIdsAlunosMatriculados(UUID turmaId);
-    Pagina<Turma> listarTodas(int pagina, int tamanho, UUID disciplinaIdFiltro, String semestreFiltro);
+    Pagina<Turma> listarAtivas(int pagina, int tamanho, UUID disciplinaIdFiltro, String semestreFiltro);
     List<Turma> listarMatriculadasPorAluno(UUID alunoId);
     List<Turma> listarLecionadasPorProfessor(UUID professorId);
+    List<Turma> listarPendentesParaProfessor(UUID professorId);
 }

@@ -65,4 +65,11 @@ public class UsuarioRepositoryAdapter implements UsuarioRepository {
                 .toList();
     }
 
+    @Override
+    public List<Usuario> listarProfessoresAtivos() {
+        return springDataUsuarioRepository.findProfessoresAtivos().stream()
+                .map(usuarioMapper::toDomain)
+                .toList();
+    }
+
 }

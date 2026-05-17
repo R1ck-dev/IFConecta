@@ -22,4 +22,7 @@ public interface SpringDataUsuarioRepository extends JpaRepository<UsuarioJpaEnt
 
     @Query("SELECT u.id FROM UsuarioJpaEntity u WHERE u.cursoId = :cursoId AND u.status = 'ATIVO'")
     List<UUID> findIdsByCursoId(@Param("cursoId") UUID cursoId);
+
+    @Query("SELECT u FROM ProfessorJpaEntity u WHERE u.status = 'ATIVO' ORDER BY u.nome")
+    List<UsuarioJpaEntity> findProfessoresAtivos();
 }

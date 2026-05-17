@@ -16,12 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.henrique.ifconecta.application.academico.dto.CriarTurmaInput;
 import com.henrique.ifconecta.application.academico.dto.TurmaResumoDTO;
+import com.henrique.ifconecta.application.academico.usecase.AprovarTurmaUseCase;
 import com.henrique.ifconecta.application.academico.usecase.CancelarMatriculaUseCase;
 import com.henrique.ifconecta.application.academico.usecase.CriarTurmaUseCase;
 import com.henrique.ifconecta.application.academico.usecase.ListarMinhasTurmasUseCase;
+import com.henrique.ifconecta.application.academico.usecase.ListarSolicitacoesTurmaParaProfessorUseCase;
 import com.henrique.ifconecta.application.academico.usecase.ListarTurmasLecionadasUseCase;
 import com.henrique.ifconecta.application.academico.usecase.ListarTurmasUseCase;
 import com.henrique.ifconecta.application.academico.usecase.MatricularAlunoUseCase;
+import com.henrique.ifconecta.application.academico.usecase.RejeitarTurmaUseCase;
 import com.henrique.ifconecta.domain.shared.Pagina;
 import com.henrique.ifconecta.infrastructure.config.security.CurrentUserId;
 import com.henrique.ifconecta.infrastructure.web.academico.dto.CriarTurmaRequest;
@@ -40,15 +43,37 @@ public class TurmaController {
     private final ListarMinhasTurmasUseCase listarMinhasTurmasUseCase;
     private final ListarTurmasLecionadasUseCase listarTurmasLecionadasUseCase;
     private final CancelarMatriculaUseCase cancelarMatriculaUseCase;
+    private final AprovarTurmaUseCase aprovarTurmaUseCase;
+    private final RejeitarTurmaUseCase rejeitarTurmaUseCase;
+    private final ListarSolicitacoesTurmaParaProfessorUseCase listarSolicitacoesTurmaParaProfessorUseCase;
 
     @PostMapping
-    public ResponseEntity<Void> criarTurma(@RequestBody @Valid CriarTurmaRequest request) {
+    public ResponseEntity<Void> criarTurma(@RequestBody @Valid CriarTurmaRequest request,
+            @CurrentUserId UUID solicitanteId) {
         criarTurmaUseCase.execute(new CriarTurmaInput(
+                solicitanteId,
                 request.disciplinaId(),
                 request.professorId(),
                 request.semestre(),
                 request.codigoTurma()));
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/solicitacoes-leciono")
+    public ResponseEntity<List<TurmaResumoDTO>> listarSolicitacoesLeciono(@CurrentUserId UUID professorId) {
+        return ResponseEntity.ok(listarSolicitacoesTurmaParaProfessorUseCase.execute(professorId));
+    }
+
+    @PostMapping("/{turmaId}/aprovar")
+    public ResponseEntity<Void> aprovarTurma(@PathVariable UUID turmaId, @CurrentUserId UUID professorId) {
+        aprovarTurmaUseCase.execute(turmaId, professorId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{turmaId}/rejeitar")
+    public ResponseEntity<Void> rejeitarTurma(@PathVariable UUID turmaId, @CurrentUserId UUID professorId) {
+        rejeitarTurmaUseCase.execute(turmaId, professorId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping

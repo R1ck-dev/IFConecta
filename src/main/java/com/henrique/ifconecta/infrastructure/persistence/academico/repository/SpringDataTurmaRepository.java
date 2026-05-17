@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.henrique.ifconecta.domain.academico.enums.StatusTurma;
 import com.henrique.ifconecta.infrastructure.persistence.academico.entity.TurmaJpaEntity;
 
 public interface SpringDataTurmaRepository extends JpaRepository<TurmaJpaEntity, UUID> {
@@ -18,11 +19,12 @@ public interface SpringDataTurmaRepository extends JpaRepository<TurmaJpaEntity,
 
     @Query("""
             SELECT t FROM TurmaJpaEntity t
-            WHERE (:disciplinaId IS NULL OR t.disciplina.id = :disciplinaId)
+            WHERE t.status = com.henrique.ifconecta.domain.academico.enums.StatusTurma.ATIVA
+              AND (:disciplinaId IS NULL OR t.disciplina.id = :disciplinaId)
               AND (:semestre IS NULL OR t.semestre = :semestre)
             ORDER BY t.dataCriacao DESC
             """)
-    Page<TurmaJpaEntity> findAllByFiltros(
+    Page<TurmaJpaEntity> findAtivasByFiltros(
             @Param("disciplinaId") UUID disciplinaId,
             @Param("semestre") String semestre,
             Pageable pageable);
@@ -30,5 +32,5 @@ public interface SpringDataTurmaRepository extends JpaRepository<TurmaJpaEntity,
     @Query("SELECT t FROM TurmaJpaEntity t JOIN t.alunosMatriculados a WHERE a = :alunoId ORDER BY t.semestre DESC, t.codigoTurma")
     List<TurmaJpaEntity> findTurmasMatriculadasByAluno(@Param("alunoId") UUID alunoId);
 
-    List<TurmaJpaEntity> findByProfessorIdOrderBySemestreDescCodigoTurmaAsc(UUID professorId);
+    List<TurmaJpaEntity> findByProfessorIdAndStatusOrderBySemestreDescCodigoTurmaAsc(UUID professorId, StatusTurma status);
 }

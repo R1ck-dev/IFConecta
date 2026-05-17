@@ -1,6 +1,7 @@
 package com.henrique.ifconecta.infrastructure.web.usuario.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,6 +30,7 @@ import com.henrique.ifconecta.application.usuario.usecase.AtivarConvidadoUseCase
 import com.henrique.ifconecta.application.usuario.usecase.AtualizarMeuPerfilUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.BuscarMeuPerfilUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.BuscarUsuarioPublicoUseCase;
+import com.henrique.ifconecta.application.usuario.usecase.ListarProfessoresAtivosUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.RedefinirSenhaUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.RegistrarAlunoUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.SolicitarRedefinicaoSenhaUseCase;
@@ -57,6 +59,7 @@ public class UsuarioController {
     private final AlterarMinhaSenhaUseCase alterarMinhaSenhaUseCase;
     private final SolicitarRedefinicaoSenhaUseCase solicitarRedefinicaoSenhaUseCase;
     private final RedefinirSenhaUseCase redefinirSenhaUseCase;
+    private final ListarProfessoresAtivosUseCase listarProfessoresAtivosUseCase;
 
     @PostMapping("/alunos")
     public ResponseEntity<Void> registrarAluno(@RequestBody @Valid RegistrarAlunoRequest request) {
@@ -124,6 +127,11 @@ public class UsuarioController {
         alterarMinhaSenhaUseCase.execute(new AlterarMinhaSenhaInput(
                 usuarioId, request.senhaAtual(), request.novaSenha()));
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/professores")
+    public ResponseEntity<List<UsuarioPublicoDTO>> listarProfessores() {
+        return ResponseEntity.ok(listarProfessoresAtivosUseCase.execute());
     }
 
     @GetMapping("/{usuarioId}")

@@ -21,7 +21,7 @@ public class ListarTurmasUseCase {
 
     @Transactional
     public Pagina<TurmaResumoDTO> execute(int pagina, int tamanho, UUID disciplinaId, String semestre) {
-        Pagina<Turma> paginaTurmas = turmaRepository.listarTodas(pagina, tamanho, disciplinaId, semestre);
+        Pagina<Turma> paginaTurmas = turmaRepository.listarAtivas(pagina, tamanho, disciplinaId, semestre);
         var resumos = turmaResumoMapper.montar(paginaTurmas.itens());
         return new Pagina<>(resumos, paginaTurmas.paginaAtual(), paginaTurmas.totalPaginas(), paginaTurmas.totalItens());
     }

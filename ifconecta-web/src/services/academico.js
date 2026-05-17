@@ -36,3 +36,21 @@ export async function listarDisciplinas({ cursoId } = {}) {
 export async function criarTurma({ disciplinaId, professorId, semestre, codigoTurma }) {
   await api.post('/turmas', { disciplinaId, professorId, semestre, codigoTurma });
 }
+
+export async function listarSolicitacoesLeciono() {
+  const { data } = await api.get('/turmas/solicitacoes-leciono');
+  return data;
+}
+
+export async function aprovarTurma(turmaId) {
+  await api.post(`/turmas/${turmaId}/aprovar`);
+}
+
+export async function rejeitarTurma(turmaId) {
+  await api.post(`/turmas/${turmaId}/rejeitar`);
+}
+
+export async function listarProfessores() {
+  const { data } = await api.get('/usuarios/professores');
+  return data;
+}

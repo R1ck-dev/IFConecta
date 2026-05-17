@@ -5,12 +5,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import com.henrique.ifconecta.domain.academico.enums.StatusTurma;
 import com.henrique.ifconecta.infrastructure.persistence.usuario.entity.UsuarioJpaEntity;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -40,6 +43,14 @@ public class TurmaJpaEntity {
 
     @Column(name = "codigo_turma", nullable = false)
     private String codigoTurma;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusTurma status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "solicitante_id")
+    private UsuarioJpaEntity solicitante;
 
     @Column(name = "data_criacao", nullable = false, updatable = false)
     private LocalDateTime dataCriacao;

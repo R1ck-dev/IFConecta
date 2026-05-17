@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import com.henrique.ifconecta.domain.academico.enums.StatusTurma;
 import com.henrique.ifconecta.domain.academico.model.Turma;
 import com.henrique.ifconecta.domain.academico.port.TurmaRepository;
 import com.henrique.ifconecta.domain.shared.Pagina;
@@ -43,10 +44,10 @@ public class TurmaRepositoryAdapter implements TurmaRepository {
     }
 
     @Override
-    public Pagina<Turma> listarTodas(int pagina, int tamanho, UUID disciplinaIdFiltro, String semestreFiltro) {
+    public Pagina<Turma> listarAtivas(int pagina, int tamanho, UUID disciplinaIdFiltro, String semestreFiltro) {
         String semestre = (semestreFiltro != null && semestreFiltro.isBlank()) ? null : semestreFiltro;
         PageRequest pageRequest = PageRequest.of(pagina, tamanho);
-        Page<TurmaJpaEntity> pageJpa = jpaRepository.findAllByFiltros(disciplinaIdFiltro, semestre, pageRequest);
+        Page<TurmaJpaEntity> pageJpa = jpaRepository.findAtivasByFiltros(disciplinaIdFiltro, semestre, pageRequest);
 
         List<Turma> itens = pageJpa.getContent().stream()
                 .map(mapper::toDomain)
@@ -64,7 +65,14 @@ public class TurmaRepositoryAdapter implements TurmaRepository {
 
     @Override
     public List<Turma> listarLecionadasPorProfessor(UUID professorId) {
-        return jpaRepository.findByProfessorIdOrderBySemestreDescCodigoTurmaAsc(professorId).stream()
+        return jpaRepository.findByProfessorIdAndStatusOrderBySemestreDescCodigoTurmaAsc(professorId, StatusTurma.ATIVA).stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Turma> listarPendentesParaProfessor(UUID professorId) {
+        return jpaRepository.findByProfessorIdAndStatusOrderBySemestreDescCodigoTurmaAsc(professorId, StatusTurma.PENDENTE).stream()
                 .map(mapper::toDomain)
                 .collect(Collectors.toList());
     }

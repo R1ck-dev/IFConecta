@@ -144,6 +144,87 @@ function LecionadasTab({ refreshSignal }) {
   );
 }
 
+function SolicitacoesTab({ refreshSignal, onChange }) {
+  const toast = useToast();
+  const [turmas, setTurmas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [actingId, setActingId] = useState(null);
+
+  const carregar = useCallback(async () => {
+    setLoading(true);
+    try {
+      const lista = await academicoService.listarSolicitacoesLeciono();
+      setTurmas(lista);
+    } catch (err) {
+      toast.error('Não foi possível carregar solicitações', extractErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
+
+  useEffect(() => { carregar(); }, [carregar, refreshSignal]);
+
+  const aprovar = async (turmaId) => {
+    setActingId(turmaId);
+    try {
+      await academicoService.aprovarTurma(turmaId);
+      toast.success('Turma aprovada!', 'Já aparece nas suas turmas lecionadas.');
+      await carregar();
+      onChange?.();
+    } catch (err) {
+      toast.error('Não foi possível aprovar', extractErrorMessage(err));
+    } finally {
+      setActingId(null);
+    }
+  };
+
+  const rejeitar = async (turmaId) => {
+    if (!window.confirm('Rejeitar esta solicitação? O aluno não poderá refazer com os mesmos dados.')) return;
+    setActingId(turmaId);
+    try {
+      await academicoService.rejeitarTurma(turmaId);
+      toast.success('Solicitação rejeitada.');
+      await carregar();
+    } catch (err) {
+      toast.error('Não foi possível rejeitar', extractErrorMessage(err));
+    } finally {
+      setActingId(null);
+    }
+  };
+
+  if (loading) {
+    return <div className="grid-2"><TurmaSkeleton /><TurmaSkeleton /></div>;
+  }
+  if (turmas.length === 0) {
+    return <Empty icon="inbox" title="Sem solicitações" message="Quando um aluno sugerir uma turma indicando você, ela aparece aqui." />;
+  }
+  return (
+    <div className="grid-2">
+      {turmas.map((t) => (
+        <TurmaCard
+          key={t.id}
+          turma={t}
+          action={
+            <div style={{ display: 'flex', gap: 6 }}>
+              <Button size="sm" variant="outline" loading={actingId === t.id} onClick={() => rejeitar(t.id)}>
+                Rejeitar
+              </Button>
+              <Button size="sm" loading={actingId === t.id} onClick={() => aprovar(t.id)}>
+                Aprovar
+              </Button>
+            </div>
+          }
+          footerExtra={t.solicitanteNome ? (
+            <div style={{ marginTop: 10, fontSize: 12, color: 'var(--fg-subtle)' }}>
+              Sugerida por <b>{t.solicitanteNome}</b>
+            </div>
+          ) : null}
+        />
+      ))}
+    </div>
+  );
+}
+
 function BuscarTurmasTab({ minhasIds, onMatriculado }) {
   const toast = useToast();
   const [disciplinas, setDisciplinas] = useState([]);
@@ -375,6 +456,7 @@ export function AcademicoPage() {
     if (isProf) {
       return [
         { value: 'leciono', label: 'Turmas que leciono', icon: 'briefcase' },
+        { value: 'solicitacoes', label: 'Solicitações', icon: 'inbox' },
         { value: 'cursos', label: 'Cursos', icon: 'graduation' },
       ];
     }
@@ -388,6 +470,9 @@ export function AcademicoPage() {
     return [{ value: 'cursos', label: 'Cursos', icon: 'graduation' }];
   }, [isProf, isAluno]);
 
+  const podeCriarTurma = (isProf && tab === 'leciono') || (isAluno && (tab === 'matriculadas' || tab === 'buscar'));
+  const labelCriar = isAluno ? 'Sugerir turma' : 'Nova turma';
+
   return (
     <div className="app-content app-content-wide" data-screen-label="Academico">
       <div className="page-hd">
@@ -395,9 +480,9 @@ export function AcademicoPage() {
           <h1>Acadêmico</h1>
           <div className="page-sub">Suas turmas, disciplinas e cursos do campus</div>
         </div>
-        {isProf && tab === 'leciono' && (
+        {podeCriarTurma && (
           <Button icon={<Icon name="plus" size={14} />} onClick={() => setCreateTurmaOpen(true)}>
-            Nova turma
+            {labelCriar}
           </Button>
         )}
       </div>
@@ -407,6 +492,7 @@ export function AcademicoPage() {
       {tab === 'matriculadas' && <MinhasTurmasTab onChange={bumpRefresh} />}
       {tab === 'buscar' && <BuscarTurmasTab minhasIds={minhasIds} onMatriculado={bumpRefresh} />}
       {tab === 'leciono' && <LecionadasTab refreshSignal={refreshLeciono} />}
+      {tab === 'solicitacoes' && <SolicitacoesTab refreshSignal={refreshLeciono} onChange={() => setRefreshLeciono((s) => s + 1)} />}
       {tab === 'cursos' && <CursosTab />}
 
       <CreateTurmaDialog
