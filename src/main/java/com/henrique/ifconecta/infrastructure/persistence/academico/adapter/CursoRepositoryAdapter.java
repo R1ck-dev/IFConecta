@@ -1,5 +1,6 @@
 package com.henrique.ifconecta.infrastructure.persistence.academico.adapter;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class CursoRepositoryAdapter implements CursoRepository{
-    
+
     private final SpringDataCursoRepository repository;
     private final CursoMapper mapper;
 
@@ -32,5 +33,12 @@ public class CursoRepositoryAdapter implements CursoRepository{
     @Override
     public boolean existePorId(UUID id) {
         return repository.existsById(id);
+    }
+
+    @Override
+    public List<Curso> listarTodos() {
+        return repository.findAll().stream()
+                .map(mapper::toDomain)
+                .toList();
     }
 }
