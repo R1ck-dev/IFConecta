@@ -3,6 +3,7 @@ import {
   Badge, Button, Card, Empty, Input, Select, Skel, Tabs, useToast,
 } from '../components/ui.jsx';
 import { Icon } from '../components/icons.jsx';
+import { CreateTurmaDialog } from '../components/modals.jsx';
 import { useAuth } from '../store/AuthContext.jsx';
 import * as academicoService from '../services/academico.js';
 import * as cursosService from '../services/cursos.js';
@@ -115,7 +116,7 @@ function MinhasTurmasTab({ onChange }) {
   );
 }
 
-function LecionadasTab() {
+function LecionadasTab({ refreshSignal }) {
   const toast = useToast();
   const [turmas, setTurmas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -128,7 +129,7 @@ function LecionadasTab() {
       .catch((err) => { if (!cancelled) toast.error('Não foi possível carregar', extractErrorMessage(err)); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, []);
+  }, [refreshSignal]);
 
   if (loading) {
     return <div className="grid-2"><TurmaSkeleton /><TurmaSkeleton /></div>;
@@ -313,6 +314,8 @@ export function AcademicoPage() {
   const [tab, setTab] = useState(defaultTab);
   const [minhasIds, setMinhasIds] = useState(new Set());
   const [refreshMinhas, setRefreshMinhas] = useState(0);
+  const [refreshLeciono, setRefreshLeciono] = useState(0);
+  const [createTurmaOpen, setCreateTurmaOpen] = useState(false);
 
   useEffect(() => {
     if (!isAluno) return;
@@ -349,14 +352,25 @@ export function AcademicoPage() {
           <h1>Acadêmico</h1>
           <div className="page-sub">Suas turmas, disciplinas e cursos do campus</div>
         </div>
+        {isProf && tab === 'leciono' && (
+          <Button icon={<Icon name="plus" size={14} />} onClick={() => setCreateTurmaOpen(true)}>
+            Nova turma
+          </Button>
+        )}
       </div>
 
       <Tabs value={tab} onChange={setTab} items={tabs} />
 
       {tab === 'matriculadas' && <MinhasTurmasTab onChange={bumpRefresh} />}
       {tab === 'buscar' && <BuscarTurmasTab minhasIds={minhasIds} onMatriculado={bumpRefresh} />}
-      {tab === 'leciono' && <LecionadasTab />}
+      {tab === 'leciono' && <LecionadasTab refreshSignal={refreshLeciono} />}
       {tab === 'cursos' && <CursosTab />}
+
+      <CreateTurmaDialog
+        open={createTurmaOpen}
+        onClose={() => setCreateTurmaOpen(false)}
+        onCreated={() => setRefreshLeciono((s) => s + 1)}
+      />
     </div>
   );
 }

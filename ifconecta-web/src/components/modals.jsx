@@ -9,6 +9,7 @@ import * as postsService from '../services/posts.js';
 import * as clubesService from '../services/clubes.js';
 import * as notificacoesService from '../services/notificacoes.js';
 import * as authService from '../services/auth.js';
+import * as academicoService from '../services/academico.js';
 import { extractErrorMessage } from '../services/api.js';
 
 const POST_LIMIT = 1000;
@@ -235,6 +236,96 @@ export function EditarPerfilDialog({ open, onClose }) {
       <div className="card-flat" style={{ padding: 11, borderRadius: 'var(--r-md)', fontSize: 12, color: 'var(--fg-muted)', display: 'flex', gap: 8 }}>
         <Icon name="info" size={14} style={{ flexShrink: 0, marginTop: 1 }} />
         <span>E-mail, prontuário e SIAPE são vínculos institucionais e não podem ser alterados aqui.</span>
+      </div>
+    </Dialog>
+  );
+}
+
+export function CreateTurmaDialog({ open, onClose, onCreated }) {
+  const { me } = useAuth();
+  const toast = useToast();
+  const [disciplinas, setDisciplinas] = useState([]);
+  const [carregandoDisciplinas, setCarregandoDisciplinas] = useState(false);
+  const [disciplinaId, setDisciplinaId] = useState('');
+  const [semestre, setSemestre] = useState('');
+  const [codigoTurma, setCodigoTurma] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    setDisciplinaId('');
+    setSemestre('');
+    setCodigoTurma('');
+
+    let cancelled = false;
+    setCarregandoDisciplinas(true);
+    academicoService.listarDisciplinas()
+      .then((lista) => { if (!cancelled) setDisciplinas(lista); })
+      .catch(() => { if (!cancelled) setDisciplinas([]); })
+      .finally(() => { if (!cancelled) setCarregandoDisciplinas(false); });
+    return () => { cancelled = true; };
+  }, [open]);
+
+  const semestreOk = /^\d{4}\.[12]$/.test(semestre.trim());
+  const codigoOk = codigoTurma.trim().length > 0;
+  const canSubmit = disciplinaId && semestreOk && codigoOk && me?.id && !submitting;
+
+  const handleSubmit = async () => {
+    if (!canSubmit) return;
+    setSubmitting(true);
+    try {
+      await academicoService.criarTurma({
+        disciplinaId,
+        professorId: me.id,
+        semestre: semestre.trim(),
+        codigoTurma: codigoTurma.trim(),
+      });
+      toast.success('Turma criada!', 'Já aparece na sua lista de turmas lecionadas.');
+      onCreated?.();
+      onClose();
+    } catch (err) {
+      toast.error('Não foi possível criar a turma', extractErrorMessage(err));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      title="Nova turma"
+      subtitle="Crie uma turma para uma disciplina existente"
+      footer={
+        <>
+          <Button variant="ghost" onClick={onClose}>Cancelar</Button>
+          <Button variant="primary" onClick={handleSubmit} disabled={!canSubmit} loading={submitting}>
+            Criar turma
+          </Button>
+        </>
+      }
+    >
+      <Field label="Disciplina">
+        <Select value={disciplinaId} onChange={(e) => setDisciplinaId(e.target.value)} disabled={carregandoDisciplinas}>
+          <option value="">{carregandoDisciplinas ? 'Carregando…' : 'Selecione…'}</option>
+          {disciplinas.map((d) => (
+            <option key={d.id} value={d.id}>
+              {d.cursoSigla ? `${d.cursoSigla} — ${d.nome}` : d.nome}
+            </option>
+          ))}
+        </Select>
+      </Field>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        <Field label="Semestre" hint={semestre.length > 0 && !semestreOk ? 'Formato: AAAA.S (ex.: 2026.1)' : 'Formato: AAAA.S'}>
+          <Input value={semestre} onChange={(e) => setSemestre(e.target.value)} placeholder="2026.1" />
+        </Field>
+        <Field label="Código da turma">
+          <Input value={codigoTurma} onChange={(e) => setCodigoTurma(e.target.value)} placeholder="Ex.: T01" />
+        </Field>
+      </div>
+      <div className="card-flat" style={{ padding: 11, borderRadius: 'var(--r-md)', fontSize: 12, color: 'var(--fg-muted)', display: 'flex', gap: 8 }}>
+        <Icon name="info" size={14} style={{ flexShrink: 0, marginTop: 1 }} />
+        <span>Você (<b>{me?.nome}</b>) é definido como professor responsável.</span>
       </div>
     </Dialog>
   );

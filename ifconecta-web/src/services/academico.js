@@ -32,3 +32,7 @@ export async function listarDisciplinas({ cursoId } = {}) {
   const { data } = await api.get('/disciplinas', { params });
   return data;
 }
+
+export async function criarTurma({ disciplinaId, professorId, semestre, codigoTurma }) {
+  await api.post('/turmas', { disciplinaId, professorId, semestre, codigoTurma });
+}
