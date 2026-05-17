@@ -266,13 +266,26 @@ function BuscarTurmasTab({ minhasIds, onMatriculado }) {
 
 function CursosTab() {
   const [cursos, setCursos] = useState([]);
+  const [disciplinasPorCurso, setDisciplinasPorCurso] = useState(new Map());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    cursosService.listar()
-      .then(setCursos)
-      .catch(() => setCursos([]))
-      .finally(() => setLoading(false));
+    let cancelled = false;
+    Promise.all([
+      cursosService.listar().catch(() => []),
+      academicoService.listarDisciplinas().catch(() => []),
+    ]).then(([cs, ds]) => {
+      if (cancelled) return;
+      setCursos(cs);
+      const mapa = new Map();
+      ds.forEach((d) => {
+        if (!d.cursoId) return;
+        if (!mapa.has(d.cursoId)) mapa.set(d.cursoId, []);
+        mapa.get(d.cursoId).push(d);
+      });
+      setDisciplinasPorCurso(mapa);
+    }).finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, []);
 
   if (loading) {
@@ -283,24 +296,54 @@ function CursosTab() {
   }
   return (
     <div className="grid-clubes">
-      {cursos.map((c) => (
-        <Card key={c.id} hoverable>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-            <div style={{
-              width: 38, height: 38, borderRadius: 10,
-              background: 'var(--primary-soft)', color: 'var(--primary)',
-              display: 'grid', placeItems: 'center', fontWeight: 700, fontSize: 13.5,
-              letterSpacing: '-0.02em',
-            }}>{c.sigla}</div>
-            <Badge variant={c.modalidade === 'SUPERIOR' ? 'primary' : 'default'}>
-              {c.modalidade?.replace('_', ' ') || '—'}
-            </Badge>
-          </div>
-          <h3 style={{ margin: '4px 0 4px', fontSize: 15, fontWeight: 700, lineHeight: 1.25, letterSpacing: '-0.01em' }}>
-            {c.nome}
-          </h3>
-        </Card>
-      ))}
+      {cursos.map((c) => {
+        const disciplinas = disciplinasPorCurso.get(c.id) || [];
+        const visiveis = disciplinas.slice(0, 6);
+        const sobra = disciplinas.length - visiveis.length;
+        return (
+          <Card key={c.id} hoverable>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+              <div style={{
+                width: 44, height: 44, borderRadius: 10,
+                background: 'var(--primary-soft)', color: 'var(--primary)',
+                display: 'grid', placeItems: 'center', fontWeight: 700, fontSize: 14,
+                letterSpacing: '-0.02em',
+              }}>{c.sigla}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, lineHeight: 1.25, letterSpacing: '-0.01em' }}>
+                  {c.nome}
+                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
+                  <Badge variant={c.modalidade === 'SUPERIOR' ? 'primary' : 'default'}>
+                    {c.modalidade?.replace('_', ' ') || '—'}
+                  </Badge>
+                  <span className="text-xs text-subtle">· {disciplinas.length} disciplina{disciplinas.length === 1 ? '' : 's'}</span>
+                </div>
+              </div>
+            </div>
+            {disciplinas.length > 0 && (
+              <>
+                <div className="divider" />
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {visiveis.map((d) => (
+                    <span key={d.id} className="chip" title={`${d.nome} (${d.cargaHoraria}h)`} style={{
+                      fontSize: 11.5, padding: '4px 8px', borderRadius: 999,
+                      background: 'var(--surface-soft)', color: 'var(--fg-muted)',
+                      whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 180,
+                    }}>{d.nome}</span>
+                  ))}
+                  {sobra > 0 && (
+                    <span className="chip" style={{
+                      fontSize: 11.5, padding: '4px 8px', borderRadius: 999,
+                      background: 'var(--surface-soft)', color: 'var(--fg-subtle)',
+                    }}>+{sobra}</span>
+                  )}
+                </div>
+              </>
+            )}
+          </Card>
+        );
+      })}
     </div>
   );
 }
