@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +19,7 @@ import com.henrique.ifconecta.application.notificacao.usecase.EnviarComunicadoUs
 import com.henrique.ifconecta.application.notificacao.usecase.ListarMinhasNotificacoesUseCase;
 import com.henrique.ifconecta.application.notificacao.usecase.MarcarNotificacaoComoLidaUseCase;
 import com.henrique.ifconecta.domain.shared.Pagina;
+import com.henrique.ifconecta.infrastructure.config.security.CurrentUserId;
 import com.henrique.ifconecta.infrastructure.web.notificacao.dto.EnviarComunicadoRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,11 +41,10 @@ public class ComunicadoController {
     @Operation(summary = "Enviar Comunicado", description = "Gera notificações em massa baseadas em um alvo (GERAL, CURSO, TURMA ou CLUBE).")
     @ApiResponse(responseCode = "202", description = "Comunicados processados e enviados")
     @PostMapping
-    public ResponseEntity<Void> enviar(@RequestBody @Valid EnviarComunicadoRequest request) {
-        String remetenteIdStr = extraiId();
-
+    public ResponseEntity<Void> enviar(@RequestBody @Valid EnviarComunicadoRequest request,
+            @CurrentUserId UUID remetenteId) {
         enviarComunicadoUseCase.execute(new EnviarComunicadoInput(
-                UUID.fromString(remetenteIdStr),
+                remetenteId,
                 request.titulo(),
                 request.mensagem(),
                 request.tipoAlvo(),
@@ -58,10 +57,8 @@ public class ComunicadoController {
     @GetMapping("/minhas")
     public ResponseEntity<Pagina<NotificacaoResumoDTO>> listarMinhasNotificacoes(
             @RequestParam(defaultValue = "0") int pagina,
-            @RequestParam(defaultValue = "10") int tamanho) {
-
-        String userIdStr = extraiId();
-        UUID usuarioId = UUID.fromString(userIdStr);
+            @RequestParam(defaultValue = "10") int tamanho,
+            @CurrentUserId UUID usuarioId) {
 
         Pagina<NotificacaoResumoDTO> response = listarMinhasNotificacoesUseCase.execute(usuarioId, pagina, tamanho);
 
@@ -70,17 +67,8 @@ public class ComunicadoController {
 
     @Operation(summary = "Visualizar Notificação", description = "Marca como 'lido' a notificação em questão.")
     @PatchMapping("/{notificacaoId}/lida")
-    public ResponseEntity<Void> marcarComoLida(@PathVariable UUID notificacaoId) {
-        
-        String userIdStr = extraiId();
-        UUID usuarioId = UUID.fromString(userIdStr);
-
+    public ResponseEntity<Void> marcarComoLida(@PathVariable UUID notificacaoId, @CurrentUserId UUID usuarioId) {
         marcarNotificacaoComoLidaUseCase.execute(notificacaoId, usuarioId);
-
-        return ResponseEntity.noContent().build(); 
-    }
-
-    private String extraiId() {
-        return (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.noContent().build();
     }
 }

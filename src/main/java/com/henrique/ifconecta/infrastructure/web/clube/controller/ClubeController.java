@@ -1,26 +1,28 @@
 package com.henrique.ifconecta.infrastructure.web.clube.controller;
 
-import com.henrique.ifconecta.application.clube.usecase.AvaliarMembroUseCase;
-import com.henrique.ifconecta.application.clube.usecase.SolicitarEntradaClubeUseCase;
-import com.henrique.ifconecta.application.post.dto.PostResumoDTO;
-import com.henrique.ifconecta.domain.shared.Pagina;
-
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.henrique.ifconecta.application.clube.dto.ClubeResumoDTO;
 import com.henrique.ifconecta.application.clube.dto.CriarClubeInput;
+import com.henrique.ifconecta.application.clube.usecase.AvaliarMembroUseCase;
 import com.henrique.ifconecta.application.clube.usecase.CriarClubeUseCase;
 import com.henrique.ifconecta.application.clube.usecase.ListarClubesUseCase;
 import com.henrique.ifconecta.application.clube.usecase.ListarTimelineDoClubeUseCase;
+import com.henrique.ifconecta.application.clube.usecase.SolicitarEntradaClubeUseCase;
+import com.henrique.ifconecta.application.post.dto.PostResumoDTO;
+import com.henrique.ifconecta.domain.shared.Pagina;
+import com.henrique.ifconecta.infrastructure.config.security.CurrentUserId;
 import com.henrique.ifconecta.infrastructure.web.clube.dto.AvaliarMembroRequest;
 import com.henrique.ifconecta.infrastructure.web.clube.dto.CriarClubeRequest;
 
@@ -29,9 +31,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/clubes")
@@ -48,12 +47,8 @@ public class ClubeController {
     @Operation(summary = "Criar Clube", description = "Cria um novo clube. O usuário criador torna-se o líder automaticamente.")
     @ApiResponse(responseCode = "201", description = "Clube criado com sucesso")
     @PostMapping
-    public ResponseEntity<Void> criarClube(@RequestBody @Valid CriarClubeRequest request) {
-        // Extraímos o ID do utilizador que o JwtAuthenticationFilter colocou no
-        // contexto
-        String userIdStr = extraiId();
-        UUID criadorId = UUID.fromString(userIdStr);
-
+    public ResponseEntity<Void> criarClube(@RequestBody @Valid CriarClubeRequest request,
+            @CurrentUserId UUID criadorId) {
         CriarClubeInput input = new CriarClubeInput(
                 request.nome(),
                 request.descricao(),
@@ -69,12 +64,8 @@ public class ClubeController {
     @ApiResponse(responseCode = "200", description = "Solicitação enviada ou entrada aprovada automaticamente")
     @ApiResponse(responseCode = "400", description = "Usuário já é membro ou possui convite pendente")
     @PostMapping("/{clubeId}/membros")
-    public ResponseEntity<Void> solicitarEntrada(@PathVariable UUID clubeId) {
-        String userIdStr = extraiId();
-        UUID usuarioId = UUID.fromString(userIdStr);
-
+    public ResponseEntity<Void> solicitarEntrada(@PathVariable UUID clubeId, @CurrentUserId UUID usuarioId) {
         solicitarEntradaClubeUseCase.execute(clubeId, usuarioId);
-
         return ResponseEntity.ok().build();
     }
 
@@ -83,12 +74,8 @@ public class ClubeController {
     @ApiResponse(responseCode = "400", description = "Usuário não é líder ou membro alvo não está pendente")
     @PutMapping("/{clubeId}/membros/{usuarioAlvoId}/avaliacao")
     public ResponseEntity<Void> avaliarMembro(@PathVariable UUID clubeId, @PathVariable UUID usuarioAlvoId,
-            @RequestBody @Valid AvaliarMembroRequest request) {
-        String userIdStr = extraiId();
-        UUID liderId = UUID.fromString(userIdStr);
-
+            @RequestBody @Valid AvaliarMembroRequest request, @CurrentUserId UUID liderId) {
         avaliarMembroUseCase.execute(clubeId, liderId, usuarioAlvoId, request.aprovado());
-
         return ResponseEntity.noContent().build();
     }
 
@@ -108,18 +95,11 @@ public class ClubeController {
     public ResponseEntity<Pagina<PostResumoDTO>> listarTimeline(
             @PathVariable UUID clubeId,
             @RequestParam(defaultValue = "0") int pagina,
-            @RequestParam(defaultValue = "10") int tamanho) {
-
-        String userIdStr = extraiId();
-        UUID usuarioId = UUID.fromString(userIdStr);
+            @RequestParam(defaultValue = "10") int tamanho,
+            @CurrentUserId UUID usuarioId) {
 
         Pagina<PostResumoDTO> response = listarTimelineDoClubeUseCase.execute(clubeId, usuarioId, pagina, tamanho);
 
         return ResponseEntity.ok(response);
     }
-
-    private String extraiId() {
-        return (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
-
 }
