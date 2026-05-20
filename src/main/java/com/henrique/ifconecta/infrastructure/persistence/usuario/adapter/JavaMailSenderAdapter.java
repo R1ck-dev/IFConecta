@@ -18,9 +18,13 @@ public class JavaMailSenderAdapter implements EmailSenderPort {
     @Value("${app.web.base-url:http://localhost:5173}")
     private String webBaseUrl;
 
+    @Value("${app.mail.from:no-reply@ifconecta.app}")
+    private String remetente;
+
     @Override
     public void enviarEmailAtivacao(String destinatario, String nome, String token) {
         SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(remetente);
         message.setTo(destinatario);
         message.setSubject("Ative sua conta no IFConecta");
 
@@ -38,6 +42,7 @@ public class JavaMailSenderAdapter implements EmailSenderPort {
     @Override
     public void enviarEmailConvite(String destinatario, String nome, String token) {
         SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(remetente);
         message.setTo(destinatario);
         message.setSubject("Você foi convidado para ativar sua conta no IFConecta");
 
@@ -55,6 +60,7 @@ public class JavaMailSenderAdapter implements EmailSenderPort {
     @Override
     public void enviarEmailRedefinicaoSenha(String destinatario, String nome, String token) {
         SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(remetente);
         message.setTo(destinatario);
         message.setSubject("Redefinição de senha no IFConecta");
 
