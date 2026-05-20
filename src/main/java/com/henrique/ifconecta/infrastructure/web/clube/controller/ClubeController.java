@@ -41,8 +41,6 @@ public class ClubeController {
     private final ListarTimelineDoClubeUseCase listarTimelineDoClubeUseCase;
     private final EntrarClubeUseCase entrarClubeUseCase;
 
-    @Operation(summary = "Criar Clube", description = "Cria um novo clube. O usuário criador torna-se o líder automaticamente.")
-    @ApiResponse(responseCode = "201", description = "Clube criado com sucesso")
     @PostMapping
     public ResponseEntity<Void> criarClube(@RequestBody @Valid CriarClubeRequest request) {
         // Extraímos o ID do utilizador que o JwtAuthenticationFilter colocou no
