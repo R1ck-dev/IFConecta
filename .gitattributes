@@ -1,2 +1,5 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
+
+# Migracoes Flyway: LF fixo para o checksum ser estavel entre maquinas/SOs
+*.sql text eol=lf
