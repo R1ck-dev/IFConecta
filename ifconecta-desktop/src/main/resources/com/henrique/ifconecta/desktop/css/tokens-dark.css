@@ -1,0 +1,33 @@
+/* IFConecta Desktop — Design tokens (tema escuro)
+   Aplicado por cima de tokens.css quando o tema escuro está ativo.
+   Port de ifconecta-web/src/styles/tokens.css (.dark). */
+
+.root {
+    -color-primary:        #3fae6a;
+    -color-primary-hover:   #4cbd77;
+    -color-primary-soft:    #1e3a2a;
+    -color-primary-soft-2:  #274d38;
+    -color-primary-fg:      #ffffff;
+
+    -color-accent:          #d6a23f;
+
+    -color-bg:              #1a1d24;
+    -color-surface:         #22262f;
+    -color-surface-2:       #2a2f39;
+    -color-surface-hover:   #313742;
+
+    -color-border:          #3a4150;
+    -color-border-strong:   #4d5666;
+    -color-divider:         #2f343f;
+
+    -color-fg:              #f1f2f4;
+    -color-fg-muted:        #aeb3bd;
+    -color-fg-subtle:       #7e8492;
+
+    -color-danger:          #e2685c;
+    -color-danger-soft:     #3a2422;
+    -color-warning:         #d6a23f;
+    -color-success:         #46b96e;
+    -color-success-soft:    #1f3a2a;
+    -color-info:            #5b95e0;
+}
