@@ -81,8 +81,11 @@ docker compose up -d
 ```
 
 Isso levanta:
-- **PostgreSQL** em `localhost:5433` (banco `ifconecta`, user `ifconecta_admin`)
+- **PostgreSQL** em `localhost:5433` (banco `ifconecta_lp1`)
 - **MailHog**: SMTP em `localhost:1025`, interface web em <http://localhost:8025>
+
+> O banco desta branch é `ifconecta_lp1`, separado do `ifconecta` usado pela branch
+> `release/versao-apsi` — as duas têm migrações Flyway divergentes e não compartilham banco.
 
 ### 2. Configure variáveis de ambiente
 
