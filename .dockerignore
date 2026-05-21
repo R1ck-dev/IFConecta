@@ -1,7 +1,0 @@
-ifconecta-web/
-target/
-.git/
-.idea/
-.vscode/
-.env
-*.md

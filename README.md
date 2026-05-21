@@ -2,10 +2,10 @@
 
 Plataforma de comunicação acadêmica para o IFSP — uma rede interna onde alunos, professores e setores institucionais conversam em **clubes**, publicam **posts**, organizam **turmas** e recebem **comunicados** oficiais.
 
-O repositório é um monorepo com dois projetos:
+O repositório reúne dois projetos:
 
 - **Backend** (`/`) — API REST em Spring Boot 4 + Java 21, arquitetura hexagonal, PostgreSQL.
-- **Frontend** (`ifconecta-web/`) — SPA em React 18 + Vite, consumindo a API.
+- **Desktop** (`ifconecta-desktop/`) — cliente desktop em JavaFX 21, consumindo a API.
 
 ---
 
@@ -30,10 +30,11 @@ O repositório é um monorepo com dois projetos:
 - JWT stateless (jjwt 0.12.5)
 - Lombok, SpringDoc OpenAPI (Swagger UI)
 
-**Frontend**
-- React 18 + React Router 6
-- Vite 5
-- Axios
+**Desktop**
+- JavaFX 21
+- Jackson (serialização JSON)
+- Ikonli (ícones)
+- Maven
 
 **Infra local**
 - Docker Compose (PostgreSQL + MailHog)
@@ -53,7 +54,7 @@ ifconecta/
 │   │       ├── persistence/<feature>/   # entidades JPA, repositórios, adapters, mappers
 │   │       └── config/                  # security, OpenAPI, exception handler
 │   └── main/resources/db/migration/     # migrações Flyway V{n}__*.sql
-├── ifconecta-web/                       # frontend React/Vite
+├── ifconecta-desktop/                   # cliente desktop JavaFX
 ├── docker-compose.yml                   # Postgres + MailHog
 ├── IF Conecta - Otimizado.postman_collection.json
 └── pom.xml
@@ -67,7 +68,6 @@ Cada uma das cinco features (`usuario`, `academico`, `clube`, `post`, `notificac
 
 - JDK 21
 - Docker + Docker Compose
-- Node.js 18+ e npm (para o frontend)
 - Maven Wrapper já incluso (`./mvnw` ou `mvnw.cmd`)
 
 ---
@@ -81,10 +81,8 @@ docker compose up -d
 ```
 
 Isso levanta:
-- **PostgreSQL** em `localhost:5432` (banco `ifconecta`, user `ifconecta_admin`)
+- **PostgreSQL** em `localhost:5433` (banco `ifconecta`, user `ifconecta_admin`)
 - **MailHog**: SMTP em `localhost:1025`, interface web em <http://localhost:8025>
-
-> ⚠ O `application-local.yml` aponta para a porta **5433** por padrão. Ajuste a porta no `docker-compose.yml` ou sobrescreva `spring.datasource.url` antes do primeiro `run`.
 
 ### 2. Configure variáveis de ambiente
 
@@ -108,15 +106,15 @@ mvnw.cmd spring-boot:run      # Windows PowerShell / CMD
 A API sobe em <http://localhost:8080>.
 Swagger UI: <http://localhost:8080/swagger-ui.html>.
 
-### 4. Rode o frontend
+### 4. Rode o desktop JavaFX
 
 ```bash
-cd ifconecta-web
-npm install
-npm run dev
+./mvnw -f ifconecta-desktop/pom.xml javafx:run      # Linux / macOS / Git Bash
+mvnw.cmd -f ifconecta-desktop/pom.xml javafx:run    # Windows PowerShell / CMD
 ```
 
-Vite serve a SPA em <http://localhost:5173> (ou na próxima porta livre).
+A janela do cliente abre consumindo a API em <http://localhost:8080>.
+Detalhes em [ifconecta-desktop/README.md](ifconecta-desktop/README.md).
 
 ### Testes
 
