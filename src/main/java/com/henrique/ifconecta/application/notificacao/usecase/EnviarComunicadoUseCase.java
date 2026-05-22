@@ -84,10 +84,6 @@ public class EnviarComunicadoUseCase {
             }
         }
 
-        if (destinatariosIds.isEmpty()) {
-            throw new NegocioException("Nenhum destinatário encontrado para este alvo.");
-        }
-
         List<Notificacao> notificacoesGeradas = destinatariosIds.stream()
                 // Evita que o remetente notifique a si mesmo se ele fizer parte do grupo
                 .filter(id -> !id.equals(remetente.getId()))
@@ -99,6 +95,10 @@ public class EnviarComunicadoUseCase {
                         input.tipoAlvo(),
                         input.alvoId()))
                 .collect(Collectors.toList());
+
+        if (notificacoesGeradas.isEmpty()) {
+            throw new NegocioException("Nenhum destinatário encontrado para este alvo.");
+        }
 
         notificacaoRepository.salvarEmLote(notificacoesGeradas);
     }

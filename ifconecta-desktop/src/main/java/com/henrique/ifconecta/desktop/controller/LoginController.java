@@ -58,12 +58,12 @@ public class LoginController {
 
     @FXML
     private void onEsqueci() {
-        Toast.info("Recuperação de senha", "Disponível na próxima fase da migração para desktop.");
+        Router.get().showFullScreen("esqueci-senha");
     }
 
     @FXML
     private void onCadastrar() {
-        Toast.info("Cadastro de aluno", "A tela de cadastro chega na próxima fase da migração.");
+        Router.get().showFullScreen("cadastro");
     }
 
     @FXML

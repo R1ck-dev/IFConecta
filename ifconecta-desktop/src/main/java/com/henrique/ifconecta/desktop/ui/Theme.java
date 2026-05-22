@@ -40,13 +40,17 @@ public final class Theme {
     }
 
     private static void apply() {
-        if (scene == null) {
-            return;
+        if (scene != null) {
+            applyTo(scene);
         }
+    }
+
+    /** Aplica os stylesheets do tema atual a uma cena qualquer (ex.: janelas modais). */
+    public static void applyTo(Scene target) {
         if (dark) {
-            scene.getStylesheets().setAll(TOKENS, APP, TOKENS_DARK);
+            target.getStylesheets().setAll(TOKENS, APP, TOKENS_DARK);
         } else {
-            scene.getStylesheets().setAll(TOKENS, APP);
+            target.getStylesheets().setAll(TOKENS, APP);
         }
     }
 

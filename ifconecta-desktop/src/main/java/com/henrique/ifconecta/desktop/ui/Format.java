@@ -2,11 +2,28 @@ package com.henrique.ifconecta.desktop.ui;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /** Utilitários de formatação — port de timeAgo() do front web (components/ui.jsx). */
 public final class Format {
 
+    private static final DateTimeFormatter DATA_HORA =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
+
     private Format() {
+    }
+
+    /** Formata uma data-hora ISO ("2026-05-21T14:30:00") como "21/05/2026 às 14:30". */
+    public static String dataHora(String isoDateTime) {
+        if (isoDateTime == null || isoDateTime.isBlank()) {
+            return "";
+        }
+        try {
+            return LocalDateTime.parse(isoDateTime).format(DATA_HORA);
+        } catch (DateTimeParseException e) {
+            return isoDateTime;
+        }
     }
 
     public static String timeAgo(LocalDateTime date) {

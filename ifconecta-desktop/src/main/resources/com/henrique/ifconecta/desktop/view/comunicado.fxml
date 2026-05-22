@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.henrique.ifconecta.desktop.controller.ComunicadoController"
+      styleClass="modal-root" fx:id="raiz" prefWidth="520.0">
+
+    <VBox spacing="2.0">
+        <Label text="Enviar comunicado" styleClass="modal-title"/>
+        <Label text="A mensagem chega como notificação para o público escolhido."
+               styleClass="modal-sub" wrapText="true"/>
+    </VBox>
+
+    <!-- Título -->
+    <VBox spacing="4.0">
+        <Label text="Título" styleClass="field-label"/>
+        <TextField fx:id="tituloField" styleClass="input" promptText="Assunto do comunicado"/>
+        <Label fx:id="tituloErro" styleClass="field-error" managed="false" visible="false"/>
+    </VBox>
+
+    <!-- Mensagem -->
+    <VBox spacing="4.0">
+        <Label text="Mensagem" styleClass="field-label"/>
+        <TextArea fx:id="mensagemArea" styleClass="text-area" wrapText="true"
+                  prefRowCount="4" promptText="Escreva o comunicado..."/>
+        <Label fx:id="mensagemErro" styleClass="field-error" managed="false" visible="false"/>
+    </VBox>
+
+    <!-- Tipo de alvo -->
+    <VBox spacing="4.0">
+        <Label text="Público" styleClass="field-label"/>
+        <ComboBox fx:id="tipoAlvoCombo" styleClass="combo-box" maxWidth="Infinity"/>
+    </VBox>
+
+    <!-- Alvo: Curso -->
+    <VBox fx:id="cursoBox" spacing="4.0" managed="false" visible="false">
+        <Label text="Curso" styleClass="field-label"/>
+        <ComboBox fx:id="cursoCombo" styleClass="combo-box" maxWidth="Infinity"
+                  promptText="Selecione o curso"/>
+    </VBox>
+
+    <!-- Alvo: Turma -->
+    <VBox fx:id="turmaBox" spacing="4.0" managed="false" visible="false">
+        <Label text="Turma" styleClass="field-label"/>
+        <ComboBox fx:id="turmaCombo" styleClass="combo-box" maxWidth="Infinity"
+                  promptText="Selecione a turma"/>
+    </VBox>
+
+    <!-- Alvo: Clube -->
+    <VBox fx:id="clubeBox" spacing="4.0" managed="false" visible="false">
+        <Label text="Clube" styleClass="field-label"/>
+        <ComboBox fx:id="clubeCombo" styleClass="combo-box" maxWidth="Infinity"
+                  promptText="Selecione o clube"/>
+    </VBox>
+
+    <Label fx:id="alvoErro" styleClass="field-error" managed="false" visible="false"/>
+
+    <!-- Ações -->
+    <HBox spacing="10.0" alignment="CENTER_RIGHT">
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Cancelar" styleClass="btn, btn-outline" onAction="#onCancelar"/>
+        <Button fx:id="enviarBtn" text="Enviar" styleClass="btn" onAction="#onEnviar"/>
+    </HBox>
+</VBox>

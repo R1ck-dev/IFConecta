@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.henrique.ifconecta.desktop.controller.PostDetalheController"
+      styleClass="modal-root" fx:id="raiz" prefWidth="520.0">
+
+    <Label text="Post" styleClass="modal-title"/>
+
+    <!-- Indicador de carregamento -->
+    <StackPane fx:id="loadingBox" alignment="CENTER" minHeight="160.0">
+        <ProgressIndicator prefWidth="42.0" prefHeight="42.0"/>
+    </StackPane>
+
+    <!-- Conteúdo do post (preenchido em runtime) -->
+    <VBox fx:id="conteudoBox" spacing="12.0" managed="false" visible="false">
+
+        <!-- Cabeçalho -->
+        <HBox fx:id="cabecalhoBox" spacing="11.0" alignment="CENTER_LEFT"/>
+
+        <!-- Corpo -->
+        <Label fx:id="corpoLabel" styleClass="post-body" wrapText="true"/>
+
+        <!-- Upvotes -->
+        <Label fx:id="upvotesLabel" styleClass="text-muted"/>
+
+        <Region styleClass="divider"/>
+
+        <!-- Comentários -->
+        <Label text="Comentários" styleClass="section-title"/>
+        <ScrollPane fx:id="comentariosScroll" styleClass="scroll-pane"
+                    fitToWidth="true" hbarPolicy="NEVER" prefHeight="220.0">
+            <VBox fx:id="comentariosBox" spacing="2.0"/>
+        </ScrollPane>
+    </VBox>
+
+    <Region VBox.vgrow="ALWAYS"/>
+
+    <!-- Rodapé fixo -->
+    <VBox spacing="8.0">
+        <HBox fx:id="novoComentarioBox" styleClass="input-group" spacing="8.0"
+              alignment="CENTER_LEFT" managed="false" visible="false">
+            <TextField fx:id="novoComentarioField" promptText="Escreva um comentário..."
+                       HBox.hgrow="ALWAYS"/>
+            <Button fx:id="comentarBtn" text="Comentar" styleClass="btn, btn-sm"
+                    onAction="#onComentar"/>
+        </HBox>
+        <HBox alignment="CENTER_RIGHT">
+            <Button text="Fechar" styleClass="btn, btn-ghost" onAction="#onFechar"/>
+        </HBox>
+    </VBox>
+</VBox>

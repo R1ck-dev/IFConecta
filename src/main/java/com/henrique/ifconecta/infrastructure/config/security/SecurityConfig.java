@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/usuarios/esqueci-senha").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios/redefinir-senha").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/cursos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/conta/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

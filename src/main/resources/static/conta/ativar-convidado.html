@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Definir senha — IFConecta</title>
+  <style>
+    :root { --primary:#1c7c43; --bg:#fafaf8; --surface:#fff; --text:#20242b; --muted:#5e636e;
+            --danger:#c9342a; --border:#e3e3df; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg);
+           color:var(--text); display:flex; align-items:center; justify-content:center;
+           min-height:100vh; padding:24px; }
+    .card { background:var(--surface); border-radius:16px; box-shadow:0 10px 40px rgba(0,0,0,.08);
+            max-width:420px; width:100%; padding:40px 32px; text-align:center; }
+    .logo { font-weight:800; font-size:22px; color:var(--primary); margin-bottom:8px; }
+    h1 { font-size:20px; margin:16px 0 8px; }
+    p { color:var(--muted); line-height:1.5; margin:8px 0 20px; }
+    form { display:flex; flex-direction:column; gap:12px; text-align:left; }
+    input { padding:12px 14px; border:1px solid var(--border); border-radius:10px; font-size:14px; }
+    input:focus { outline:2px solid var(--primary); outline-offset:-1px; }
+    button { padding:12px; background:var(--primary); color:#fff; border:none; border-radius:10px;
+             font-size:15px; font-weight:600; cursor:pointer; margin-top:4px; }
+    button:disabled { opacity:.6; cursor:default; }
+    .erro { color:var(--danger); font-size:13px; min-height:16px; }
+    .status { font-size:48px; margin:8px 0; }
+    .ok { color:var(--primary); } .err { color:var(--danger); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">IFConecta</div>
+    <div id="formWrap">
+      <h1>Defina sua senha</h1>
+      <p>Crie uma senha para ativar sua conta e acessar o IFConecta.</p>
+      <form id="form">
+        <input type="password" id="senha" placeholder="Nova senha (mín. 8 caracteres)" required minlength="8">
+        <input type="password" id="confirma" placeholder="Confirmar senha" required minlength="8">
+        <div id="erro" class="erro"></div>
+        <button type="submit" id="btn">Ativar conta</button>
+      </form>
+    </div>
+    <div id="resultWrap" style="display:none">
+      <div id="icon" class="status"></div>
+      <h1 id="titulo"></h1>
+      <p id="msg"></p>
+    </div>
+  </div>
+  <script>
+    const token = new URLSearchParams(location.search).get('token');
+    const form = document.getElementById('form');
+    const erro = document.getElementById('erro');
+    const btn = document.getElementById('btn');
+
+    function mostrarResultado(sucesso, titulo, msg) {
+      document.getElementById('formWrap').style.display = 'none';
+      document.getElementById('resultWrap').style.display = 'block';
+      const icon = document.getElementById('icon');
+      icon.textContent = sucesso ? '✓' : '✕';
+      icon.className = 'status ' + (sucesso ? 'ok' : 'err');
+      document.getElementById('titulo').textContent = titulo;
+      document.getElementById('msg').textContent = msg;
+    }
+
+    if (!token) {
+      mostrarResultado(false, 'Link inválido', 'Token de ativação ausente no link.');
+    }
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      erro.textContent = '';
+      const senha = document.getElementById('senha').value;
+      const confirma = document.getElementById('confirma').value;
+      if (senha.length < 8) { erro.textContent = 'A senha deve ter ao menos 8 caracteres.'; return; }
+      if (senha !== confirma) { erro.textContent = 'As senhas não coincidem.'; return; }
+
+      btn.disabled = true; btn.textContent = 'Enviando…';
+      try {
+        const r = await fetch('/api/usuarios/ativar-convidado', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, novaSenha: senha })
+        });
+        const data = await r.json().catch(() => ({}));
+        if (r.ok) {
+          mostrarResultado(true, 'Conta ativada!', data.mensagem || 'Você já pode fazer login.');
+        } else {
+          btn.disabled = false; btn.textContent = 'Ativar conta';
+          erro.textContent = data.erro || data.message || 'Não foi possível ativar. O link pode ter expirado.';
+        }
+      } catch {
+        btn.disabled = false; btn.textContent = 'Ativar conta';
+        erro.textContent = 'Erro de conexão com o servidor.';
+      }
+    });
+  </script>
+</body>
+</html>

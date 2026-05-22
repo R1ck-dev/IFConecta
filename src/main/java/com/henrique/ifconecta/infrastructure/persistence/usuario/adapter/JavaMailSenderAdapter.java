@@ -15,7 +15,7 @@ public class JavaMailSenderAdapter implements EmailSenderPort {
 
     private final JavaMailSender mailSender;
 
-    @Value("${app.web.base-url:http://localhost:5173}")
+    @Value("${app.web.base-url:http://localhost:8080}")
     private String webBaseUrl;
 
     @Value("${app.mail.from:no-reply@ifconecta.app}")
@@ -28,7 +28,7 @@ public class JavaMailSenderAdapter implements EmailSenderPort {
         message.setTo(destinatario);
         message.setSubject("Ative sua conta no IFConecta");
 
-        String urlAtivacao = webBaseUrl + "/ativar?token=" + token;
+        String urlAtivacao = webBaseUrl + "/conta/ativar.html?token=" + token;
 
         message.setText("Olá, " + nome + "!\n\n" +
                 "Bem-vindo ao IFConecta. Para começar a usar a plataforma, confirme seu e-mail clicando no link abaixo:\n"
@@ -46,7 +46,7 @@ public class JavaMailSenderAdapter implements EmailSenderPort {
         message.setTo(destinatario);
         message.setSubject("Você foi convidado para ativar sua conta no IFConecta");
 
-        String urlAtivacao = webBaseUrl + "/ativar-convidado?token=" + token;
+        String urlAtivacao = webBaseUrl + "/conta/ativar-convidado.html?token=" + token;
 
         message.setText("Olá, " + nome + "!\n\n" +
                 "Bem-vindo ao IFConecta. Para começar a usar a plataforma, defina sua senha clicando no link abaixo:\n"
@@ -64,7 +64,7 @@ public class JavaMailSenderAdapter implements EmailSenderPort {
         message.setTo(destinatario);
         message.setSubject("Redefinição de senha no IFConecta");
 
-        String url = webBaseUrl + "/redefinir-senha?token=" + token;
+        String url = webBaseUrl + "/conta/redefinir-senha.html?token=" + token;
 
         message.setText("Olá, " + nome + "!\n\n" +
                 "Recebemos uma solicitação para redefinir a senha da sua conta no IFConecta. " +

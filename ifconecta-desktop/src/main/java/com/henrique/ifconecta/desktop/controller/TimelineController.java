@@ -12,21 +12,21 @@ import com.henrique.ifconecta.desktop.model.MeuPerfil;
 import com.henrique.ifconecta.desktop.model.PostResumo;
 import com.henrique.ifconecta.desktop.service.PostService;
 import com.henrique.ifconecta.desktop.ui.Avatar;
-import com.henrique.ifconecta.desktop.ui.Format;
 import com.henrique.ifconecta.desktop.ui.Icons;
+import com.henrique.ifconecta.desktop.ui.Modal;
+import com.henrique.ifconecta.desktop.ui.PostCard;
 import com.henrique.ifconecta.desktop.ui.Toast;
 
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 /**
  * Timeline — port de TimelinePage (ifconecta-web/src/pages/timeline.jsx).
- * Lista os posts de GET /api/posts (paginado) e permite dar upvote.
+ * Lista os posts de GET /api/posts (paginado), permite criar post, abrir o
+ * detalhe com comentários e dar upvote.
  */
 public class TimelineController {
 
@@ -92,7 +92,8 @@ public class TimelineController {
 
     @FXML
     private void onComposer() {
-        Toast.info("Criar post", "A criação de posts chega na próxima fase da migração.");
+        Modal.abrir("criar-post", "Novo post",
+                (CriarPostController c) -> c.configurar(null, () -> carregar(0)));
     }
 
     // ───────── Render ─────────
@@ -103,7 +104,7 @@ public class TimelineController {
             feedBox.getChildren().add(estadoVazio());
         } else {
             for (PostResumo post : posts) {
-                feedBox.getChildren().add(cartaoPost(post));
+                feedBox.getChildren().add(PostCard.criar(post, this::darUpvote, this::abrirDetalhe));
             }
         }
         boolean temMais = paginaAtual + 1 < totalPaginas;
@@ -111,51 +112,9 @@ public class TimelineController {
         carregarMaisBtn.setManaged(temMais);
     }
 
-    private VBox cartaoPost(PostResumo post) {
-        VBox cartao = new VBox(10);
-        cartao.getStyleClass().add("post");
-
-        // Cabeçalho: avatar + autor + tempo
-        boolean anonimo = post.autorNome() == null || post.autorNome().isBlank();
-        HBox cabecalho = new HBox(11);
-        cabecalho.setAlignment(Pos.CENTER_LEFT);
-
-        VBox autor = new VBox(2);
-        Label nome = new Label(anonimo ? "Anônimo" : post.autorNome());
-        nome.getStyleClass().add("post-author-name");
-        Label tempo = new Label(Format.timeAgo(post.dataCriacao()));
-        tempo.getStyleClass().add("post-author-meta");
-        autor.getChildren().addAll(nome, tempo);
-
-        cabecalho.getChildren().addAll(new Avatar(anonimo ? "" : post.autorNome(), 38), autor);
-
-        // Corpo
-        Label corpo = new Label(post.conteudo());
-        corpo.getStyleClass().add("post-body");
-        corpo.setWrapText(true);
-
-        // Rodapé: upvote + comentários
-        HBox rodape = new HBox(6);
-        rodape.setAlignment(Pos.CENTER_LEFT);
-
-        Button upvote = new Button(String.valueOf(post.qtdUpvotes()));
-        upvote.getStyleClass().add("post-action");
-        if (post.jaDeiUpvote()) {
-            upvote.getStyleClass().add("active");
-        }
-        upvote.setGraphic(Icons.of("fth-arrow-up", 15));
-        upvote.setOnAction(e -> darUpvote(post));
-
-        Button comentarios = new Button(String.valueOf(post.qtdComentarios()));
-        comentarios.getStyleClass().add("post-action");
-        comentarios.setGraphic(Icons.of("fth-message-square", 15));
-        comentarios.setOnAction(e ->
-                Toast.info("Comentários", "O detalhe do post chega na próxima fase da migração."));
-
-        rodape.getChildren().addAll(upvote, comentarios);
-
-        cartao.getChildren().addAll(cabecalho, corpo, rodape);
-        return cartao;
+    private void abrirDetalhe(PostResumo post) {
+        Modal.abrir("post-detalhe", "Post",
+                (PostDetalheController c) -> c.carregar(post.id()));
     }
 
     private VBox estadoVazio() {

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.henrique.ifconecta.desktop.controller.NotificacoesController"
+            styleClass="content-area" fitToWidth="true" hbarPolicy="NEVER">
+
+    <StackPane alignment="TOP_CENTER">
+        <padding>
+            <Insets top="24.0" right="24.0" bottom="24.0" left="24.0"/>
+        </padding>
+
+        <VBox maxWidth="820.0" spacing="14.0">
+
+            <!-- Cabeçalho -->
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                    <Label text="Notificações" styleClass="page-title"/>
+                    <Label text="Comunicados e avisos do campus" styleClass="page-sub"/>
+                </VBox>
+                <Button fx:id="marcarTodasBtn" text="Marcar todas como lidas"
+                        styleClass="btn, btn-outline, btn-sm" onAction="#onMarcarTodas"/>
+            </HBox>
+
+            <!-- Lista -->
+            <VBox fx:id="listaBox" spacing="12.0"/>
+
+            <!-- Indicador de carregamento -->
+            <StackPane fx:id="loadingBox" alignment="CENTER" managed="false" visible="false">
+                <padding>
+                    <Insets top="32.0" bottom="32.0"/>
+                </padding>
+                <ProgressIndicator prefWidth="42.0" prefHeight="42.0"/>
+            </StackPane>
+
+            <!-- Paginação -->
+            <StackPane alignment="CENTER">
+                <Button fx:id="carregarMaisBtn" text="Carregar mais"
+                        styleClass="btn, btn-outline" onAction="#onCarregarMais"
+                        managed="false" visible="false"/>
+            </StackPane>
+        </VBox>
+    </StackPane>
+</ScrollPane>

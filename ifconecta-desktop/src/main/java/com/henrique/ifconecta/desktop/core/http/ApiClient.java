@@ -91,6 +91,10 @@ public final class ApiClient {
         exchange("PUT", path, null);
     }
 
+    public static void put(String path, Object body) {
+        exchange("PUT", path, body);
+    }
+
     public static void patch(String path, Object body) {
         exchange("PATCH", path, body);
     }

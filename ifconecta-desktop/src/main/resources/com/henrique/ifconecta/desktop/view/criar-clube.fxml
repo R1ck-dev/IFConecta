@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.henrique.ifconecta.desktop.controller.CriarClubeController"
+      styleClass="modal-root" prefWidth="480.0">
+
+    <VBox spacing="2.0">
+        <Label text="Criar clube" styleClass="modal-title"/>
+        <Label text="Reúna pessoas em torno de um interesse do campus" styleClass="modal-sub"/>
+    </VBox>
+
+    <!-- Nome -->
+    <VBox spacing="5.0">
+        <Label text="Nome do clube" styleClass="field-label"/>
+        <TextField fx:id="nomeField" styleClass="input" promptText="Ex.: Clube de Robótica"/>
+    </VBox>
+
+    <!-- Descrição -->
+    <VBox spacing="5.0">
+        <Label text="Descrição" styleClass="field-label"/>
+        <TextArea fx:id="descricaoArea" styleClass="text-area" wrapText="true"
+                  prefRowCount="3" promptText="Conte do que se trata o clube"/>
+    </VBox>
+
+    <!-- Tipo de acesso -->
+    <VBox spacing="5.0">
+        <Label text="Tipo de acesso" styleClass="field-label"/>
+        <ComboBox fx:id="tipoCombo" styleClass="combo-box" maxWidth="Infinity"/>
+    </VBox>
+
+    <!-- Erro -->
+    <Label fx:id="erroLabel" styleClass="field-error" wrapText="true"
+           managed="false" visible="false"/>
+
+    <!-- Rodapé -->
+    <HBox spacing="8.0" alignment="CENTER_RIGHT">
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="cancelarBtn" text="Cancelar" styleClass="btn, btn-outline"
+                onAction="#onCancelar"/>
+        <Button fx:id="criarBtn" text="Criar clube" styleClass="btn" onAction="#onCriar"/>
+    </HBox>
+</VBox>

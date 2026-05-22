@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<HBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.henrique.ifconecta.desktop.controller.CadastroController"
+      styleClass="auth-shell">
+
+    <!-- ───── Painel ilustrativo ───── -->
+    <VBox styleClass="auth-art" prefWidth="460.0" spacing="18.0">
+        <HBox alignment="CENTER_LEFT" spacing="11.0">
+            <Label text="iC" styleClass="brand-mark"
+                   minWidth="40.0" minHeight="40.0" prefWidth="40.0" prefHeight="40.0"
+                   maxWidth="40.0" maxHeight="40.0"/>
+            <Label text="IFConecta" styleClass="auth-art-brand"/>
+        </HBox>
+        <Region VBox.vgrow="ALWAYS"/>
+        <Label styleClass="auth-art-hero" wrapText="true"
+               text="Faça parte da comunidade do Campus Salto."/>
+        <Label styleClass="auth-art-tag" wrapText="true"
+               text="Crie sua conta de aluno e acompanhe a timeline, os clubes, os comunicados e as turmas do campus."/>
+    </VBox>
+
+    <!-- ───── Formulário ───── -->
+    <StackPane HBox.hgrow="ALWAYS" styleClass="auth-form-wrap">
+        <padding>
+            <Insets top="32.0" right="32.0" bottom="32.0" left="32.0"/>
+        </padding>
+        <VBox styleClass="auth-form" maxWidth="380.0" alignment="CENTER_LEFT">
+
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Label text="iC" styleClass="brand-mark"
+                       minWidth="32.0" minHeight="32.0" prefWidth="32.0" prefHeight="32.0"
+                       maxWidth="32.0" maxHeight="32.0"/>
+                <Label text="IFConecta" styleClass="brand-text"/>
+            </HBox>
+
+            <Label text="Criar conta de aluno" styleClass="auth-title"/>
+            <Label text="Use seu e-mail institucional do IFSP." styleClass="auth-subtitle"/>
+
+            <!-- Nome -->
+            <VBox spacing="5.0">
+                <Label text="Nome completo" styleClass="field-label"/>
+                <HBox fx:id="nomeGroup" styleClass="input-group" alignment="CENTER_LEFT">
+                    <FontIcon iconLiteral="fth-user" iconSize="16"/>
+                    <TextField fx:id="nomeField" HBox.hgrow="ALWAYS"
+                               promptText="Seu nome completo"/>
+                </HBox>
+                <Label fx:id="nomeError" styleClass="field-error" managed="false" visible="false"/>
+            </VBox>
+
+            <!-- E-mail -->
+            <VBox spacing="5.0">
+                <Label text="E-mail" styleClass="field-label"/>
+                <HBox fx:id="emailGroup" styleClass="input-group" alignment="CENTER_LEFT">
+                    <FontIcon iconLiteral="fth-mail" iconSize="16"/>
+                    <TextField fx:id="emailField" HBox.hgrow="ALWAYS"
+                               promptText="seu.nome@aluno.ifsp.edu.br"/>
+                </HBox>
+                <Label fx:id="emailError" styleClass="field-error" managed="false" visible="false"/>
+            </VBox>
+
+            <!-- Senha -->
+            <VBox spacing="5.0">
+                <Label text="Senha" styleClass="field-label"/>
+                <HBox fx:id="senhaGroup" styleClass="input-group" alignment="CENTER_LEFT">
+                    <FontIcon iconLiteral="fth-lock" iconSize="16"/>
+                    <PasswordField fx:id="senhaField" HBox.hgrow="ALWAYS"
+                                   promptText="Mínimo de 8 caracteres"/>
+                </HBox>
+                <Label fx:id="senhaError" styleClass="field-error" managed="false" visible="false"/>
+            </VBox>
+
+            <!-- Prontuário -->
+            <VBox spacing="5.0">
+                <Label text="Prontuário" styleClass="field-label"/>
+                <HBox fx:id="prontuarioGroup" styleClass="input-group" alignment="CENTER_LEFT">
+                    <FontIcon iconLiteral="fth-hash" iconSize="16"/>
+                    <TextField fx:id="prontuarioField" HBox.hgrow="ALWAYS"
+                               promptText="SL000000X"/>
+                </HBox>
+                <Label fx:id="prontuarioError" styleClass="field-error" managed="false" visible="false"/>
+            </VBox>
+
+            <!-- Curso -->
+            <VBox spacing="5.0">
+                <Label text="Curso" styleClass="field-label"/>
+                <ComboBox fx:id="cursoCombo" styleClass="combo-box" maxWidth="Infinity"
+                          promptText="Selecione seu curso"/>
+                <Label fx:id="cursoError" styleClass="field-error" managed="false" visible="false"/>
+            </VBox>
+
+            <Button fx:id="cadastrarBtn" text="Cadastrar" styleClass="btn, btn-block"
+                    onAction="#onCadastrar"/>
+
+            <HBox alignment="CENTER_LEFT" spacing="4.0">
+                <Label text="Já tem uma conta?" styleClass="auth-form-foot"/>
+                <Hyperlink text="Entrar" styleClass="link" onAction="#onVoltarLogin"/>
+            </HBox>
+
+        </VBox>
+    </StackPane>
+</HBox>

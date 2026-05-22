@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<ScrollPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.henrique.ifconecta.desktop.controller.ClubeDetalheController"
+            styleClass="content-area" fitToWidth="true" hbarPolicy="NEVER">
+
+    <StackPane alignment="TOP_CENTER">
+        <padding>
+            <Insets top="24.0" right="24.0" bottom="24.0" left="24.0"/>
+        </padding>
+
+        <VBox maxWidth="820.0" spacing="14.0">
+
+            <!-- Voltar -->
+            <HBox>
+                <Button text="Voltar" styleClass="btn, btn-ghost, btn-sm" onAction="#onVoltar">
+                    <graphic>
+                        <FontIcon iconLiteral="fth-arrow-left" iconSize="14"/>
+                    </graphic>
+                </Button>
+            </HBox>
+
+            <!-- Indicador de carregamento -->
+            <StackPane fx:id="loadingBox" alignment="CENTER" managed="false" visible="false">
+                <padding>
+                    <Insets top="48.0" bottom="48.0"/>
+                </padding>
+                <ProgressIndicator prefWidth="42.0" prefHeight="42.0"/>
+            </StackPane>
+
+            <!-- Corpo do clube -->
+            <VBox fx:id="corpoBox" spacing="14.0" managed="false" visible="false">
+
+                <!-- Cabeçalho do clube -->
+                <VBox styleClass="card" spacing="8.0">
+                    <Label fx:id="nomeLabel" styleClass="page-title" wrapText="true"/>
+                    <Label fx:id="descricaoLabel" styleClass="page-sub" wrapText="true"/>
+                    <HBox spacing="8.0" alignment="CENTER_LEFT">
+                        <Label fx:id="tipoChip" styleClass="chip"/>
+                        <Label fx:id="membrosLabel" styleClass="item-meta"/>
+                        <Label fx:id="liderLabel" styleClass="item-meta"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <StackPane fx:id="acaoBox" alignment="CENTER_RIGHT"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Abas -->
+                <HBox styleClass="tabs" alignment="CENTER_LEFT">
+                    <Button fx:id="abaPosts" text="Posts" styleClass="tab" onAction="#onAbaPosts"/>
+                    <Button fx:id="abaMembros" text="Membros" styleClass="tab" onAction="#onAbaMembros"/>
+                    <Button fx:id="abaSolicitacoes" text="Solicitações" styleClass="tab"
+                            onAction="#onAbaSolicitacoes" managed="false" visible="false"/>
+                </HBox>
+
+                <!-- Conteúdo da aba -->
+                <VBox fx:id="conteudoAba" spacing="12.0"/>
+            </VBox>
+
+        </VBox>
+    </StackPane>
+</ScrollPane>

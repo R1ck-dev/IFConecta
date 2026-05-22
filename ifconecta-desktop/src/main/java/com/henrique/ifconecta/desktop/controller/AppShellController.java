@@ -5,11 +5,14 @@ import java.util.Map;
 
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import com.henrique.ifconecta.desktop.core.AsyncRunner;
 import com.henrique.ifconecta.desktop.core.Router;
 import com.henrique.ifconecta.desktop.core.Session;
 import com.henrique.ifconecta.desktop.model.MeuPerfil;
+import com.henrique.ifconecta.desktop.service.NotificacaoService;
 import com.henrique.ifconecta.desktop.ui.Avatar;
 import com.henrique.ifconecta.desktop.ui.Icons;
+import com.henrique.ifconecta.desktop.ui.Modal;
 import com.henrique.ifconecta.desktop.ui.Theme;
 import com.henrique.ifconecta.desktop.ui.Toast;
 
@@ -37,6 +40,7 @@ public class AppShellController {
     @FXML private VBox sidebar;
     @FXML private StackPane contentHost;
     @FXML private Button comunicadoBtn;
+    @FXML private Button notificacoesBtn;
     @FXML private Button accountBtn;
     @FXML private FontIcon themeIcon;
 
@@ -57,6 +61,7 @@ public class AppShellController {
         themeIcon.setIconLiteral(Theme.isDark() ? "fth-sun" : "fth-moon");
         accountBtn.setGraphic(new Avatar(me == null ? "" : me.nome(), 32));
         accountMenu = construirMenuConta();
+        atualizarBadgeNotificacoes();
     }
 
     /** Coloca uma tela na área central e marca o item de menu correspondente. */
@@ -68,6 +73,7 @@ public class AppShellController {
                 botao.getStyleClass().add("active");
             }
         });
+        atualizarBadgeNotificacoes();
     }
 
     // ───────── Header ─────────
@@ -80,12 +86,34 @@ public class AppShellController {
 
     @FXML
     private void onComunicado() {
-        emBreve("Comunicados");
+        Modal.abrir("comunicado", "Enviar comunicado", (ComunicadoController c) -> {
+        });
+    }
+
+    /** Atualiza o contador de não-lidas no ícone de sino do header. */
+    private void atualizarBadgeNotificacoes() {
+        AsyncRunner.run(
+                NotificacaoService::contarNaoLidas,
+                total -> notificacoesBtn.setGraphic(graficoSino(total)),
+                erro -> {
+                });
+    }
+
+    private javafx.scene.Node graficoSino(long naoLidas) {
+        FontIcon sino = Icons.of("fth-bell", 18);
+        if (naoLidas <= 0) {
+            return sino;
+        }
+        Label badge = new Label(naoLidas > 99 ? "99+" : String.valueOf(naoLidas));
+        badge.getStyleClass().add("notif-badge");
+        HBox grafico = new HBox(3, sino, badge);
+        grafico.setAlignment(Pos.CENTER);
+        return grafico;
     }
 
     @FXML
     private void onNotificacoes() {
-        emBreve("Notificações");
+        Router.get().navigate("notificacoes");
     }
 
     @FXML
@@ -131,7 +159,7 @@ public class AppShellController {
         botao.getStyleClass().add("sb-link");
         botao.setGraphic(Icons.of(iconLiteral, 18));
         botao.setMaxWidth(Double.MAX_VALUE);
-        botao.setOnAction(e -> navegar(view, rotulo));
+        botao.setOnAction(e -> navegar(view));
         navButtons.put(view, botao);
         return botao;
     }
@@ -159,15 +187,12 @@ public class AppShellController {
         ContextMenu menu = new ContextMenu();
 
         MenuItem perfil = new MenuItem("Meu perfil");
-        perfil.setOnAction(e -> emBreve("Meu perfil"));
-
-        MenuItem config = new MenuItem("Configurações");
-        config.setOnAction(e -> emBreve("Configurações"));
+        perfil.setOnAction(e -> Router.get().navigate("perfil"));
 
         MenuItem sair = new MenuItem("Sair");
         sair.setOnAction(e -> logout());
 
-        menu.getItems().addAll(perfil, config, new SeparatorMenuItem(), sair);
+        menu.getItems().addAll(perfil, new SeparatorMenuItem(), sair);
         return menu;
     }
 
@@ -179,15 +204,7 @@ public class AppShellController {
 
     // ───────── Navegação ─────────
 
-    private void navegar(String view, String rotulo) {
-        if ("timeline".equals(view)) {
-            Router.get().navigate("timeline");
-        } else {
-            emBreve(rotulo);
-        }
-    }
-
-    private void emBreve(String tela) {
-        Toast.info(tela, "Esta tela chega na próxima fase da migração para desktop.");
+    private void navegar(String view) {
+        Router.get().navigate(view);
     }
 }

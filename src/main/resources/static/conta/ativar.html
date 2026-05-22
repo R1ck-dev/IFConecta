@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ativar conta — IFConecta</title>
+  <style>
+    :root { --primary:#1c7c43; --bg:#fafaf8; --surface:#fff; --text:#20242b; --muted:#5e636e; --danger:#c9342a; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg);
+           color:var(--text); display:flex; align-items:center; justify-content:center;
+           min-height:100vh; padding:24px; }
+    .card { background:var(--surface); border-radius:16px; box-shadow:0 10px 40px rgba(0,0,0,.08);
+            max-width:420px; width:100%; padding:40px 32px; text-align:center; }
+    .logo { font-weight:800; font-size:22px; color:var(--primary); margin-bottom:8px; }
+    h1 { font-size:20px; margin:16px 0 8px; }
+    p { color:var(--muted); line-height:1.5; margin:8px 0; }
+    .status { font-size:48px; margin:8px 0; }
+    .ok { color:var(--primary); } .err { color:var(--danger); } .spin { color:var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">IFConecta</div>
+    <div id="icon" class="status spin">&#8987;</div>
+    <h1 id="titulo">Ativando sua conta&hellip;</h1>
+    <p id="msg">Aguarde um instante.</p>
+  </div>
+  <script>
+    const token = new URLSearchParams(location.search).get('token');
+    const icon = document.getElementById('icon');
+    const titulo = document.getElementById('titulo');
+    const msg = document.getElementById('msg');
+
+    function mostrar(sucesso, t, m) {
+      icon.textContent = sucesso ? '✓' : '✕';
+      icon.className = 'status ' + (sucesso ? 'ok' : 'err');
+      titulo.textContent = t;
+      msg.textContent = m;
+    }
+
+    if (!token) {
+      mostrar(false, 'Link inválido', 'Token de ativação ausente no link.');
+    } else {
+      fetch('/api/usuarios/ativar?token=' + encodeURIComponent(token))
+        .then(async r => {
+          const data = await r.json().catch(() => ({}));
+          if (r.ok) mostrar(true, 'Conta ativada!', data.mensagem || 'Você já pode fazer login no IFConecta.');
+          else mostrar(false, 'Não foi possível ativar', data.erro || data.message || 'O link pode ter expirado ou já foi usado.');
+        })
+        .catch(() => mostrar(false, 'Erro de conexão', 'Não foi possível falar com o servidor.'));
+    }
+  </script>
+</body>
+</html>

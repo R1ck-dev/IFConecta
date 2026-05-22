@@ -71,6 +71,9 @@ public class Turma {
         if (this.status != StatusTurma.ATIVA) {
             throw new NegocioException("So e possivel matricular em turmas ativas.");
         }
+        if (this.professorId.equals(alunoId)) {
+            throw new NegocioException("O professor responsavel nao pode se matricular na propria turma.");
+        }
         if (this.alunosMatriculados.contains(alunoId)) {
             throw new NegocioException("O aluno ja esta matriculado nesta turma.");
         }

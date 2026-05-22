@@ -40,8 +40,13 @@ public final class Router {
 
     /** Mostra a tela de login em tela cheia (sem AppShell). */
     public void showLogin() {
+        showFullScreen("login");
+    }
+
+    /** Mostra uma tela em tela cheia, sem o AppShell (login, cadastro, esqueci-senha). */
+    public void showFullScreen(String viewName) {
         shell = null;
-        contentLayer.getChildren().setAll(load("login").root());
+        contentLayer.getChildren().setAll(load(viewName).root());
     }
 
     /** Carrega o AppShell e abre a tela inicial dentro dele. */
@@ -54,11 +59,19 @@ public final class Router {
 
     /** Troca a tela exibida na área central do AppShell. */
     public void navigate(String viewName) {
+        navigate(viewName, null);
+    }
+
+    /** Troca a tela e entrega um argumento ao controller (se ele for RouteParam). */
+    public void navigate(String viewName, Object argumento) {
         if (shell == null) {
             showShell(viewName);
             return;
         }
         Loaded loaded = load(viewName);
+        if (argumento != null && loaded.controller() instanceof RouteParam destino) {
+            destino.aoNavegar(argumento);
+        }
         shell.setContent(viewName, loaded.root());
     }
 
