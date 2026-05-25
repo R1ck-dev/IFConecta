@@ -13,8 +13,5 @@ db-data/
 # Build output
 target/
 
-# Frontend (nao faz parte desta branch)
-ifconecta-web/
-
 # Configuracao do Claude Code
 .claude/
