@@ -31,6 +31,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/usuarios/ativar").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios/ativar-convidado").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/",
+                                "/criar-clube", "/criar-clube/**",
+                                "/criar-post", "/criar-post/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

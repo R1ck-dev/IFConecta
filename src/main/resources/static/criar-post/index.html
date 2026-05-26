@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFConecta - Criar Post</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main class="main-content">
+        <div class="form-card">
+            <div class="form-header">
+                <img src="assets/if.png" alt="Logo IFSP" class="inst-logo">
+                <h2>Publicar Novo Post</h2>
+            </div>
+
+            <div class="user-profile-sim">
+                <img src="assets/image.png" alt="Foto de Perfil" class="profile-img">
+                <div class="profile-info">
+                    <span class="profile-label">Autor do Post</span>
+                    <span class="profile-name">Pedro Modesto</span>
+                </div>
+            </div>
+
+            <form id="form-criar-post" novalidate>
+                <div class="form-group">
+                    <label for="clubeId">Clube</label>
+                    <select id="clubeId" name="clubeId" required>
+                        <option value="">Carregando clubes...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="conteudoPost">Conteúdo</label>
+                    <textarea id="conteudoPost" name="conteudoPost" placeholder="O que você quer compartilhar com o clube?" required></textarea>
+                </div>
+
+                <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+
+                <div class="form-footer">
+                    <button type="button" class="cancel-btn" id="btn-cancelar">Cancelar</button>
+                    <button type="submit" class="submit-btn" id="btn-submit">Publicar Post</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

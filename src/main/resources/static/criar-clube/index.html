@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFConecta - Criar Clube</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main class="main-content">
+        <div class="form-card">
+            <div class="form-header">
+                <img src="assets/if.png" alt="Logo IFSP" class="inst-logo">
+                <h2>Criação de Novo Clube</h2>
+            </div>
+
+            <div class="user-profile-sim">
+                <img src="assets/image.png" alt="Foto de Perfil" class="profile-img">
+                <div class="profile-info">
+                    <span class="profile-label">Criador do Clube</span>
+                    <span class="profile-name">Pedro Modesto</span>
+                </div>
+            </div>
+
+            <form id="form-criar-clube" novalidate>
+                <div class="form-group">
+                    <label for="nomeClube">Nome do Clube</label>
+                    <input type="text" id="nomeClube" name="nomeClube" placeholder="Ex: Clube de Programação Maratona" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="descricaoClube">Descrição do Objetivo</label>
+                    <textarea id="descricaoClube" name="descricaoClube" placeholder="Descreva as atividades e metas do grupo..." required></textarea>
+                </div>
+
+                <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+
+                <div class="form-footer">
+                    <button type="button" class="cancel-btn" id="btn-cancelar">Cancelar</button>
+                    <button type="submit" class="submit-btn" id="btn-submit">Finalizar Criação</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
