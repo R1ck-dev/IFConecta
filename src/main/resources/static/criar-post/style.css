@@ -29,6 +29,19 @@ body {
     padding: 20px;
 }
 
+.voltar-link {
+    display: inline-block;
+    margin-bottom: 14px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.voltar-link:hover {
+    color: var(--ifsp-green);
+}
+
 .form-card {
     background-color: #ffffff;
     border-radius: 8px;
