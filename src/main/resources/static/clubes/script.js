@@ -1,5 +1,5 @@
 const TOKEN_KEY = 'ifconecta_token';
-const LOGIN_URL = '/login/index.html';
+const LOGIN_URL = '/login/Login.html';
 const TAMANHO_PAGINA = 10;
 
 /* ===== Auth ===== */
@@ -105,7 +105,7 @@ async function carregarClubes(pagina) {
 }
 
 function renderCard(c) {
-    const timelineUrl = `/timeline/index.html?clubeId=${encodeURIComponent(c.id)}&nome=${encodeURIComponent(c.nome || '')}`;
+    const timelineUrl = `/timeline/Timeline.html?clubeId=${encodeURIComponent(c.id)}&nome=${encodeURIComponent(c.nome || '')}`;
     return `
         <article class="clube-card">
             <h3>${esc(c.nome)}</h3>

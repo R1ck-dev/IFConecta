@@ -7,6 +7,20 @@ const feedback = document.getElementById('feedback');
 const btnSubmit = document.getElementById('btn-submit');
 const btnCancelar = document.getElementById('btn-cancelar');
 
+// Preenche o bloco de autor com o usuário logado (e-mail do JWT). Sem backend.
+(function preencherAutor() {
+    const nomeEl = document.querySelector('.profile-name');
+    if (!nomeEl) return;
+    const token = localStorage.getItem(TOKEN_KEY);
+    let email = null;
+    if (token) {
+        try {
+            email = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).sub;
+        } catch (_) {}
+    }
+    nomeEl.textContent = email || 'Visitante (faça login)';
+})();
+
 function mostrarFeedback(msg, tipo) {
     feedback.textContent = msg;
     feedback.className = 'feedback ' + tipo;

@@ -1,5 +1,5 @@
 const TOKEN_KEY = 'ifconecta_token';
-const LOGIN_URL = '/login/index.html';
+const LOGIN_URL = '/login/Login.html';
 const TAMANHO_PAGINA = 10;
 
 /* ===== Auth ===== */

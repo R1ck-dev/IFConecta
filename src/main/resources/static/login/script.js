@@ -1,5 +1,5 @@
 const TOKEN_KEY = 'ifconecta_token';
-const HOME_URL = '/clubes/index.html';
+const HOME_URL = '/clubes/Clubes.html';
 
 const form = document.getElementById('form-login');
 const emailInput = document.getElementById('email');
