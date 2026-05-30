@@ -21,7 +21,7 @@ public class JavaMailSenderAdapter implements EmailSenderPort {
         message.setSubject("Ative sua conta no IFConecta");
 
         // TODO: Passar essa URL para uma variável de ambiente
-        String urlAtivacao = "http://localhost:8080/api/usuarios/ativar?token=" + token;
+        String urlAtivacao = "http://localhost:8080/ativar/index.html?token=" + token;
 
         message.setText("Olá, " + nome + "!\n\n" +
                 "Bem-vindo ao IFConecta. Para começar a usar a plataforma, confirme seu e-mail clicando no link abaixo:\n"

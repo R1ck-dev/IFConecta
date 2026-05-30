@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFConecta - Clubes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="app-header-inner">
+            <a href="/clubes/index.html" class="brand">
+                <img src="assets/if.png" alt="IFSP" class="brand-logo">
+                <span class="brand-name">IFConecta</span>
+            </a>
+            <nav class="app-nav">
+                <a href="/clubes/index.html" class="nav-link nav-link--active">Clubes</a>
+                <a href="/criar-clube/index.html" class="nav-link">Criar clube</a>
+                <a href="/criar-post/index.html" class="nav-link">Criar post</a>
+            </nav>
+            <div class="user-box">
+                <img src="assets/image.png" alt="" class="user-avatar">
+                <span class="user-email" id="user-email">—</span>
+                <button class="logout-btn" id="btn-logout">Sair</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="page-head">
+            <h1>Explorar clubes</h1>
+            <a href="/criar-clube/index.html" class="submit-btn">+ Novo clube</a>
+        </div>
+
+        <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+
+        <div id="lista-clubes" class="card-list"></div>
+
+        <div id="paginacao" class="paginacao" hidden>
+            <button type="button" class="page-btn" id="btn-anterior">‹ Anterior</button>
+            <span id="page-info" class="page-info"></span>
+            <button type="button" class="page-btn" id="btn-proximo">Próximo ›</button>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFConecta - Cadastro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main class="main-content">
+        <div class="form-card">
+            <div class="form-header">
+                <img src="assets/if.png" alt="Logo IFSP" class="inst-logo">
+                <div>
+                    <h2>Criar conta de aluno</h2>
+                    <p class="form-subtitle">Use seu e-mail @aluno.ifsp.edu.br</p>
+                </div>
+            </div>
+
+            <form id="form-cadastro" novalidate>
+                <div class="form-group">
+                    <label for="nome">Nome completo</label>
+                    <input type="text" id="nome" name="nome" placeholder="Ex: Pedro Modesto" autocomplete="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">E-mail acadêmico</label>
+                    <input type="email" id="email" name="email" placeholder="seu.nome@aluno.ifsp.edu.br" autocomplete="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="prontuario">Prontuário</label>
+                    <input type="text" id="prontuario" name="prontuario" placeholder="Ex: SP3012345" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" name="password" placeholder="Mínimo de 8 caracteres" autocomplete="new-password" required>
+                </div>
+
+                <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+
+                <div class="form-footer">
+                    <button type="submit" class="submit-btn submit-btn--block" id="btn-submit">Cadastrar</button>
+                </div>
+            </form>
+
+            <p class="form-switch">
+                Já tem conta?
+                <a href="/login/index.html">Entrar</a>
+            </p>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

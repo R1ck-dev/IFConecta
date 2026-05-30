@@ -33,6 +33,11 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/",
+                                "/login", "/login/**",
+                                "/cadastro", "/cadastro/**",
+                                "/ativar", "/ativar/**",
+                                "/clubes", "/clubes/**",
+                                "/timeline", "/timeline/**",
                                 "/criar-clube", "/criar-clube/**",
                                 "/criar-post", "/criar-post/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

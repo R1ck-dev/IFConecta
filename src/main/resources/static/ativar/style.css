@@ -1,0 +1,101 @@
+:root {
+    --ifsp-green: #2f9e41;
+    --ifsp-red: #c8191e;
+    --bg-light: #f4f7f6;
+    --text-main: #333333;
+    --text-muted: #666666;
+    --border-color: #e0e0e0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.main-content {
+    width: 100%;
+    max-width: 440px;
+    padding: 20px;
+}
+
+.form-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 32px;
+    border-top: 6px solid var(--ifsp-green);
+    text-align: center;
+}
+
+.form-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+    text-align: left;
+}
+
+.inst-logo {
+    height: 45px;
+}
+
+.form-card h2 {
+    font-size: 1.4rem;
+    color: var(--ifsp-green);
+    font-weight: 600;
+}
+
+.form-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.status-icon {
+    font-size: 2.6rem;
+    margin: 10px 0 16px;
+}
+
+.status-msg {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.status-msg.error {
+    color: var(--ifsp-red);
+}
+
+.status-msg.success {
+    color: var(--ifsp-green);
+    font-weight: 600;
+}
+
+.form-switch {
+    margin-top: 20px;
+    font-size: 0.95rem;
+}
+
+.form-switch a {
+    color: var(--ifsp-green);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.form-switch a:hover {
+    text-decoration: underline;
+}

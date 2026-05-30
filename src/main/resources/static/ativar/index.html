@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFConecta - Ativação de conta</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main class="main-content">
+        <div class="form-card">
+            <div class="form-header">
+                <img src="assets/if.png" alt="Logo IFSP" class="inst-logo">
+                <div>
+                    <h2>Ativação de conta</h2>
+                    <p class="form-subtitle">Confirmação do seu e-mail acadêmico</p>
+                </div>
+            </div>
+
+            <div id="status-icon" class="status-icon" aria-hidden="true">⏳</div>
+            <p id="status-msg" class="status-msg" role="status" aria-live="polite">Validando seu link de ativação...</p>
+
+            <p class="form-switch" id="acao" hidden>
+                <a href="/login/index.html">Ir para o login</a>
+            </p>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
