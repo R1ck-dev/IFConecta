@@ -6,7 +6,7 @@ import java.util.UUID;
 import com.henrique.ifconecta.domain.post.model.Post;
 import com.henrique.ifconecta.domain.shared.Pagina;
 
-public interface PostRepository {
+public interface PostRepository { // Adapter: PostRepositoryAdapter (infrastructure/persistence/post/adapter)
     Post salvar(Post post);
     Optional<Post> buscarPorId(UUID id);
     Pagina<Post> listarTimelineGeral(int pagina, int tamanho);

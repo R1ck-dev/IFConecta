@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import com.henrique.ifconecta.domain.usuario.model.Usuario;
 
-public interface UsuarioRepository {
+public interface UsuarioRepository { // Adapter: UsuarioRepositoryAdapter (infrastructure/persistence/usuario/adapter)
     Usuario salvar(Usuario usuario);
     Optional<Usuario> buscarPorId(UUID id);
     Optional<Usuario> buscarPorEmail(String email);

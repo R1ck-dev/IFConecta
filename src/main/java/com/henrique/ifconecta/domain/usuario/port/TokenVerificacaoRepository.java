@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.henrique.ifconecta.domain.usuario.model.TokenVerificacao;
 
-public interface TokenVerificacaoRepository {
+public interface TokenVerificacaoRepository { // Adapter: TokenVerificacaoRepositoryAdapter (infrastructure/persistence/usuario/adapter)
     TokenVerificacao salvar(TokenVerificacao token);
     Optional<TokenVerificacao> buscarPorToken(String token);
 }
