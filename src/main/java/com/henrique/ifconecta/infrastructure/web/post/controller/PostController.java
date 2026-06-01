@@ -10,9 +10,6 @@ import com.henrique.ifconecta.application.post.usecase.CriarPostUseCase;
 import com.henrique.ifconecta.infrastructure.web.post.dto.AdicionarComentarioRequest;
 import com.henrique.ifconecta.infrastructure.web.post.dto.CriarPostRequest;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -28,14 +25,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
-@Tag(name = "Posts", description = "Criação de posts, comentários e curtidas (upvotes)")
 public class PostController {
 
     private final CriarPostUseCase criarPostUseCase;
     private final AdicionarComentarioUseCase adicionarComentarioUseCase;
 
-    @Operation(summary = "Criar Post", description = "Publica um novo post, podendo ser na timeline geral ou vinculado a um clube. Suporta postagens anônimas.")
-    @ApiResponse(responseCode = "201", description = "Post criado com sucesso")
     @PostMapping
     public ResponseEntity<Void> criarPost(@RequestBody @Valid CriarPostRequest request) {
         String userIdStr = extraiId();
@@ -51,8 +45,6 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @Operation(summary = "Adicionar Comentário", description = "Comenta em um post existente.")
-    @ApiResponse(responseCode = "201", description = "Comentário adicionado")
     @PostMapping("/{postId}/comentarios")
     public ResponseEntity<Void> adicionarComentario(@PathVariable UUID postId,
             @RequestBody @Valid AdicionarComentarioRequest request) {

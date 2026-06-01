@@ -48,18 +48,18 @@ public class ClubeRepositoryAdapter implements ClubeRepository {
 
     @Override
     public Pagina<Clube> listarTodosAtivos(int pagina, int tamanho) {
-        // 1. Cria o objeto de paginação específico do Spring
+        //Cria o objeto de paginação específico do Spring
         PageRequest pageRequest = PageRequest.of(pagina, tamanho);
 
-        // 2. Executa a query paginada no banco
+        //Executa a query paginada no banco
         Page<ClubeJpaEntity> pageJpa = springDataClubeRepository.findAllByStatus(StatusClube.ATIVO, pageRequest);
 
-        // 3. Converte as entidades JPA para Domínio
+        //Converte as entidades JPA para Domínio
         List<Clube> clubesDomain = pageJpa.getContent().stream()
                 .map(clubeMapper::toDomain)
                 .collect(Collectors.toList());
 
-        // 4. Encapsula na nossa Pagina agnóstica a framework
+        //Encapsula na nossa Pagina
         return new Pagina<>(
                 clubesDomain,
                 pageJpa.getNumber(),

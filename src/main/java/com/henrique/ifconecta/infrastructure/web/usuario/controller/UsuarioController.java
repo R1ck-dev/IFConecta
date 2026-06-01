@@ -17,24 +17,17 @@ import com.henrique.ifconecta.application.usuario.usecase.AtivarContaUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.RegistrarAlunoUseCase;
 import com.henrique.ifconecta.infrastructure.web.usuario.dto.RegistrarAlunoRequest;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/usuarios")
 @RequiredArgsConstructor
-@Tag(name = "Usuários", description = "Gerenciamento de alunos e ativação de contas")
 public class UsuarioController {
 
     private final RegistrarAlunoUseCase registrarAlunoUseCase;
     private final AtivarContaUseCase ativarContaUseCase;
 
-    @Operation(summary = "Registrar Aluno", description = "Cria a conta de um novo aluno. Requer um e-mail acadêmico válido.")
-    @ApiResponse(responseCode = "201", description = "Aluno registrado com sucesso. E-mail de ativação enviado.")
-    @ApiResponse(responseCode = "400", description = "Dados inválidos, e-mail já registrado ou curso inexistente.")
     @PostMapping("/alunos")
     public ResponseEntity<Void> registrarAluno(@RequestBody @Valid RegistrarAlunoRequest request) {
 
@@ -49,9 +42,6 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @Operation(summary = "Ativar Conta (Aluno)", description = "Ativa a conta de um aluno através do token enviado por e-mail.")
-    @ApiResponse(responseCode = "200", description = "Conta ativada com sucesso")
-    @ApiResponse(responseCode = "400", description = "Token inválido ou expirado")
     @GetMapping("/ativar")
     public ResponseEntity<Map<String, String>> ativarConta(@RequestParam String token) {
         ativarContaUseCase.execute(token);

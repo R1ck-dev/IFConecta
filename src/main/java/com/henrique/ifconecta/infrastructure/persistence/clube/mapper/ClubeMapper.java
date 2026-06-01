@@ -43,8 +43,7 @@ public class ClubeMapper {
         entity.setPapel(domain.getPapel());
         entity.setDataIngresso(domain.getDataIngresso());
 
-        // Obtemos uma referência "proxy" do utilizador pelo ID para não fazer SELECT
-        // desnecessário
+        // Obtemos uma referência "proxy" do utilizador pelo ID para não fazer SELECT desnecessário
         entity.setUsuario(entityManager.getReference(UsuarioJpaEntity.class, domain.getUsuarioId()));
 
         return entity;

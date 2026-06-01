@@ -22,9 +22,6 @@ import com.henrique.ifconecta.application.clube.usecase.ListarClubesUseCase;
 import com.henrique.ifconecta.application.clube.usecase.ListarTimelineDoClubeUseCase;
 import com.henrique.ifconecta.infrastructure.web.clube.dto.CriarClubeRequest;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 @RequestMapping("/api/clubes")
 @RequiredArgsConstructor
-@Tag(name = "Clubes", description = "Criação de clubes, gestão de membros e visualização de timelines")
 public class ClubeController {
 
     private final CriarClubeUseCase criarClubeUseCase;
@@ -58,7 +54,6 @@ public class ClubeController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @Operation(summary = "Listar Clubes", description = "Retorna uma lista paginada de todos os clubes ativos.")
     @GetMapping()
     public ResponseEntity<Pagina<ClubeResumoDTO>> listarClubes(@RequestParam(defaultValue = "0") int pagina,
             @RequestParam(defaultValue = "10") int tamanho) {
@@ -77,9 +72,6 @@ public class ClubeController {
         return ResponseEntity.noContent().build(); 
     }
 
-    @Operation(summary = "Timeline do Clube", description = "Retorna os posts feitos dentro de um clube específico.")
-    @ApiResponse(responseCode = "200", description = "Timeline recuperada com sucesso")
-    @ApiResponse(responseCode = "400", description = "Usuário não tem permissão para ver este clube privado")
     @GetMapping("/{clubeId}/posts")
     public ResponseEntity<Pagina<PostResumoDTO>> listarTimeline(
             @PathVariable UUID clubeId,
