@@ -31,12 +31,6 @@
                 </graphic>
             </Button>
 
-            <Button styleClass="hdr-icon-btn" onAction="#onToggleTheme">
-                <graphic>
-                    <FontIcon fx:id="themeIcon" iconLiteral="fth-moon" iconSize="18"/>
-                </graphic>
-            </Button>
-
             <Button fx:id="notificacoesBtn" styleClass="hdr-icon-btn" onAction="#onNotificacoes">
                 <graphic>
                     <FontIcon iconLiteral="fth-bell" iconSize="18"/>

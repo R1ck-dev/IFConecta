@@ -19,7 +19,7 @@ public class TokenVerificacao {
         this.id = UUID.randomUUID();
         this.usuario = usuario;
         this.token = UUID.randomUUID().toString();
-        this.dataExpiracao = LocalDateTime.now().plusHours(tipo == TipoToken.REDEFINICAO_SENHA ? 1 : 24);
+        this.dataExpiracao = LocalDateTime.now().plusHours(24);
         this.utilizado = false;
         this.tipo = tipo;
     }

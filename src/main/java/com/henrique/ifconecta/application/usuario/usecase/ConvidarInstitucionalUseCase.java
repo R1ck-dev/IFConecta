@@ -43,7 +43,6 @@ public class ConvidarInstitucionalUseCase {
 
         Institucional novoInstitucional = new Institucional(
             null,
-            null,
             input.nome(),
             input.emailAcad(),
             hash,

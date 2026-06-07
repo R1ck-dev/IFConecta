@@ -28,7 +28,7 @@
         <Label styleClass="auth-art-hero" wrapText="true"
                text="A rede do Campus Salto, feita por quem vive o campus."/>
         <Label styleClass="auth-art-tag" wrapText="true"
-               text="Timeline, clubes, comunicados e turmas — tudo em um só lugar. Sem ruído de redes sociais, com a cara da nossa comunidade."/>
+               text="Timeline, clubes e comunicados — tudo em um só lugar. Sem ruído de redes sociais, com a cara da nossa comunidade."/>
     </VBox>
 
     <!-- ───── Formulário ───── -->
@@ -61,11 +61,7 @@
 
             <!-- Senha -->
             <VBox spacing="5.0">
-                <HBox alignment="CENTER_LEFT">
-                    <Label text="Senha" styleClass="field-label"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Hyperlink text="Esqueci minha senha" styleClass="link" onAction="#onEsqueci"/>
-                </HBox>
+                <Label text="Senha" styleClass="field-label"/>
                 <HBox fx:id="senhaGroup" styleClass="input-group" alignment="CENTER_LEFT">
                     <FontIcon iconLiteral="fth-lock" iconSize="16"/>
                     <PasswordField fx:id="senhaField" HBox.hgrow="ALWAYS" promptText="••••••••"/>

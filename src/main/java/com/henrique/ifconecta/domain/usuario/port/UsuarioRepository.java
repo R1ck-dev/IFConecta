@@ -13,8 +13,6 @@ public interface UsuarioRepository {
     Optional<Usuario> buscarPorEmail(String email);
     boolean existePorEmail(String email);
     List<UUID> buscarTodosIdsAtivos();
-    List<UUID> buscarIdsPorCurso(UUID cursoId);
     List<Usuario> buscarPorIds(Collection<UUID> ids);
-    List<Usuario> listarProfessoresAtivos();
 }
 

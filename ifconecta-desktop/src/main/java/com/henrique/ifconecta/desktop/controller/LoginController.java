@@ -57,11 +57,6 @@ public class LoginController {
     }
 
     @FXML
-    private void onEsqueci() {
-        Router.get().showFullScreen("esqueci-senha");
-    }
-
-    @FXML
     private void onCadastrar() {
         Router.get().showFullScreen("cadastro");
     }

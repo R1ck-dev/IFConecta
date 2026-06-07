@@ -51,23 +51,11 @@ public class UsuarioRepositoryAdapter implements UsuarioRepository {
     }
 
     @Override
-    public List<UUID> buscarIdsPorCurso(UUID cursoId) {
-        return springDataUsuarioRepository.findIdsByCursoId(cursoId);
-    }
-
-    @Override
     public List<Usuario> buscarPorIds(Collection<UUID> ids) {
         if (ids == null || ids.isEmpty()) {
             return List.of();
         }
         return springDataUsuarioRepository.findAllById(ids).stream()
-                .map(usuarioMapper::toDomain)
-                .toList();
-    }
-
-    @Override
-    public List<Usuario> listarProfessoresAtivos() {
-        return springDataUsuarioRepository.findProfessoresAtivos().stream()
                 .map(usuarioMapper::toDomain)
                 .toList();
     }

@@ -36,9 +36,8 @@ public class AdminSeeder implements CommandLineRunner {
             String hash = passwordEncoder.encode(adminPassword);
 
             Institucional admin = new Institucional(
-                    null, 
-                    null, 
-                    "Administrador IFConecta", 
+                    null,
+                    "Administrador IFConecta",
                     adminEmail, 
                     hash, 
                     "TI", 

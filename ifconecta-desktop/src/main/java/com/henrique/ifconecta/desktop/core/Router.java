@@ -43,7 +43,7 @@ public final class Router {
         showFullScreen("login");
     }
 
-    /** Mostra uma tela em tela cheia, sem o AppShell (login, cadastro, esqueci-senha). */
+    /** Mostra uma tela em tela cheia, sem o AppShell (login, cadastro). */
     public void showFullScreen(String viewName) {
         shell = null;
         contentLayer.getChildren().setAll(load(viewName).root());

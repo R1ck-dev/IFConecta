@@ -57,23 +57,4 @@ public class JavaMailSenderAdapter implements EmailSenderPort {
         mailSender.send(message);
     }
 
-    @Override
-    public void enviarEmailRedefinicaoSenha(String destinatario, String nome, String token) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(remetente);
-        message.setTo(destinatario);
-        message.setSubject("Redefinição de senha no IFConecta");
-
-        String url = webBaseUrl + "/conta/redefinir-senha.html?token=" + token;
-
-        message.setText("Olá, " + nome + "!\n\n" +
-                "Recebemos uma solicitação para redefinir a senha da sua conta no IFConecta. " +
-                "Clique no link abaixo para escolher uma nova senha:\n\n" +
-                url + "\n\n" +
-                "Se você não solicitou essa redefinição, ignore este e-mail.\n" +
-                "O link é válido por 1 hora.");
-
-        mailSender.send(message);
-    }
-
 }

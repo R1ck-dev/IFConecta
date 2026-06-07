@@ -1,23 +1,17 @@
 package com.henrique.ifconecta.desktop.controller;
 
-import java.util.List;
-
 import com.henrique.ifconecta.desktop.core.AsyncRunner;
 import com.henrique.ifconecta.desktop.core.Router;
 import com.henrique.ifconecta.desktop.core.http.ApiException;
-import com.henrique.ifconecta.desktop.model.Curso;
-import com.henrique.ifconecta.desktop.service.CursoService;
 import com.henrique.ifconecta.desktop.service.UsuarioService;
 import com.henrique.ifconecta.desktop.ui.Toast;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.util.StringConverter;
 
 /**
  * Tela de cadastro de aluno — tela cheia, pré-login.
@@ -36,33 +30,11 @@ public class CadastroController {
     @FXML private TextField emailField;
     @FXML private PasswordField senhaField;
     @FXML private TextField prontuarioField;
-    @FXML private ComboBox<Curso> cursoCombo;
     @FXML private Label nomeError;
     @FXML private Label emailError;
     @FXML private Label senhaError;
     @FXML private Label prontuarioError;
-    @FXML private Label cursoError;
     @FXML private Button cadastrarBtn;
-
-    @FXML
-    private void initialize() {
-        cursoCombo.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(Curso curso) {
-                return curso == null ? "" : curso.nome();
-            }
-
-            @Override
-            public Curso fromString(String texto) {
-                return null;
-            }
-        });
-
-        AsyncRunner.run(
-                CursoService::listar,
-                cursos -> cursoCombo.getItems().setAll(cursos == null ? List.of() : cursos),
-                erro -> Toast.error("Não foi possível carregar os cursos", mensagem(erro)));
-    }
 
     @FXML
     private void onVoltarLogin() {
@@ -75,7 +47,6 @@ public class CadastroController {
         String email = valor(emailField);
         String senha = senhaField.getText() == null ? "" : senhaField.getText();
         String prontuario = valor(prontuarioField);
-        Curso curso = cursoCombo.getValue();
 
         boolean valido = true;
         if (nome.isEmpty()) {
@@ -105,18 +76,13 @@ public class CadastroController {
         } else {
             limparErro(prontuarioGroup, prontuarioError);
         }
-        if (curso == null) {
-            valido = marcarErro(cursoError, "Selecione seu curso.") && valido;
-        } else {
-            limparErro(cursoError);
-        }
         if (!valido) {
             return;
         }
 
         setLoading(true);
         AsyncRunner.runVoid(
-                () -> UsuarioService.registrarAluno(curso.id(), nome, email, senha, prontuario),
+                () -> UsuarioService.registrarAluno(nome, email, senha, prontuario),
                 () -> {
                     setLoading(false);
                     Toast.success("Conta criada!",
@@ -136,7 +102,6 @@ public class CadastroController {
         emailField.setDisable(loading);
         senhaField.setDisable(loading);
         prontuarioField.setDisable(loading);
-        cursoCombo.setDisable(loading);
     }
 
     private boolean marcarErro(HBox grupo, Label label, String msg) {

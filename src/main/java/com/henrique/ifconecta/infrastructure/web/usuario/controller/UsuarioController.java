@@ -1,45 +1,27 @@
 package com.henrique.ifconecta.infrastructure.web.usuario.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.henrique.ifconecta.application.usuario.dto.AlterarMinhaSenhaInput;
 import com.henrique.ifconecta.application.usuario.dto.AtivarConvidadoInput;
-import com.henrique.ifconecta.application.usuario.dto.AtualizarMeuPerfilInput;
 import com.henrique.ifconecta.application.usuario.dto.MeuPerfilDTO;
-import com.henrique.ifconecta.application.usuario.dto.RedefinirSenhaInput;
 import com.henrique.ifconecta.application.usuario.dto.RegistrarAlunoInput;
-import com.henrique.ifconecta.application.usuario.dto.SolicitarRedefinicaoSenhaInput;
-import com.henrique.ifconecta.application.usuario.dto.UsuarioPublicoDTO;
-import com.henrique.ifconecta.application.usuario.usecase.AlterarMinhaSenhaUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.AtivarContaUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.AtivarConvidadoUseCase;
-import com.henrique.ifconecta.application.usuario.usecase.AtualizarMeuPerfilUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.BuscarMeuPerfilUseCase;
-import com.henrique.ifconecta.application.usuario.usecase.BuscarUsuarioPublicoUseCase;
-import com.henrique.ifconecta.application.usuario.usecase.ListarProfessoresAtivosUseCase;
-import com.henrique.ifconecta.application.usuario.usecase.RedefinirSenhaUseCase;
 import com.henrique.ifconecta.application.usuario.usecase.RegistrarAlunoUseCase;
-import com.henrique.ifconecta.application.usuario.usecase.SolicitarRedefinicaoSenhaUseCase;
 import com.henrique.ifconecta.infrastructure.config.security.CurrentUserId;
-import com.henrique.ifconecta.infrastructure.web.usuario.dto.AlterarMinhaSenhaRequest;
-import com.henrique.ifconecta.infrastructure.web.usuario.dto.AtualizarMeuPerfilRequest;
 import com.henrique.ifconecta.infrastructure.web.usuario.dto.DefinirSenhaRequest;
-import com.henrique.ifconecta.infrastructure.web.usuario.dto.EsqueciSenhaRequest;
-import com.henrique.ifconecta.infrastructure.web.usuario.dto.RedefinirSenhaRequest;
 import com.henrique.ifconecta.infrastructure.web.usuario.dto.RegistrarAlunoRequest;
 
 import jakarta.validation.Valid;
@@ -54,18 +36,11 @@ public class UsuarioController {
     private final AtivarContaUseCase ativarContaUseCase;
     private final AtivarConvidadoUseCase ativarConvidadoUseCase;
     private final BuscarMeuPerfilUseCase buscarMeuPerfilUseCase;
-    private final BuscarUsuarioPublicoUseCase buscarUsuarioPublicoUseCase;
-    private final AtualizarMeuPerfilUseCase atualizarMeuPerfilUseCase;
-    private final AlterarMinhaSenhaUseCase alterarMinhaSenhaUseCase;
-    private final SolicitarRedefinicaoSenhaUseCase solicitarRedefinicaoSenhaUseCase;
-    private final RedefinirSenhaUseCase redefinirSenhaUseCase;
-    private final ListarProfessoresAtivosUseCase listarProfessoresAtivosUseCase;
 
     @PostMapping("/alunos")
     public ResponseEntity<Void> registrarAluno(@RequestBody @Valid RegistrarAlunoRequest request) {
 
         RegistrarAlunoInput input = new RegistrarAlunoInput(
-                request.cursoId(),
                 request.nome(),
                 request.email(),
                 request.password(),
@@ -95,47 +70,8 @@ public class UsuarioController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/esqueci-senha")
-    public ResponseEntity<Map<String, String>> esqueciSenha(@RequestBody @Valid EsqueciSenhaRequest request) {
-        solicitarRedefinicaoSenhaUseCase.execute(new SolicitarRedefinicaoSenhaInput(request.email()));
-        return ResponseEntity.ok(Map.of(
-                "mensagem", "Se houver uma conta com este e-mail, enviaremos um link de redefinição."));
-    }
-
-    @PostMapping("/redefinir-senha")
-    public ResponseEntity<Map<String, String>> redefinirSenha(@RequestBody @Valid RedefinirSenhaRequest request) {
-        redefinirSenhaUseCase.execute(new RedefinirSenhaInput(request.token(), request.novaSenha()));
-        return ResponseEntity.ok(Map.of(
-                "mensagem", "Senha redefinida com sucesso! Faça login com a nova senha."));
-    }
-
     @GetMapping("/me")
     public ResponseEntity<MeuPerfilDTO> meuPerfil(@CurrentUserId UUID usuarioId) {
         return ResponseEntity.ok(buscarMeuPerfilUseCase.execute(usuarioId));
-    }
-
-    @PatchMapping("/me")
-    public ResponseEntity<Void> atualizarMeuPerfil(@CurrentUserId UUID usuarioId,
-            @RequestBody @Valid AtualizarMeuPerfilRequest request) {
-        atualizarMeuPerfilUseCase.execute(new AtualizarMeuPerfilInput(usuarioId, request.nome()));
-        return ResponseEntity.noContent().build();
-    }
-
-    @PatchMapping("/me/senha")
-    public ResponseEntity<Void> alterarMinhaSenha(@CurrentUserId UUID usuarioId,
-            @RequestBody @Valid AlterarMinhaSenhaRequest request) {
-        alterarMinhaSenhaUseCase.execute(new AlterarMinhaSenhaInput(
-                usuarioId, request.senhaAtual(), request.novaSenha()));
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/professores")
-    public ResponseEntity<List<UsuarioPublicoDTO>> listarProfessores() {
-        return ResponseEntity.ok(listarProfessoresAtivosUseCase.execute());
-    }
-
-    @GetMapping("/{usuarioId}")
-    public ResponseEntity<UsuarioPublicoDTO> buscarPorId(@PathVariable UUID usuarioId) {
-        return ResponseEntity.ok(buscarUsuarioPublicoUseCase.execute(usuarioId));
     }
 }

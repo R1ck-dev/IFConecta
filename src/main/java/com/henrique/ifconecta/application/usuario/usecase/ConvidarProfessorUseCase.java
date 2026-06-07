@@ -44,9 +44,8 @@ public class ConvidarProfessorUseCase {
         String hash = passwordEncoderPort.encode(senhaAleatoria);
 
         Professor novoProfessor = new Professor(
-                null, 
-                null, // CursoId pode ser nulo para professor inicialmente
-                input.nome(), 
+                null,
+                input.nome(),
                 input.emailAcad(), 
                 hash, 
                 input.siape()

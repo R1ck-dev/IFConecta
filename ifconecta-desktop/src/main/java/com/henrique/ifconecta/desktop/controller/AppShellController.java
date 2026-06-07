@@ -13,7 +13,6 @@ import com.henrique.ifconecta.desktop.service.NotificacaoService;
 import com.henrique.ifconecta.desktop.ui.Avatar;
 import com.henrique.ifconecta.desktop.ui.Icons;
 import com.henrique.ifconecta.desktop.ui.Modal;
-import com.henrique.ifconecta.desktop.ui.Theme;
 import com.henrique.ifconecta.desktop.ui.Toast;
 
 import javafx.fxml.FXML;
@@ -24,7 +23,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -42,7 +40,6 @@ public class AppShellController {
     @FXML private Button comunicadoBtn;
     @FXML private Button notificacoesBtn;
     @FXML private Button accountBtn;
-    @FXML private FontIcon themeIcon;
 
     /** view -> botão da sidebar, para alternar o estado "active". */
     private final Map<String, Button> navButtons = new LinkedHashMap<>();
@@ -58,7 +55,6 @@ public class AppShellController {
         comunicadoBtn.setVisible(podeComunicar);
         comunicadoBtn.setManaged(podeComunicar);
 
-        themeIcon.setIconLiteral(Theme.isDark() ? "fth-sun" : "fth-moon");
         accountBtn.setGraphic(new Avatar(me == null ? "" : me.nome(), 32));
         accountMenu = construirMenuConta();
         atualizarBadgeNotificacoes();
@@ -77,12 +73,6 @@ public class AppShellController {
     }
 
     // ───────── Header ─────────
-
-    @FXML
-    private void onToggleTheme() {
-        Theme.toggle();
-        themeIcon.setIconLiteral(Theme.isDark() ? "fth-sun" : "fth-moon");
-    }
 
     @FXML
     private void onComunicado() {
@@ -132,12 +122,7 @@ public class AppShellController {
                 secao("Feed"),
                 navLink("timeline", "fth-home", "Timeline"),
                 navLink("clubes", "fth-users", "Clubes"),
-                navLink("notificacoes", "fth-bell", "Notificações"),
-                secao("Acadêmico"),
-                navLink("academico", "fth-book-open", "Minhas turmas"),
-                navLink("cursos", "fth-award", "Cursos"),
-                secao("Você"),
-                navLink("perfil", "fth-user", "Meu perfil"));
+                navLink("notificacoes", "fth-bell", "Notificações"));
 
         if (me != null && me.isAdmin()) {
             sidebar.getChildren().addAll(secao("Admin"), navLink("admin", "fth-shield", "Painel"));
@@ -186,13 +171,10 @@ public class AppShellController {
     private ContextMenu construirMenuConta() {
         ContextMenu menu = new ContextMenu();
 
-        MenuItem perfil = new MenuItem("Meu perfil");
-        perfil.setOnAction(e -> Router.get().navigate("perfil"));
-
         MenuItem sair = new MenuItem("Sair");
         sair.setOnAction(e -> logout());
 
-        menu.getItems().addAll(perfil, new SeparatorMenuItem(), sair);
+        menu.getItems().add(sair);
         return menu;
     }
 

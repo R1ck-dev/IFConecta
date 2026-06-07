@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.henrique.ifconecta.infrastructure.persistence.usuario.entity.UsuarioJpaEntity;
@@ -19,10 +18,4 @@ public interface SpringDataUsuarioRepository extends JpaRepository<UsuarioJpaEnt
 
     @Query("SELECT u.id FROM UsuarioJpaEntity u WHERE u.status = 'ATIVO'")
     List<UUID> findAllAtivosIds();
-
-    @Query("SELECT u.id FROM UsuarioJpaEntity u WHERE u.cursoId = :cursoId AND u.status = 'ATIVO'")
-    List<UUID> findIdsByCursoId(@Param("cursoId") UUID cursoId);
-
-    @Query("SELECT u FROM ProfessorJpaEntity u WHERE u.status = 'ATIVO' ORDER BY u.nome")
-    List<UsuarioJpaEntity> findProfessoresAtivos();
 }

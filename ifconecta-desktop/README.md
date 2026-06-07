@@ -4,9 +4,6 @@ Cliente **desktop** do IFConecta, escrito em **JavaFX 21**. Substitui o frontend
 (`ifconecta-web`) para execução como aplicação de plataforma, consumindo a mesma API
 REST do backend Spring Boot.
 
-> Migração **faseada**. Esta é a **Fase A — núcleo**: fundação técnica + Login + AppShell
-> (header/sidebar) + Timeline, integrados ao backend. As demais telas e modais vêm na Fase B.
-
 ## Stack
 
 - **JavaFX 21** — UI em FXML + CSS (o CSS é um port dos design tokens do front web).
@@ -46,12 +43,12 @@ src/main/java/com/henrique/ifconecta/desktop/
 ├── IFConectaApp.java        Application — monta a cena, tema, roteador
 ├── core/                    Router, Session, AsyncRunner, http/ApiClient
 ├── model/                   records espelhando os DTOs do backend
-├── service/                 AuthService, CursoService, PostService
-├── controller/              LoginController, AppShellController, TimelineController
+├── service/                 AuthService, ClubeService, PostService, NotificacaoService, AdminService, UsuarioService
+├── controller/              LoginController, AppShellController, TimelineController, ...
 └── ui/                      Theme, Toast, Avatar, Icons, Format
 src/main/resources/com/henrique/ifconecta/desktop/
 ├── view/                    *.fxml
-└── css/                     tokens.css, tokens-dark.css, app.css
+└── css/                     tokens.css, app.css
 ```
 
 ## Mapa Web → Desktop
@@ -62,5 +59,5 @@ src/main/resources/com/henrique/ifconecta/desktop/
 | `axios` + interceptors | `core/http/ApiClient` |
 | `AuthContext` / `localStorage` | `core/Session` |
 | `useToast` | `ui/Toast` |
-| design tokens CSS | `css/tokens*.css` (oklch → sRGB) |
+| design tokens CSS | `css/tokens.css` + `app.css` (oklch → sRGB) |
 | `async/await` + loading | `core/AsyncRunner` (`Task`) |

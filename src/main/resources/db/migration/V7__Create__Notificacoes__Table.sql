@@ -5,8 +5,8 @@ CREATE TABLE notificacoes (
     titulo VARCHAR(100) NOT NULL,
     mensagem TEXT NOT NULL,
     lida BOOLEAN NOT NULL DEFAULT FALSE,
-    tipo_alvo VARCHAR(50) NOT NULL, -- GERAL, CURSO, TURMA, CLUBE
-    referencia_id UUID, -- O ID do alvo (ex: ID da Turma)
+    tipo_alvo VARCHAR(50) NOT NULL, -- GERAL, CLUBE
+    referencia_id UUID, -- O ID do alvo (ex: ID do Clube)
     data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

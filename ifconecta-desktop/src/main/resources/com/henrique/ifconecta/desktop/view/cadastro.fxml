@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
@@ -29,7 +28,7 @@
         <Label styleClass="auth-art-hero" wrapText="true"
                text="Faça parte da comunidade do Campus Salto."/>
         <Label styleClass="auth-art-tag" wrapText="true"
-               text="Crie sua conta de aluno e acompanhe a timeline, os clubes, os comunicados e as turmas do campus."/>
+               text="Crie sua conta de aluno e acompanhe a timeline, os clubes e os comunicados do campus."/>
     </VBox>
 
     <!-- ───── Formulário ───── -->
@@ -91,14 +90,6 @@
                                promptText="SL000000X"/>
                 </HBox>
                 <Label fx:id="prontuarioError" styleClass="field-error" managed="false" visible="false"/>
-            </VBox>
-
-            <!-- Curso -->
-            <VBox spacing="5.0">
-                <Label text="Curso" styleClass="field-label"/>
-                <ComboBox fx:id="cursoCombo" styleClass="combo-box" maxWidth="Infinity"
-                          promptText="Selecione seu curso"/>
-                <Label fx:id="cursoError" styleClass="field-error" managed="false" visible="false"/>
             </VBox>
 
             <Button fx:id="cadastrarBtn" text="Cadastrar" styleClass="btn, btn-block"

@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
@@ -23,7 +22,7 @@
 
             <VBox spacing="2.0">
                 <Label text="Painel administrativo" styleClass="page-title"/>
-                <Label text="Convites de servidores e cadastro acadêmico" styleClass="page-sub"/>
+                <Label text="Convites de servidores" styleClass="page-sub"/>
             </VBox>
 
             <!-- Convidar professor -->
@@ -86,44 +85,6 @@
                 <HBox>
                     <Button fx:id="instBtn" text="Enviar convite" styleClass="btn"
                             onAction="#onConvidarInstitucional"/>
-                </HBox>
-            </VBox>
-
-            <!-- Cadastrar curso -->
-            <VBox styleClass="card" spacing="10.0">
-                <Label text="Cadastrar curso" styleClass="section-title"/>
-
-                <VBox spacing="5.0">
-                    <Label text="Nome do curso" styleClass="field-label"/>
-                    <TextField fx:id="cursoNomeField" styleClass="input"
-                               promptText="ex.: Ciência da Computação"/>
-                </VBox>
-                <VBox spacing="5.0">
-                    <Label text="Sigla" styleClass="field-label"/>
-                    <TextField fx:id="cursoSiglaField" styleClass="input" promptText="ex.: CC"/>
-                </VBox>
-                <VBox spacing="5.0">
-                    <Label text="Modalidade" styleClass="field-label"/>
-                    <ComboBox fx:id="modalidadeCombo" styleClass="combo-box" maxWidth="Infinity"
-                              promptText="Selecione a modalidade"/>
-                </VBox>
-
-                <VBox spacing="5.0">
-                    <Label text="Disciplinas" styleClass="field-label"/>
-                    <VBox fx:id="disciplinasBox" spacing="8.0"/>
-                    <HBox>
-                        <Button fx:id="addDisciplinaBtn" text="Adicionar disciplina"
-                                styleClass="btn, btn-outline, btn-sm"
-                                onAction="#onAdicionarDisciplina"/>
-                    </HBox>
-                </VBox>
-
-                <Label fx:id="cursoError" styleClass="field-error"
-                       managed="false" visible="false" wrapText="true"/>
-
-                <HBox>
-                    <Button fx:id="cursoBtn" text="Cadastrar curso" styleClass="btn"
-                            onAction="#onCadastrarCurso"/>
                 </HBox>
             </VBox>
         </VBox>

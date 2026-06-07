@@ -17,7 +17,7 @@ public record EnviarComunicadoRequest(
     @NotBlank(message = "A mensagem do comunicado é obrigatória.")
     String mensagem,
 
-    @NotNull(message = "O tipo de alvo é obrigatório (GERAL, CURSO, TURMA, CLUBE).")
+    @NotNull(message = "O tipo de alvo é obrigatório (GERAL, CLUBE).")
     TipoAlvoComunicado tipoAlvo,
 
     UUID alvoId 

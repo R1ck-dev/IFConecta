@@ -12,7 +12,6 @@ public record MeuPerfilDTO(
         String emailAcad,
         RoleUsuario role,
         StatusUsuario status,
-        UUID cursoId,
         LocalDateTime dataCriacao,
         String tipo,
         String prontuario,

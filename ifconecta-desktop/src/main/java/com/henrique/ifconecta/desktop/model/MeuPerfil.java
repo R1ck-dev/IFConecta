@@ -10,7 +10,6 @@ public record MeuPerfil(
         String emailAcad,
         String role,
         String status,
-        String cursoId,
         String dataCriacao,
         String tipo,
         String prontuario,

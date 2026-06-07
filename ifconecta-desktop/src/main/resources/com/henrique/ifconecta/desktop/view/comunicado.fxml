@@ -40,20 +40,6 @@
         <ComboBox fx:id="tipoAlvoCombo" styleClass="combo-box" maxWidth="Infinity"/>
     </VBox>
 
-    <!-- Alvo: Curso -->
-    <VBox fx:id="cursoBox" spacing="4.0" managed="false" visible="false">
-        <Label text="Curso" styleClass="field-label"/>
-        <ComboBox fx:id="cursoCombo" styleClass="combo-box" maxWidth="Infinity"
-                  promptText="Selecione o curso"/>
-    </VBox>
-
-    <!-- Alvo: Turma -->
-    <VBox fx:id="turmaBox" spacing="4.0" managed="false" visible="false">
-        <Label text="Turma" styleClass="field-label"/>
-        <ComboBox fx:id="turmaCombo" styleClass="combo-box" maxWidth="Infinity"
-                  promptText="Selecione a turma"/>
-    </VBox>
-
     <!-- Alvo: Clube -->
     <VBox fx:id="clubeBox" spacing="4.0" managed="false" visible="false">
         <Label text="Clube" styleClass="field-label"/>
