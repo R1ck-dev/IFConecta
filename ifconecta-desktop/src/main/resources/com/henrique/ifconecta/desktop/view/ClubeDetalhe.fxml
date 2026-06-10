@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.henrique.ifconecta.desktop.controller.ClubeDetalheController">
+    <VBox spacing="12">
+        <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+
+        <Button text="Voltar" onAction="#onVoltar"/>
+
+        <!-- Cabecalho do clube: nome, descricao e info. Preenchido por codigo. -->
+        <VBox fx:id="cabecalhoBox" spacing="6"/>
+
+        <TabPane fx:id="abas" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="Posts">
+                    <content>
+                        <VBox fx:id="postsBox" spacing="10">
+                            <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="Membros">
+                    <content>
+                        <VBox fx:id="membrosBox" spacing="10">
+                            <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab fx:id="solicitacoesTab" text="Solicitacoes">
+                    <content>
+                        <VBox fx:id="solicitacoesBox" spacing="10">
+                            <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </VBox>
+</ScrollPane>

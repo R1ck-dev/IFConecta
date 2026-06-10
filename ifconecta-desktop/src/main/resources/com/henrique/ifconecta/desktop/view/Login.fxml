@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.henrique.ifconecta.desktop.controller.LoginController">
+
+    <VBox styleClass="card" spacing="12" maxWidth="360" maxHeight="-Infinity" alignment="CENTER_LEFT">
+        <padding><Insets top="28" right="28" bottom="28" left="28"/></padding>
+
+        <Label text="IFConecta" styleClass="titulo"/>
+        <Label text="Acesse sua conta" styleClass="subtitulo"/>
+
+        <Label text="Email"/>
+        <TextField fx:id="emailField" promptText="seu.nome@aluno.ifsp.edu.br"/>
+
+        <Label text="Senha"/>
+        <PasswordField fx:id="senhaField" promptText="Sua senha"/>
+
+        <Button fx:id="entrarBtn" text="Entrar" maxWidth="Infinity" onAction="#onEntrar"/>
+
+        <HBox spacing="4" alignment="CENTER_LEFT">
+            <Label text="Não tem conta?"/>
+            <Hyperlink text="Cadastrar como aluno" onAction="#onCadastrar"/>
+        </HBox>
+    </VBox>
+
+</StackPane>

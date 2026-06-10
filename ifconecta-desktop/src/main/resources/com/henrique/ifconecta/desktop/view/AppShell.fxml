@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.henrique.ifconecta.desktop.controller.AppShellController">
+
+    <!-- Cabecalho verde no topo -->
+    <top>
+        <HBox styleClass="cabecalho" alignment="CENTER_LEFT" spacing="12">
+            <padding><Insets top="12" right="18" bottom="12" left="18"/></padding>
+            <Label text="IFConecta" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="nomeUsuarioLabel"/>
+            <Button fx:id="comunicadoBtn" text="Comunicado" onAction="#irComunicado"/>
+            <Button text="Sair" onAction="#sair"/>
+        </HBox>
+    </top>
+
+    <!-- Menu lateral a esquerda -->
+    <left>
+        <VBox styleClass="menu-lateral" prefWidth="190" spacing="6">
+            <padding><Insets top="16" right="10" bottom="16" left="10"/></padding>
+            <Button text="Timeline" maxWidth="Infinity" onAction="#irTimeline"/>
+            <Button text="Clubes" maxWidth="Infinity" onAction="#irClubes"/>
+            <Button text="Notificações" maxWidth="Infinity" onAction="#irNotificacoes"/>
+            <Button fx:id="adminBtn" text="Painel admin" maxWidth="Infinity" onAction="#irAdmin"/>
+        </VBox>
+    </left>
+
+    <!-- O meio fica vazio aqui; o App coloca a tela atual nele. -->
+
+</BorderPane>

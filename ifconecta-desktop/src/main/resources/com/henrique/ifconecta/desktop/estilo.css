@@ -1,0 +1,72 @@
+/* Estilo simples do IFConecta (verde institucional do IFSP). */
+
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: #f4f4f0;
+}
+
+/* Titulos das telas */
+.titulo {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1c7c43;
+}
+
+.subtitulo {
+    -fx-font-size: 13px;
+    -fx-text-fill: #5e636e;
+}
+
+/* Botoes (verde) */
+.button {
+    -fx-background-color: #1c7c43;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 6;
+}
+
+.button:hover {
+    -fx-background-color: #166437;
+}
+
+/* Cartoes usados nas listas (posts, clubes, membros, etc.) */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #e0e0da;
+    -fx-border-radius: 8;
+    -fx-padding: 12;
+}
+
+/* Cabecalho verde da area logada */
+.cabecalho {
+    -fx-background-color: #1c7c43;
+}
+
+.cabecalho .label {
+    -fx-text-fill: white;
+}
+
+.cabecalho .button {
+    -fx-background-color: white;
+    -fx-text-fill: #1c7c43;
+}
+
+/* Menu lateral da area logada */
+.menu-lateral {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0da;
+}
+
+.menu-lateral .button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #20242b;
+    -fx-font-weight: normal;
+    -fx-alignment: center-left;
+}
+
+.menu-lateral .button:hover {
+    -fx-background-color: #eef3ef;
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.henrique.ifconecta.desktop.controller.ClubesController">
+    <VBox spacing="14">
+        <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <Label text="Clubes" styleClass="titulo"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Criar clube" onAction="#onCriarClube"/>
+        </HBox>
+        <Label text="Meus clubes" style="-fx-font-weight: bold;"/>
+        <VBox fx:id="meusBox" spacing="10"/>
+        <Label text="Explorar" style="-fx-font-weight: bold;"/>
+        <VBox fx:id="explorarBox" spacing="10"/>
+    </VBox>
+</ScrollPane>

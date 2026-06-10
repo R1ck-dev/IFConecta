@@ -1,172 +1,94 @@
 package com.henrique.ifconecta.desktop.controller;
 
-import com.henrique.ifconecta.desktop.core.AsyncRunner;
-import com.henrique.ifconecta.desktop.core.http.ApiException;
+import com.henrique.ifconecta.desktop.Api;
+import com.henrique.ifconecta.desktop.App;
 import com.henrique.ifconecta.desktop.model.Comentario;
 import com.henrique.ifconecta.desktop.model.PostDetalhe;
-import com.henrique.ifconecta.desktop.service.PostService;
-import com.henrique.ifconecta.desktop.ui.Avatar;
-import com.henrique.ifconecta.desktop.ui.Format;
-import com.henrique.ifconecta.desktop.ui.Modal;
-import com.henrique.ifconecta.desktop.ui.Toast;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-/**
- * Modal de detalhe do post — exibe o post completo, a lista de comentários
- * e permite comentar. Espelha a página de detalhe do post do front web.
- */
 public class PostDetalheController {
 
-    @FXML private VBox raiz;
-    @FXML private StackPane loadingBox;
-    @FXML private VBox conteudoBox;
-    @FXML private HBox cabecalhoBox;
-    @FXML private Label corpoLabel;
-    @FXML private Label upvotesLabel;
-    @FXML private ScrollPane comentariosScroll;
+    @FXML private VBox postBox;
     @FXML private VBox comentariosBox;
-    @FXML private HBox novoComentarioBox;
-    @FXML private TextField novoComentarioField;
-    @FXML private Button comentarBtn;
+    @FXML private TextField comentarioField;
 
+    // guarda o id do post que veio da tela anterior
     private String postId;
 
-    /**
-     * Carrega (ou recarrega) o detalhe do post indicado.
-     *
-     * @param postId id do post a exibir
-     */
-    public void carregar(String postId) {
-        this.postId = postId;
-        mostrarLoading(true);
-        AsyncRunner.run(
-                () -> PostService.detalhe(postId),
-                detalhe -> {
-                    mostrarLoading(false);
-                    renderizar(detalhe);
-                },
-                erro -> {
-                    mostrarLoading(false);
-                    if (!(erro instanceof ApiException api && api.isUnauthorized())) {
-                        Toast.error("Não foi possível carregar o post", mensagem(erro));
-                    }
-                });
+    @FXML
+    public void initialize() {
+        postId = App.parametro;
+        carregar();
     }
 
-    // ───────── Render ─────────
-
-    private void renderizar(PostDetalhe detalhe) {
-        boolean anonimo = detalhe.anonimo()
-                || detalhe.autorNome() == null || detalhe.autorNome().isBlank();
-        String nomeAutor = anonimo ? "Anônimo" : detalhe.autorNome();
-
-        VBox autor = new VBox(2);
-        Label nome = new Label(nomeAutor);
-        nome.getStyleClass().add("post-author-name");
-        Label tempo = new Label(Format.timeAgo(detalhe.dataCriacao()));
-        tempo.getStyleClass().add("post-author-meta");
-        autor.getChildren().addAll(nome, tempo);
-
-        cabecalhoBox.getChildren().setAll(
-                new Avatar(anonimo ? "" : detalhe.autorNome(), 40), autor);
-
-        corpoLabel.setText(detalhe.conteudo());
-        upvotesLabel.setText(detalhe.qtdUpvotes()
-                + (detalhe.qtdUpvotes() == 1 ? " upvote" : " upvotes"));
-
-        renderizarComentarios(detalhe);
-
-        conteudoBox.setManaged(true);
-        conteudoBox.setVisible(true);
-        novoComentarioBox.setManaged(true);
-        novoComentarioBox.setVisible(true);
+    private void carregar() {
+        Task<PostDetalhe> tarefa = new Task<>() {
+            @Override
+            protected PostDetalhe call() {
+                return Api.detalhePost(postId);
+            }
+        };
+        tarefa.setOnSucceeded(evento -> mostrar(tarefa.getValue()));
+        tarefa.setOnFailed(evento -> App.erro(tarefa.getException()));
+        new Thread(tarefa).start();
     }
 
-    private void renderizarComentarios(PostDetalhe detalhe) {
-        comentariosBox.getChildren().clear();
-        if (detalhe.comentarios() == null || detalhe.comentarios().isEmpty()) {
-            Label vazio = new Label("Seja o primeiro a comentar");
-            vazio.getStyleClass().add("text-muted");
-            comentariosBox.getChildren().add(vazio);
-            return;
-        }
-        for (Comentario comentario : detalhe.comentarios()) {
-            comentariosBox.getChildren().add(cartaoComentario(comentario));
-        }
-    }
-
-    private VBox cartaoComentario(Comentario comentario) {
-        VBox caixa = new VBox();
-        caixa.getStyleClass().add("comment");
-
-        HBox topo = new HBox(8);
-        topo.setAlignment(Pos.CENTER_LEFT);
-        Label autor = new Label(comentario.autorNome() == null || comentario.autorNome().isBlank()
-                ? "Anônimo" : comentario.autorNome());
-        autor.getStyleClass().add("comment-author");
-        Label meta = new Label(Format.timeAgo(comentario.dataCriacao()));
-        meta.getStyleClass().add("comment-meta");
-        topo.getChildren().addAll(autor, meta);
-
-        Label corpo = new Label(comentario.conteudo());
-        corpo.getStyleClass().add("comment-body");
+    private void mostrar(PostDetalhe d) {
+        // mostra o post no topo
+        postBox.getChildren().clear();
+        Label autor = new Label(d.anonimo() ? "Anonimo" : d.autorNome());
+        autor.setStyle("-fx-font-weight: bold;");
+        Label corpo = new Label(d.conteudo());
         corpo.setWrapText(true);
+        Label up = new Label(d.qtdUpvotes() + " curtidas");
+        postBox.getChildren().addAll(autor, corpo, up);
 
-        caixa.getChildren().addAll(topo, corpo);
-        return caixa;
+        // mostra a lista de comentarios
+        comentariosBox.getChildren().clear();
+        if (d.comentarios().isEmpty()) {
+            comentariosBox.getChildren().add(new Label("Nenhum comentario ainda."));
+        } else {
+            for (Comentario c : d.comentarios()) {
+                Label cAutor = new Label(c.autorNome());
+                cAutor.setStyle("-fx-font-weight: bold;");
+                Label cTexto = new Label(c.conteudo());
+                cTexto.setWrapText(true);
+                VBox card = new VBox(4, cAutor, cTexto);
+                card.getStyleClass().add("card");
+                comentariosBox.getChildren().add(card);
+            }
+        }
     }
-
-    // ───────── Ações ─────────
 
     @FXML
     private void onComentar() {
-        String texto = novoComentarioField.getText() == null
-                ? "" : novoComentarioField.getText().trim();
+        String texto = comentarioField.getText().trim();
         if (texto.isEmpty()) {
-            Toast.error("Comentário vazio", "Escreva algo antes de comentar.");
+            App.avisar("Escreva um comentario.");
             return;
         }
-        comentarBtn.setDisable(true);
-        AsyncRunner.runVoid(
-                () -> PostService.comentar(postId, texto),
-                () -> {
-                    comentarBtn.setDisable(false);
-                    novoComentarioField.clear();
-                    carregar(postId);
-                },
-                erro -> {
-                    comentarBtn.setDisable(false);
-                    if (!(erro instanceof ApiException api && api.isUnauthorized())) {
-                        Toast.error("Não foi possível comentar", mensagem(erro));
-                    }
-                });
+        Task<Void> tarefa = new Task<>() {
+            @Override
+            protected Void call() {
+                Api.comentar(postId, texto);
+                return null;
+            }
+        };
+        tarefa.setOnSucceeded(evento -> {
+            comentarioField.clear();
+            carregar(); // recarrega para mostrar o novo comentario
+        });
+        tarefa.setOnFailed(evento -> App.erro(tarefa.getException()));
+        new Thread(tarefa).start();
     }
 
     @FXML
-    private void onFechar() {
-        Modal.fechar(raiz);
-    }
-
-    // ───────── Auxiliares ─────────
-
-    private void mostrarLoading(boolean visivel) {
-        loadingBox.setManaged(visivel);
-        loadingBox.setVisible(visivel);
-    }
-
-    private static String mensagem(Throwable erro) {
-        if (erro instanceof ApiException api) {
-            return api.getMessage();
-        }
-        return "Tente novamente em instantes.";
+    private void onVoltar() {
+        App.mostrarConteudo("Timeline");
     }
 }

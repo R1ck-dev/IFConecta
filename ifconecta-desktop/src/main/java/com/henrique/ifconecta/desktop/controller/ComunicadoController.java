@@ -1,224 +1,93 @@
 package com.henrique.ifconecta.desktop.controller;
 
-import com.henrique.ifconecta.desktop.core.AsyncRunner;
-import com.henrique.ifconecta.desktop.core.http.ApiException;
+import com.henrique.ifconecta.desktop.Api;
+import com.henrique.ifconecta.desktop.App;
 import com.henrique.ifconecta.desktop.model.ClubeResumo;
-import com.henrique.ifconecta.desktop.service.ClubeService;
-import com.henrique.ifconecta.desktop.service.NotificacaoService;
-import com.henrique.ifconecta.desktop.ui.Modal;
-import com.henrique.ifconecta.desktop.ui.Toast;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.util.StringConverter;
 
-/**
- * Modal de envio de comunicado — escolhe o público alvo (geral ou clube)
- * e dispara uma notificação para os destinatários correspondentes.
- */
 public class ComunicadoController {
 
-    private static final String GERAL = "GERAL";
-    private static final String CLUBE = "CLUBE";
-
-    @FXML private VBox raiz;
     @FXML private TextField tituloField;
-    @FXML private Label tituloErro;
     @FXML private TextArea mensagemArea;
-    @FXML private Label mensagemErro;
-    @FXML private ComboBox<String> tipoAlvoCombo;
-    @FXML private VBox clubeBox;
-    @FXML private ComboBox<ClubeResumo> clubeCombo;
-    @FXML private Label alvoErro;
-    @FXML private Button enviarBtn;
+    @FXML private ComboBox<String> publicoCombo;
+    @FXML private ComboBox<String> clubeCombo;
 
-    private boolean clubesCarregados;
-
-    /** Quando preenchido, o modal fica travado em CLUBE neste clube. */
-    private String clubeFixadoId;
+    // guardo os clubes para pegar o id pelo indice escolhido no combo
+    private ClubeResumo[] meusClubes;
 
     @FXML
-    private void initialize() {
-        tipoAlvoCombo.getItems().setAll(GERAL, CLUBE);
-
-        clubeCombo.setConverter(conversor(c -> c == null ? null : c.nome()));
-
-        tipoAlvoCombo.valueProperty().addListener((obs, antigo, novo) -> aoMudarTipoAlvo(novo));
-        tipoAlvoCombo.setValue(GERAL);
-    }
-
-    /**
-     * Pré-configura o modal para enviar um comunicado a um clube específico,
-     * travando o público em CLUBE e o destino no clube informado. Usado pelo
-     * líder do clube a partir da tela de detalhe.
-     */
-    public void fixarClube(String clubeId) {
-        this.clubeFixadoId = clubeId;
-        tipoAlvoCombo.setValue(CLUBE);
-        tipoAlvoCombo.setDisable(true);
-        clubeCombo.setDisable(true);
-    }
-
-    // ───────── Tipo de alvo ─────────
-
-    private void aoMudarTipoAlvo(String tipo) {
-        String alvo = tipo == null ? GERAL : tipo;
-        mostrar(clubeBox, CLUBE.equals(alvo));
-        limparErroAlvo();
-
-        if (CLUBE.equals(alvo)) {
-            carregarClubes();
-        }
+    public void initialize() {
+        // opcoes de publico; Geral ja vem selecionada
+        publicoCombo.getItems().addAll("Geral", "Clube");
+        publicoCombo.getSelectionModel().selectFirst();
+        carregarClubes();
     }
 
     private void carregarClubes() {
-        if (clubesCarregados) {
-            return;
-        }
-        clubesCarregados = true;
-        AsyncRunner.run(
-                ClubeService::meusClubes,
-                clubes -> {
-                    clubeCombo.getItems().setAll(clubes);
-                    if (clubeFixadoId != null) {
-                        clubes.stream()
-                                .filter(c -> clubeFixadoId.equals(c.id()))
-                                .findFirst()
-                                .ifPresent(clubeCombo::setValue);
-                    }
-                },
-                erro -> {
-                    clubesCarregados = false;
-                    erroCarga("os clubes", erro);
-                });
-    }
-
-    private void erroCarga(String oque, Throwable erro) {
-        if (!(erro instanceof ApiException api && api.isUnauthorized())) {
-            Toast.error("Não foi possível carregar " + oque, mensagem(erro));
-        }
-    }
-
-    // ───────── Ações ─────────
-
-    @FXML
-    private void onCancelar() {
-        Modal.fechar(raiz);
+        // busca na rede entao roda numa Task de fundo
+        Task<ClubeResumo[]> tarefa = new Task<>() {
+            @Override
+            protected ClubeResumo[] call() {
+                return Api.meusClubes();
+            }
+        };
+        tarefa.setOnSucceeded(evento -> {
+            meusClubes = tarefa.getValue();
+            for (ClubeResumo c : meusClubes) {
+                clubeCombo.getItems().add(c.nome());
+            }
+        });
+        tarefa.setOnFailed(evento -> App.erro(tarefa.getException()));
+        new Thread(tarefa).start();
     }
 
     @FXML
     private void onEnviar() {
-        String titulo = tituloField.getText() == null ? "" : tituloField.getText().trim();
-        String mensagem = mensagemArea.getText() == null ? "" : mensagemArea.getText().trim();
-        boolean valido = true;
-
-        if (titulo.isEmpty()) {
-            mostrarErro(tituloErro, tituloField, "Informe um título.");
-            valido = false;
-        } else {
-            limparErro(tituloErro, tituloField);
-        }
-        if (mensagem.isEmpty()) {
-            mostrarErro(mensagemErro, mensagemArea, "Escreva a mensagem do comunicado.");
-            valido = false;
-        } else {
-            limparErro(mensagemErro, mensagemArea);
-        }
-
-        String tipoAlvo = tipoAlvoCombo.getValue() == null ? GERAL : tipoAlvoCombo.getValue();
-        String alvoId = null;
-        if (!GERAL.equals(tipoAlvo)) {
-            alvoId = idDoAlvoSelecionado();
-            if (alvoId == null) {
-                mostrarErroAlvo("Selecione o destino do comunicado.");
-                valido = false;
-            } else {
-                limparErroAlvo();
-            }
-        } else {
-            limparErroAlvo();
-        }
-
-        if (!valido) {
+        String titulo = tituloField.getText().trim();
+        String mensagem = mensagemArea.getText().trim();
+        if (titulo.isEmpty() || mensagem.isEmpty()) {
+            App.avisar("Preencha titulo e mensagem.");
             return;
         }
 
-        String alvoIdFinal = alvoId;
-        enviarBtn.setDisable(true);
-        AsyncRunner.runVoid(
-                () -> NotificacaoService.enviarComunicado(titulo, mensagem, tipoAlvo, alvoIdFinal),
-                () -> {
-                    Toast.success("Comunicado enviado!");
-                    Modal.fechar(raiz);
-                },
-                erro -> {
-                    enviarBtn.setDisable(false);
-                    if (!(erro instanceof ApiException api && api.isUnauthorized())) {
-                        Toast.error("Não foi possível enviar o comunicado", mensagem(erro));
-                    }
-                });
-    }
-
-    private String idDoAlvoSelecionado() {
-        return clubeCombo.getValue() == null ? null : clubeCombo.getValue().id();
-    }
-
-    // ───────── Auxiliares ─────────
-
-    private static <T> StringConverter<T> conversor(java.util.function.Function<T, String> rotulo) {
-        return new StringConverter<>() {
-            @Override
-            public String toString(T item) {
-                return rotulo.apply(item);
+        // descobre o alvo conforme o publico escolhido
+        String tipoAlvo;
+        String alvoId;
+        if ("Geral".equals(publicoCombo.getValue())) {
+            tipoAlvo = "GERAL";
+            alvoId = null;
+        } else {
+            int i = clubeCombo.getSelectionModel().getSelectedIndex();
+            if (i < 0) {
+                App.avisar("Escolha um clube.");
+                return;
             }
+            tipoAlvo = "CLUBE";
+            alvoId = meusClubes[i].id();
+        }
 
+        Task<Void> tarefa = new Task<>() {
             @Override
-            public T fromString(String texto) {
+            protected Void call() {
+                Api.enviarComunicado(titulo, mensagem, tipoAlvo, alvoId);
                 return null;
             }
         };
+        tarefa.setOnSucceeded(evento -> {
+            App.avisar("Comunicado enviado!");
+            App.mostrarConteudo("Timeline");
+        });
+        tarefa.setOnFailed(evento -> App.erro(tarefa.getException()));
+        new Thread(tarefa).start();
     }
 
-    private static void mostrar(VBox box, boolean visivel) {
-        box.setManaged(visivel);
-        box.setVisible(visivel);
-    }
-
-    private void mostrarErro(Label erro, javafx.scene.control.Control campo, String texto) {
-        erro.setText(texto);
-        erro.setManaged(true);
-        erro.setVisible(true);
-        if (!campo.getStyleClass().contains("has-error")) {
-            campo.getStyleClass().add("has-error");
-        }
-    }
-
-    private void limparErro(Label erro, javafx.scene.control.Control campo) {
-        erro.setManaged(false);
-        erro.setVisible(false);
-        campo.getStyleClass().remove("has-error");
-    }
-
-    private void mostrarErroAlvo(String texto) {
-        alvoErro.setText(texto);
-        alvoErro.setManaged(true);
-        alvoErro.setVisible(true);
-    }
-
-    private void limparErroAlvo() {
-        alvoErro.setManaged(false);
-        alvoErro.setVisible(false);
-    }
-
-    private static String mensagem(Throwable erro) {
-        if (erro instanceof ApiException api) {
-            return api.getMessage();
-        }
-        return "Tente novamente em instantes.";
+    @FXML
+    private void onCancelar() {
+        App.mostrarConteudo("Timeline");
     }
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.henrique.ifconecta.desktop.controller.CriarPostController">
+    <VBox spacing="12">
+        <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+        <Label text="Criar post" styleClass="titulo"/>
+        <TextArea fx:id="conteudoArea" wrapText="true" prefRowCount="4"
+                  promptText="No que voce esta pensando?"/>
+        <Label text="Clube (opcional)"/>
+        <ComboBox fx:id="clubeCombo"/>
+        <CheckBox fx:id="anonimoCheck" text="Postar como anonimo"/>
+        <HBox spacing="8">
+            <Button text="Publicar" onAction="#onPublicar"/>
+            <Button text="Cancelar" onAction="#onCancelar"/>
+        </HBox>
+    </VBox>
+</ScrollPane>

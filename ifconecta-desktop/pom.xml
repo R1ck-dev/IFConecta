@@ -17,8 +17,7 @@
         <maven.compiler.release>21</maven.compiler.release>
         <javafx.version>21.0.5</javafx.version>
         <jackson.version>2.18.2</jackson.version>
-        <ikonli.version>12.3.1</ikonli.version>
-        <main.class>com.henrique.ifconecta.desktop.IFConectaApp</main.class>
+        <main.class>com.henrique.ifconecta.desktop.App</main.class>
     </properties>
 
     <dependencies>
@@ -44,18 +43,6 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
-        </dependency>
-
-        <!-- Ícones outline (equivalentes aos SVGs do front web) -->
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-javafx</artifactId>
-            <version>${ikonli.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-feather-pack</artifactId>
-            <version>${ikonli.version}</version>
         </dependency>
     </dependencies>
 

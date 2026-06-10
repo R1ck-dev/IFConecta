@@ -1,133 +1,82 @@
 package com.henrique.ifconecta.desktop.controller;
 
-import com.henrique.ifconecta.desktop.core.AsyncRunner;
-import com.henrique.ifconecta.desktop.core.http.ApiException;
-import com.henrique.ifconecta.desktop.service.AdminService;
-import com.henrique.ifconecta.desktop.ui.Toast;
+import com.henrique.ifconecta.desktop.Api;
+import com.henrique.ifconecta.desktop.App;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-/**
- * Painel administrativo — convite de professores e institucionais
- * (endpoints /api/admin/*, apenas ADMIN).
- */
 public class AdminController {
 
-    private static final String EMAIL_REGEX = "^\\S+@\\S+\\.\\S+$";
+    // Campos do convite de professor
+    @FXML private TextField profNome;
+    @FXML private TextField profEmail;
+    @FXML private TextField profSiape;
 
-    // ── Convidar professor ──
-    @FXML private TextField profNomeField;
-    @FXML private TextField profEmailField;
-    @FXML private TextField profSiapeField;
-    @FXML private Label profError;
-    @FXML private Button profBtn;
-
-    // ── Convidar institucional ──
-    @FXML private TextField instNomeField;
-    @FXML private TextField instEmailField;
-    @FXML private TextField instSetorField;
-    @FXML private TextField instCargoField;
-    @FXML private Label instError;
-    @FXML private Button instBtn;
-
-    // ───────── Convidar professor ─────────
+    // Campos do convite de institucional
+    @FXML private TextField instNome;
+    @FXML private TextField instEmail;
+    @FXML private TextField instSetor;
+    @FXML private TextField instCargo;
 
     @FXML
     private void onConvidarProfessor() {
-        String nome = valor(profNomeField);
-        String email = valor(profEmailField);
-        String siape = valor(profSiapeField);
-
+        String nome = profNome.getText().trim();
+        String email = profEmail.getText().trim();
+        String siape = profSiape.getText().trim();
+        // Todos os campos sao obrigatorios
         if (nome.isEmpty() || email.isEmpty() || siape.isEmpty()) {
-            marcarErro(profError, "Preencha nome, e-mail e SIAPE.");
+            App.avisar("Preencha todos os campos do professor.");
             return;
         }
-        if (!email.matches(EMAIL_REGEX)) {
-            marcarErro(profError, "E-mail em formato inválido.");
-            return;
-        }
-        limparErro(profError);
-
-        profBtn.setDisable(true);
-        AsyncRunner.runVoid(
-                () -> AdminService.convidarProfessor(nome, email, siape),
-                () -> {
-                    profBtn.setDisable(false);
-                    Toast.success("Convite enviado por e-mail.");
-                    profNomeField.clear();
-                    profEmailField.clear();
-                    profSiapeField.clear();
-                },
-                erro -> {
-                    profBtn.setDisable(false);
-                    if (!(erro instanceof ApiException api && api.isUnauthorized())) {
-                        Toast.error("Não foi possível enviar o convite", mensagem(erro));
-                    }
-                });
+        // Chamada de rede roda em thread de fundo para nao travar a tela
+        Task<Void> tarefa = new Task<>() {
+            @Override
+            protected Void call() {
+                Api.convidarProfessor(nome, email, siape);
+                return null;
+            }
+        };
+        tarefa.setOnSucceeded(evento -> {
+            App.avisar("Convite enviado!");
+            // Limpa os campos para um novo convite
+            profNome.setText("");
+            profEmail.setText("");
+            profSiape.setText("");
+        });
+        tarefa.setOnFailed(evento -> App.erro(tarefa.getException()));
+        new Thread(tarefa).start();
     }
-
-    // ───────── Convidar institucional ─────────
 
     @FXML
     private void onConvidarInstitucional() {
-        String nome = valor(instNomeField);
-        String email = valor(instEmailField);
-        String setor = valor(instSetorField);
-        String cargo = valor(instCargoField);
-
+        String nome = instNome.getText().trim();
+        String email = instEmail.getText().trim();
+        String setor = instSetor.getText().trim();
+        String cargo = instCargo.getText().trim();
+        // Todos os campos sao obrigatorios
         if (nome.isEmpty() || email.isEmpty() || setor.isEmpty() || cargo.isEmpty()) {
-            marcarErro(instError, "Preencha nome, e-mail, setor e cargo.");
+            App.avisar("Preencha todos os campos do institucional.");
             return;
         }
-        if (!email.matches(EMAIL_REGEX)) {
-            marcarErro(instError, "E-mail em formato inválido.");
-            return;
-        }
-        limparErro(instError);
-
-        instBtn.setDisable(true);
-        AsyncRunner.runVoid(
-                () -> AdminService.convidarInstitucional(nome, email, setor, cargo),
-                () -> {
-                    instBtn.setDisable(false);
-                    Toast.success("Convite enviado por e-mail.");
-                    instNomeField.clear();
-                    instEmailField.clear();
-                    instSetorField.clear();
-                    instCargoField.clear();
-                },
-                erro -> {
-                    instBtn.setDisable(false);
-                    if (!(erro instanceof ApiException api && api.isUnauthorized())) {
-                        Toast.error("Não foi possível enviar o convite", mensagem(erro));
-                    }
-                });
-    }
-
-    // ───────── Auxiliares ─────────
-
-    private static void marcarErro(Label label, String msg) {
-        label.setText(msg);
-        label.setVisible(true);
-        label.setManaged(true);
-    }
-
-    private static void limparErro(Label label) {
-        label.setVisible(false);
-        label.setManaged(false);
-    }
-
-    private static String valor(TextField field) {
-        return field.getText() == null ? "" : field.getText().trim();
-    }
-
-    private static String mensagem(Throwable erro) {
-        if (erro instanceof ApiException api) {
-            return api.getMessage();
-        }
-        return "Tente novamente em instantes.";
+        // Chamada de rede roda em thread de fundo para nao travar a tela
+        Task<Void> tarefa = new Task<>() {
+            @Override
+            protected Void call() {
+                Api.convidarInstitucional(nome, email, setor, cargo);
+                return null;
+            }
+        };
+        tarefa.setOnSucceeded(evento -> {
+            App.avisar("Convite enviado!");
+            // Limpa os campos para um novo convite
+            instNome.setText("");
+            instEmail.setText("");
+            instSetor.setText("");
+            instCargo.setText("");
+        });
+        tarefa.setOnFailed(evento -> App.erro(tarefa.getException()));
+        new Thread(tarefa).start();
     }
 }
