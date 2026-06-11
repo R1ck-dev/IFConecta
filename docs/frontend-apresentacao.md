@@ -189,7 +189,7 @@ Estas três classes ficam **na raiz do pacote** (não numa subpasta) e são a **
 
 # 🎯 Estudo de caso completo: **Criar um Clube**
 
-> Esta é a hora de "amarrar tudo". Vamos seguir um clube sendo criado, **do clique até o servidor**, passando por cada peça que apresentamos. Mantenha aberto o diagrama abaixo enquanto narra.
+> Esta é a hora de "amarrar tudo". Vamos seguir um clube sendo criado, **do clique até o banco de dados e de volta**, passando por cada peça que apresentamos — primeiro no app e depois **dentro do servidor**. Mantenha aberto o diagrama abaixo enquanto narra.
 
 ## Visão geral do fluxo
 
@@ -198,24 +198,34 @@ sequenceDiagram
     autonumber
     actor U as Usuário
     participant CL as ClubesController
-    participant APP as App (navegação)
+    participant APP as App
     participant CC as CriarClubeController
-    participant T as Task (thread de fundo)
     participant API as Api
-    participant BE as Servidor (API REST)
+    participant SEC as Segurança JWT
+    participant BC as ClubeController
+    participant UC as CriarClubeUseCase
+    participant DOM as Clube (domínio)
+    participant REP as ClubeRepository/Adapter
+    participant DB as Banco de Dados
 
     U->>CL: clica em "Criar clube"
     CL->>APP: App.mostrarConteudo("CriarClube")
     APP->>CC: carrega CriarClube.fxml + initialize()
-    CC-->>U: mostra o formulário no centro
     U->>CC: preenche e clica "Criar clube" (onCriar)
-    CC->>CC: valida nome/descrição e traduz o tipo
-    CC->>T: new Thread(task).start()
-    T->>API: Api.criarClube(nome, desc, tipo)  [thread de fundo]
-    API->>BE: POST /api/clubes  (+ Authorization: Bearer)
-    BE-->>API: 201 Created
-    API-->>T: ok
-    T->>CC: setOnSucceeded  [de volta na thread da tela]
+    CC->>API: Api.criarClube(...)  [Task em segundo plano]
+    API->>SEC: POST /api/clubes  (+ Authorization: Bearer)
+    Note over SEC,DB: dentro do servidor (Spring Boot · hexagonal)
+    SEC->>BC: token válido → criadorId resolvido
+    BC->>UC: criarClubeUseCase.execute(input)
+    UC->>UC: existePorNome(nome)? (nome único)
+    UC->>DOM: new Clube(...) → criador vira líder aprovado
+    UC->>REP: clubeRepository.salvar(clube)
+    REP->>DB: INSERT em clubes / membros
+    DB-->>REP: ok
+    REP-->>UC: clube salvo
+    UC-->>BC: void (sem erro)
+    BC-->>API: 201 Created
+    API-->>CC: setOnSucceeded  [de volta na thread da tela]
     CC->>APP: App.mostrarConteudo("Clubes")  → a lista recarrega
 ```
 
@@ -312,26 +322,103 @@ public static void criarClube(String nome, String descricao, String tipoAcesso) 
 **O que explicar.** O método monta o **corpo** do pedido (um mapa que vira JSON) e chama a parte interna `enviar(...)`, dizendo só o **verbo** (`POST`) e o **caminho** (`/clubes`). Dentro de `enviar(...)`, o "carteiro" entra em ação:
 - monta a URL completa (`http://localhost:8080/api/clubes`);
 - pega o **token** da `Sessao` e adiciona `Authorization: Bearer ...` — é assim que o servidor sabe **quem** está criando o clube (o criador vira o **líder**!);
-- transforma o mapa em **JSON** e envia o `POST`;
-- se vier **201 Created**, retorna com sucesso; se vier erro, **lança** uma mensagem amigável que a `Task` vai capturar no `setOnFailed`.
+- transforma o mapa em **JSON** e envia o `POST`.
 
-> **Aponte a conexão com o backend:** "Do outro lado, o servidor recebe esse `POST /api/clubes`, identifica o usuário pelo token, cria o clube **já adicionando o criador como líder aprovado**, e responde **201**. O app **não** sabe (nem precisa saber) como isso é feito — ele só recebe o 'ok'." *(Para os detalhes do lado servidor, veja o documento de diagramas — `CriarClubeUseCase` → `Clube` → `ClubeRepository`.)*
+A partir daqui **saímos do app e entramos no servidor**. Vamos seguir o pedido lá dentro, na ordem em que ele passa por cada camada.
 
-### ⑥ De volta à tela: sucesso
-Quando o `201` chega, o JavaFX devolve o controle para a **thread da tela** e executa o `setOnSucceeded` do passo ④:
-- `App.mostrarConteudo("Clubes")` → a tela de Clubes é carregada de novo e, no seu `initialize()`, busca a lista atualizada no servidor — então **o clube novo já aparece**.
+---
+
+> 🖥️ **A partir daqui é o backend.** O servidor é um **Spring Boot (Java 21)** em **arquitetura hexagonal**, organizado em camadas: **web** (recebe o pedido) → **aplicação** (regras do caso de uso) → **domínio** (as regras do próprio objeto) → **infraestrutura** (banco). *(Os diagramas completos do backend estão em [diagramas.md](docs/diagramas.md).)*
+
+### ⑥ A segurança confere o crachá (antes de tudo)
+Todo pedido autenticado passa primeiro por um **filtro de segurança** (`JwtAuthenticationFilter`): ele lê o cabeçalho `Authorization: Bearer ...`, **valida o token JWT** e descobre **quem** é o usuário. Esse `id` é entregue ao controller pela anotação `@CurrentUserId`. Se o token faltar ou for inválido, o pedido **nem chega** ao controller — o servidor responde **401** e o app manda de volta para o login.
+
+### ⑦ `ClubeController` recebe o `POST /api/clubes`
+📄 [`ClubeController.java`](src/main/java/com/henrique/ifconecta/infrastructure/web/clube/controller/ClubeController.java) — camada **web**
+
+```java
+@PostMapping
+public ResponseEntity<Void> criarClube(@RequestBody @Valid CriarClubeRequest request,
+        @CurrentUserId UUID criadorId) {
+    CriarClubeInput input = new CriarClubeInput(
+            request.nome(), request.descricao(), request.tipoAcesso(), criadorId);
+    criarClubeUseCase.execute(input);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
+}
+```
+
+**O que explicar.** O JSON do corpo vira um `CriarClubeRequest` e o `@Valid` confere o formato. O controller junta os dados do corpo com o `criadorId` (vindo do crachá, passo ⑥) num `CriarClubeInput` e chama o **caso de uso**. Repare: o controller **não tem regra de negócio** — ele só recebe, organiza e delega.
+
+### ⑧ `CriarClubeUseCase` aplica as regras
+📄 [`CriarClubeUseCase.java`](src/main/java/com/henrique/ifconecta/application/clube/usecase/CriarClubeUseCase.java) — camada de **aplicação**
+
+```java
+@Transactional
+public void execute(CriarClubeInput input) {
+    if (clubeRepository.existePorNome(input.nome())) {
+        throw new NegocioException("Já existe um clube registrado com este nome.");
+    }
+    Clube novoClube = new Clube(
+            input.nome(), input.descricao(), input.tipoAcesso(), input.criadorId());
+    clubeRepository.salvar(novoClube);
+}
+```
+
+**O que explicar.** Aqui ficam as **regras do caso de uso**: primeiro garante que **não existe outro clube com o mesmo nome** (se existir, lança `NegocioException`); depois cria o objeto de domínio `Clube` e manda **salvar** pelo `ClubeRepository`. Note que ele depende só da **interface** `ClubeRepository` (um *port*) — não sabe nada de banco.
+
+### ⑨ O domínio `Clube` nasce já com o líder
+📄 [`Clube.java`](src/main/java/com/henrique/ifconecta/domain/clube/model/Clube.java) — camada de **domínio** (Java puro, sem Spring)
+
+```java
+public Clube(String nome, String descricao, TipoAcesso tipoAcesso, UUID criadorId) {
+    this.id = UUID.randomUUID();
+    this.status = StatusClube.ATIVO;
+    // ...
+    this.membros = new ArrayList<>();
+    // O criador é líder e aprovado automaticamente:
+    this.membros.add(new MembroClube(criadorId, PapelMembro.LIDER, StatusMembro.APROVADO));
+}
+```
+
+**O que explicar.** A regra mais importante mora **dentro do próprio objeto**: ao nascer, o clube **já se adiciona o criador como `MembroClube` com papel `LIDER` e status `APROVADO`**. Não é o controller nem o caso de uso que "lembram" disso — é o **domínio que protege a própria regra**. (É por isso que, ao voltar para a lista, quem criou já aparece como líder.)
+
+### ⑩ `ClubeRepository` → `Adapter` → banco
+📄 [`ClubeRepositoryAdapter.java`](src/main/java/com/henrique/ifconecta/infrastructure/persistence/clube/adapter/ClubeRepositoryAdapter.java) — camada de **infraestrutura**
+
+```java
+@Override
+public Clube salvar(Clube clube) {
+    ClubeJpaEntity entity = clubeMapper.toEntity(clube);            // domínio → entidade JPA
+    ClubeJpaEntity salvo = springDataClubeRepository.save(entity);  // INSERT no banco
+    return clubeMapper.toDomain(salvo);                            // entidade → domínio
+}
+```
+
+**O que explicar.** `ClubeRepository` é só uma **interface no domínio** (o *port*); quem a **realiza** é o `ClubeRepositoryAdapter` (o *adapter*). Ele usa o `ClubeMapper` para traduzir o `Clube` (domínio) em `ClubeJpaEntity` (a "forma de tabela") e o `SpringDataClubeRepository` (JPA/Hibernate) para fazer o **`INSERT`** nas tabelas de clubes e de membros. **O domínio nunca vê JPA nem Spring** — essa é a regra de ouro do hexagonal.
+
+### ⑪ O servidor responde `201 Created`
+Gravado o clube, o caso de uso termina sem erro e o `ClubeController` devolve **`201 Created`** (sem corpo). *(Se em algum passo um `NegocioException` tivesse sido lançado — por exemplo, nome repetido —, o `GlobalExceptionHandler` o traduziria em um **`400`** com a mensagem em JSON, que o app mostraria no `Alert`.)*
+
+### ⑫ De volta à tela: sucesso
+Quando o `201` chega **de volta ao app**, o JavaFX devolve o controle para a **thread da tela** e executa o `setOnSucceeded` do passo ④:
+- `App.mostrarConteudo("Clubes")` → a tela de Clubes é carregada de novo e, no seu `initialize()`, busca a lista atualizada no servidor — então **o clube novo já aparece** (com você como líder).
 
 ### O que esse caso de uso prova
 Em um único fluxo, o usuário viu **todas as peças trabalhando juntas**:
 
-| Peça | Papel no Criar Clube |
-|---|---|
-| `CriarClube.fxml` (**view**) | desenhou o formulário |
-| `ClubesController` / `CriarClubeController` (**controller**) | comandaram a navegação, a validação e o pós-sucesso |
-| `Task` (**segundo plano**) | rodou a chamada sem travar a tela |
-| `Api` (**servidor**) | escolheu o endpoint, montou o corpo e enviou com o crachá |
-| `Sessao` (**login**) | forneceu o token para o pedido |
-| `App` (**navegação/avisos**) | trocou de tela e mostraria o erro, se houvesse |
+| Peça | Camada | Papel no Criar Clube |
+|---|---|---|
+| `CriarClube.fxml` | front · view | desenhou o formulário |
+| `CriarClubeController` | front · controller | validou os campos e disparou a `Task` |
+| `Task` | front · segundo plano | rodou a chamada sem travar a tela |
+| `Sessao` | front · login | forneceu o token JWT para o pedido |
+| `Api` | front · HTTP | montou o corpo, anexou o crachá e enviou o `POST` |
+| `JwtAuthenticationFilter` + `@CurrentUserId` | back · segurança | validou o token e identificou o criador |
+| `ClubeController` | back · web | recebeu o `POST` e montou o `CriarClubeInput` |
+| `CriarClubeUseCase` | back · aplicação | checou o nome único e orquestrou a criação |
+| `Clube` | back · domínio | nasceu já com o criador como líder aprovado |
+| `ClubeRepository` + `Adapter` + `Mapper` | back · infraestrutura | traduziram o domínio e gravaram no banco |
+| `App` | front · navegação | trocou de volta para a lista de clubes |
 
 > **Feche assim:** "É essa separação de responsabilidades — cada peça com um trabalho claro — que faz o app ser fácil de entender e de crescer. Adicionar uma nova tela é repetir essa mesma receita."
 
@@ -346,5 +433,5 @@ Em um único fluxo, o usuário viu **todas as peças trabalhando juntas**:
 5. **`model`** → "records: as fôrmas dos dados; alguns com helpers de leitura".
 6. **As três classes-base (devagar!)** → `App` (troca de tela + avisos), `Api` (fala com o servidor), `Sessao` (lembra o login) — *por que cada uma existe*.
 7. **`estilo.css`** → "um CSS curtinho; o verde institucional vem daqui".
-8. **Criar Clube** → siga o diagrama de sequência e os passos; destaque a receita da `Task`.
-9. **Feche** com a tabela "o que esse caso de uso prova".
+8. **Criar Clube** → siga o diagrama de sequência **do clique até o banco e de volta**; destaque a receita da `Task` (no app) e as camadas do backend (**Segurança → Controller → UseCase → domínio → Repository → banco**).
+9. **Feche** com a tabela "o que esse caso de uso prova" (front + back).

@@ -1,8 +1,7 @@
 package com.henrique.ifconecta.desktop.model;
 
 /**
- * Espelha MeuPerfilDTO (GET /api/usuarios/me).
- * UUIDs e datas ficam como String — basta para exibição no cliente.
+ * UUIDs e datas ficam como String - basta para exibição no cliente.
  */
 public record MeuPerfil(
         String id,
@@ -21,12 +20,12 @@ public record MeuPerfil(
         return "ADMIN".equalsIgnoreCase(role);
     }
 
-    /** Equivale a podeComunicar() do front web (professores e institucionais). */
+    /** Professores e institucionais podem enviar comunicados. */
     public boolean podeComunicar() {
         return "PROFESSOR".equalsIgnoreCase(tipo) || "INSTITUCIONAL".equalsIgnoreCase(tipo);
     }
 
-    /** Equivale a tipoLabel() do front web. */
+    /** Texto amigavel do tipo de usuario para mostrar na tela. */
     public String tipoLabel() {
         if ("PROFESSOR".equalsIgnoreCase(tipo)) return "Professor(a)";
         if ("INSTITUCIONAL".equalsIgnoreCase(tipo)) return "Servidor(a)";

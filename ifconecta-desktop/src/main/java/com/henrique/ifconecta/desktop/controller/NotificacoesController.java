@@ -27,7 +27,6 @@ public class NotificacoesController {
             }
         };
         tarefa.setOnSucceeded(evento -> {
-            // limpa a lista antes de montar de novo
             lista.getChildren().clear();
             NotificacaoResumo[] ns = tarefa.getValue();
             if (ns.length == 0) {

@@ -49,7 +49,6 @@ public class ClubesController {
         new Thread(tarefa).start();
     }
 
-    // Monta a lista dentro da caixa indicada
     private void preencher(VBox caixa, ClubeResumo[] clubes, String vazio) {
         caixa.getChildren().clear();
         if (clubes.length == 0) {
@@ -61,7 +60,6 @@ public class ClubesController {
         }
     }
 
-    // Cria o cartao de um clube
     private VBox criarCard(ClubeResumo c) {
         Label nome = new Label(c.nome());
         nome.setStyle("-fx-font-weight: bold;");

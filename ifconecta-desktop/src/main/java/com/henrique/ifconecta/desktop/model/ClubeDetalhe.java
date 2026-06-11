@@ -1,6 +1,5 @@
 package com.henrique.ifconecta.desktop.model;
 
-/** Espelha ClubeDetalheDTO (GET /api/clubes/{id}). */
 public record ClubeDetalhe(
         String id,
         String nome,

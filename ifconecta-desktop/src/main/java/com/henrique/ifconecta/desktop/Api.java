@@ -45,7 +45,7 @@ public class Api {
             .registerModule(new JavaTimeModule())
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-    // ───────── Login e perfil ─────────
+    // ----- Login e perfil -----
 
     /** Faz login. Devolve o token; guarde-o em Sessao.token. */
     public static String login(String email, String senha) {
@@ -73,7 +73,7 @@ public class Api {
         enviar("POST", "/usuarios/alunos", corpo);
     }
 
-    // ───────── Painel do administrador ─────────
+    // ----- Painel do administrador -----
 
     /** Convida um professor por e-mail (so admin). */
     public static void convidarProfessor(String nome, String emailAcad, String siape) {
@@ -94,7 +94,7 @@ public class Api {
         enviar("POST", "/admin/usuarios/institucionais/convidar", corpo);
     }
 
-    // ───────── Clubes ─────────
+    // ----- Clubes -----
 
     /** Lista todos os clubes do campus. */
     public static ClubeResumo[] listarClubes() {
@@ -153,7 +153,7 @@ public class Api {
         enviar("PUT", "/clubes/" + clubeId + "/membros/" + usuarioId + "/avaliacao", corpo);
     }
 
-    // ───────── Posts ─────────
+    // ----- Posts -----
 
     /** Lista os posts da timeline geral. */
     public static PostResumo[] timeline() {
@@ -188,7 +188,7 @@ public class Api {
         enviar("POST", "/posts/" + postId + "/comentarios", corpo);
     }
 
-    // ───────── Notificacoes e comunicados ─────────
+    // ----- Notificacoes e comunicados -----
 
     /** Lista as notificacoes recebidas pelo usuario. */
     public static NotificacaoResumo[] minhasNotificacoes() {
@@ -216,7 +216,7 @@ public class Api {
         enviar("POST", "/comunicados", corpo);
     }
 
-    // ───────── Parte interna (o "como" dos pedidos) ─────────
+    // ----- Parte interna -----
 
     /** Monta e envia um pedido HTTP; devolve o corpo da resposta como texto. */
     private static String enviar(String metodo, String caminho, Object corpo) {
@@ -245,7 +245,7 @@ public class Api {
             if (status >= 200 && status < 300) {
                 return resposta.body();
             }
-            // Deu erro: joga uma mensagem para a tela mostrar.
+            // joga uma mensagem para a tela mostrar.
             throw new RuntimeException(mensagemDeErro(resposta.body(), status));
 
         } catch (IOException | InterruptedException e) {

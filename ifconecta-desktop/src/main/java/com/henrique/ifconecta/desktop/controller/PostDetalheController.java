@@ -39,7 +39,6 @@ public class PostDetalheController {
     }
 
     private void mostrar(PostDetalhe d) {
-        // mostra o post no topo
         postBox.getChildren().clear();
         Label autor = new Label(d.anonimo() ? "Anonimo" : d.autorNome());
         autor.setStyle("-fx-font-weight: bold;");
@@ -48,7 +47,6 @@ public class PostDetalheController {
         Label up = new Label(d.qtdUpvotes() + " curtidas");
         postBox.getChildren().addAll(autor, corpo, up);
 
-        // mostra a lista de comentarios
         comentariosBox.getChildren().clear();
         if (d.comentarios().isEmpty()) {
             comentariosBox.getChildren().add(new Label("Nenhum comentario ainda."));
