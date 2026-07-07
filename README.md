@@ -151,8 +151,6 @@ Hexagonal / ports-and-adapters, organizada **por feature antes da camada**. Regr
 - **Schema é controlado pelo Flyway.** `ddl-auto=validate` — qualquer mudança no banco vira uma nova migração `V{n}__*.sql`.
 - **Erros de negócio** sobem como `NegocioException` e são traduzidos para `400 {"erro": "..."}` pelo `GlobalExcpetHandler`.
 
-Para quem for contribuir, o [CLAUDE.md](CLAUDE.md) tem a visão técnica detalhada.
-
 ---
 
 ## Documentação e ferramentas
