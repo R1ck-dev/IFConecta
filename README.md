@@ -99,10 +99,8 @@ docker compose up -d
 ```
 
 Isso levanta:
-- **PostgreSQL** em `localhost:5432` (banco `ifconecta`, user `ifconecta_admin`)
+- **PostgreSQL** em `localhost:5433` (banco `ifconecta`), já alinhado com o `application-local.yml`. As credenciais vêm de `DB_USER`/`DB_PASSWORD` — o Docker Compose lê o `.env` da raiz automaticamente; sem `.env`, o padrão é `ifconecta_admin` / `local_password`.
 - **MailHog**: SMTP em `localhost:1025`, interface web em <http://localhost:8025>
-
-> ⚠ O `application-local.yml` aponta para a porta **5433** por padrão. Ajuste a porta no `docker-compose.yml` ou sobrescreva `spring.datasource.url` antes do primeiro `run`.
 
 ### 2. Configure variáveis de ambiente
 
@@ -135,6 +133,18 @@ npm run dev
 ```
 
 Vite serve a SPA em <http://localhost:5173> (ou na próxima porta livre).
+
+### 5. (Opcional) Popule dados de teste
+
+Com o schema já migrado (após o primeiro start do backend), rode o seed de desenvolvimento — cria usuários de cada papel, clubes, posts, turmas e notificações de exemplo. É **idempotente** e **não** é uma migração Flyway (não afeta produção nem as branches acadêmicas):
+
+```bash
+docker exec -i ifconecta-db psql -U ifconecta_admin -d ifconecta < scripts/seed_dev.sql
+```
+
+> Use o mesmo usuário do seu `.env` (`DB_USER`) no lugar de `ifconecta_admin`, se tiver personalizado.
+
+Contas criadas (senha `senha123`): `dev.aluno@aluno.ifsp.edu.br`, `dev.professor@ifsp.edu.br`, `dev.institucional@ifsp.edu.br`. Em modo de desenvolvimento, a tela de login exibe atalhos de acesso rápido para essas contas.
 
 ### Testes
 
