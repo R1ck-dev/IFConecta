@@ -11,6 +11,7 @@ O repositório é um monorepo com dois projetos:
 
 ## Sumário
 
+- [Telas](#telas)
 - [Stack](#stack)
 - [Estrutura do repositório](#estrutura-do-repositório)
 - [Pré-requisitos](#pré-requisitos)
@@ -18,6 +19,23 @@ O repositório é um monorepo com dois projetos:
 - [Módulos](#módulos)
 - [Arquitetura](#arquitetura)
 - [Documentação e ferramentas](#documentação-e-ferramentas)
+
+---
+
+## Telas
+
+Interface em React + Vite, na visão de **aluno**, populada com os dados de exemplo do [`scripts/seed_dev.sql`](scripts/seed_dev.sql).
+
+**Login** — em modo de desenvolvimento, exibe atalhos de acesso rápido por papel (Aluno / Professor / Institucional).
+
+![Tela de login do IFConecta](docs/Login.jpeg)
+
+| Timeline | Clubes |
+|:---:|:---:|
+| ![Timeline do campus](docs/Main-Aluno.jpeg) | ![Lista de clubes](docs/Clube-Aluno.jpeg) |
+| **Timeline** — feed geral do campus com posts, upvotes, comentários e posts anônimos | **Clubes** — comunidades públicas e privadas, com contagem de membros |
+| ![Minhas turmas do aluno](docs/Turma-Aluno.jpeg) | ![Notificações do aluno](docs/Noti-Aluno.jpeg) |
+| **Minhas turmas** — disciplinas, turmas e matrículas do aluno | **Notificações** — comunicados segmentados por turma, curso e geral |
 
 ---
 

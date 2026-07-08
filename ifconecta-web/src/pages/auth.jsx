@@ -33,6 +33,14 @@ function AuthArt() {
   );
 }
 
+// Contas de teste criadas por scripts/seed_dev.sql. Usadas só nos atalhos de dev.
+const DEV_SENHA = 'senha123';
+const DEV_CONTAS = [
+  { label: 'Aluno', email: 'dev.aluno@aluno.ifsp.edu.br' },
+  { label: 'Professor', email: 'dev.professor@ifsp.edu.br' },
+  { label: 'Institucional', email: 'dev.institucional@ifsp.edu.br' },
+];
+
 export function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -60,6 +68,24 @@ export function LoginPage() {
       navigate('/timeline');
     } catch (err) {
       toast.error('Falha ao entrar', extractErrorMessage(err, 'Email ou senha inválidos.'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Acesso rápido para desenvolvimento — só aparece no build de dev (Vite).
+  // Contas populadas por scripts/seed_dev.sql (senha: senha123).
+  const quickLogin = async (conta) => {
+    setEmail(conta.email);
+    setSenha(DEV_SENHA);
+    setErrs({});
+    setLoading(true);
+    try {
+      await login(conta.email, DEV_SENHA);
+      toast.success(`Acesso de teste: ${conta.label}`);
+      navigate('/timeline');
+    } catch (err) {
+      toast.error('Falha no acesso rápido', extractErrorMessage(err, 'Rode scripts/seed_dev.sql no banco local.'));
     } finally {
       setLoading(false);
     }
@@ -126,6 +152,30 @@ export function LoginPage() {
             <Icon name="info" size={14} style={{ flexShrink: 0, marginTop: 1 }} />
             <span>Professores e servidores devem aguardar o convite institucional por email para definir senha.</span>
           </div>
+
+          {import.meta.env.DEV && (
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px dashed var(--border)' }}>
+              <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.4, color: 'var(--fg-subtle)', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Icon name="zap" size={12} />
+                Acesso rápido — desenvolvimento
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {DEV_CONTAS.map((conta) => (
+                  <Button
+                    key={conta.email}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    block
+                    disabled={loading}
+                    onClick={() => quickLogin(conta)}
+                  >
+                    {conta.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
         </form>
       </div>
       <EsqueciSenhaDialog open={esqueciOpen} onClose={() => setEsqueciOpen(false)} />
